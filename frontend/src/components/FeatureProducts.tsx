@@ -7,7 +7,7 @@ const ProductCard = ({ product }: {product: Product}) => {
         return price.toLocaleString('vi-VN', { minimumFractionDigits: 0 }) + 'đ';
     };
     return (
-    <div className="bg-white shadow-md rounded-md overflow-hidden hover:scale-105">
+    <div className="bg-white shadow-md rounded-md overflow-hidden hover:scale-105 duration-500">
         <img src={product.image} alt={product.name} className="w-full h-64 object-cover" />
         <div className="p-4">
         <h3 className="text-lg font-semibold text-gray-800">{product.name}</h3>
