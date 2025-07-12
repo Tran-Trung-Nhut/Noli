@@ -1,7 +1,8 @@
 
+import type { Product } from "../dtos/product.dto";
 import { products } from "../mocks/product";
 
-const ProductCard = ({ product }: {product: any}) => {
+const ProductCard = ({ product }: {product: Product}) => {
     const formatPrice = (price: number) => {
         return price.toLocaleString('vi-VN', { minimumFractionDigits: 0 }) + 'đ';
     };
