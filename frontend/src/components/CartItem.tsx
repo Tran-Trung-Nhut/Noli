@@ -10,7 +10,7 @@ const CartItem = ({product} : {product: Product}) =>{
     return(
         <>
             <div className="cart-item flex items-center bg-white p-4 rounded-md shadow-md">
-                <img src={product.image} alt="Quần Jeans Xanh" className="w-24 h-24 object-cover mr-4" />
+                <img src={product.image[0]} alt="Quần Jeans Xanh" className="w-24 h-24 object-cover mr-4" />
                 <div className="flex-1">
                     <h3 className="text-lg font-semibold text-gray-800">{product.name}</h3>
                     <p className="text-gray-600">{formatPrice(product.price)}</p>
