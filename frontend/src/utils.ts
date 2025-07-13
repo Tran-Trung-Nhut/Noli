@@ -1,6 +1,6 @@
 import { toast } from "react-toastify";
-import type { Product } from "./dtos/product.dto";
 import Swal from 'sweetalert2';
+import type { Product } from "./dtos/Product.dto";
 
 export const notifySuccess = (message: string) => toast.success(message, { position: 'top-right', autoClose: 2000 })
 

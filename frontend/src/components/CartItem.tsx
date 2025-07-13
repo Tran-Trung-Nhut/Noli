@@ -1,6 +1,6 @@
 import { FaTrash } from "react-icons/fa"
-import type { Product } from "../dtos/product.dto"
 import { confirm, formatPrice, notifySuccess, removeFromCartLocalStorage } from "../utils"
+import type { Product } from "../dtos/Product.dto"
 
 const CartItem = ({product} : {product: Product}) =>{
     const removeFromCart = (id: number) => {

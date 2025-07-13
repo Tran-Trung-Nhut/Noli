@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import CartItem from "../components/CartItem"
 import { formatPrice, getCartLocalStorage, totalPriceOfAllProducts } from "../utils"
-import type { Product } from "../dtos/product.dto"
+import type { Product } from "../dtos/Product.dto"
 
 const Cart = () =>{
     const [products, setProducts] = useState<Product[]>([])
