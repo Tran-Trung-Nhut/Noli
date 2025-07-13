@@ -33,8 +33,8 @@ const ProductDetail = () => {
     return (
         <section className="p-5 min-h-[500px]">
             <nav className="text-sm text-gray-500 mb-4">
-                <a href="/" className="hover:underline">Trang chủ</a> 
-                <a href="/shop" className="hover:underline"> Cửa hàng</a> 
+                <a href="/" className="hover:underline">Trang chủ </a>/
+                <a href="/shop" className="hover:underline"> Cửa hàng </a>/ 
                 <span> {product.name}</span>
             </nav>
             <div className="flex flex-col md:flex-row">
@@ -73,7 +73,7 @@ const ProductDetail = () => {
                     <h1 className="text-3xl font-bold uppercase text-black">{product.name}</h1>
                     <p className="text-xl text-black mt-2">{formatPrice(product.price)}</p>
                     <p className="text-lg text-black mt-4 leading-relaxed">
-                        Đây là mô tả sản phẩm. Hiện chưa được cập nhật trường cho cơ sở dữ liệu. Sẽ được cập nhật trong thời gian sắp tới
+                        {product.description}
                     </p>
                     <div className="mt-6 flex space-x-4">
                         <button className="bg-sky-500 text-white px-6 py-2 rounded-lg hover:opacity-80">
