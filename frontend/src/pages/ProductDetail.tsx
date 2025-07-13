@@ -1,6 +1,6 @@
 import { formatPrice, getCartLocalStorage, isProductInCart } from "../utils";
 import { useEffect, useState } from "react";
-import { defaultProduct, type Product } from "../dtos/Product.dto";
+import { defaultProduct, type Product } from "../dtos/product.dto";
 import { getProductInformation } from "../api/product";
 import { useParams } from "react-router-dom";
 

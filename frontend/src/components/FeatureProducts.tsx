@@ -1,6 +1,6 @@
 
 import { useEffect, useState } from "react";
-import type { Product } from "../dtos/Product.dto";
+import type { Product } from "../dtos/product.dto";
 import { products } from "../mocks/product";
 import { addToCartLocalStorage, getCartLocalStorage, isProductInCart, notifySuccess } from "../utils";
 import ProductCard from "./ProductCart";

@@ -1,4 +1,4 @@
-import type { Product } from "../dtos/Product.dto"
+import type { Product } from "../dtos/product.dto"
 import { products } from "../mocks/product"
 
 export const getProductInformation = (productId: number): Product | undefined => {

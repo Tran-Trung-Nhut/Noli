@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import type { Product } from "../dtos/Product.dto";
+import type { Product } from "../dtos/product.dto";
 import { formatPrice, isProductInCart } from "../utils";
 
 const ProductCard = ({ 
