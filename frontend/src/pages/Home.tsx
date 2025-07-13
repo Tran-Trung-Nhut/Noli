@@ -4,11 +4,11 @@ import Hero from "../components/Hero";
 
 const Home = () => {
     return (
-    <>
-        <Hero />
-        <FeaturedProducts />
-        <Categories />
-    </>
+        <>
+            <Hero />
+            <FeaturedProducts />
+            <Categories />
+        </>
     );
 };
 
