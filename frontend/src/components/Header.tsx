@@ -15,7 +15,7 @@ const Header = () => {
 
                     <div className="hidden md:flex space-x-4">
                         <a href="/" className="text-gray-700 hover:text-sky-500 font-bold">Trang Chủ</a>
-                        <a href="/" className="text-gray-700 hover:text-sky-500 font-bold">Cửa Hàng</a>
+                        <a href="/shop/" className="text-gray-700 hover:text-sky-500 font-bold">Cửa Hàng</a>
                         <a href="/" className="text-gray-700 hover:text-sky-500 font-bold">Giới Thiệu</a>
                         <a href="/" className="text-gray-700 hover:text-sky-500 font-bold">Liên Hệ</a>
                     </div>
