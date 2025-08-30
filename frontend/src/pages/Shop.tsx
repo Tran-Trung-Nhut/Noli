@@ -26,9 +26,6 @@ const Shop = () => {
     const [maxPrice, setMaxPrice] = useState<number | null> (null)
 
     // quick view modal
-    const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
-    const [quickOpen, setQuickOpen] = useState(false);
-
     const [hasMore, setHasMore] = useState(true);
     const [isFetching, setIsFetching] = useState(false); // prevents concurrent fetches
 
@@ -65,7 +62,8 @@ const Shop = () => {
 
             // nếu items < limit => không còn page tiếp theo
             setHasMore(result.data.data.length === limit);
-        } catch (err) {
+        } catch (error) {
+            console.log(error)
             notifyError("Hệ thống gặp lỗi. Vui lòng thử lại sau");
             setHasMore(false);
         } finally {
@@ -106,16 +104,6 @@ const Shop = () => {
         if (isFetching || !hasMore) return;
         setPage((p) => p + 1);
     };
-
-    const openQuickView = (p: Product) => {
-        setSelectedProduct(p);
-        setQuickOpen(true);
-    };
-
-    // const closeQuick = () => {
-    //     setSelectedProduct(null);
-    //     setQuickOpen(false);
-    // };
 
     const toolbarHandlers = useMemo(
         () => ({
@@ -167,7 +155,7 @@ const Shop = () => {
                         // optional threshold to prefetch earlier
                         scrollThreshold="200px"
                     >
-                        <ProductGrid products={products} loading={loading} onQuickView={openQuickView} />
+                        <ProductGrid products={products} loading={loading} />
                     </InfiniteScroll>
                 </div>
             </div>

@@ -48,6 +48,26 @@ const Checkout = () => {
     const location = useLocation();
     const state = location.state as { product: Product, productVariant: ProductVariant, quantity: number }
 
+    // Shipping form
+    const [fullName, setFullName] = useState<string>("");
+    const [email, setEmail] = useState<string>("");
+    const [phone, setPhone] = useState<string>("");
+    const [addressLine, setAddressLine] = useState<string>("");
+    const [province, setProvince] = useState<string>("");
+    const [district, setDistrict] = useState<string>("");
+    const [ward, setWard] = useState<string>("");
+    const [note, setNote] = useState<string>("");
+
+    // UI state
+    const [shippingFee, setShippingFee] = useState<number | null>(null);
+    const [coupon, setCoupon] = useState<string>("");
+    const [discountAmount, setDiscountAmount] = useState<number>(0);
+
+    // dependent lists
+    const [listProvinces, setListProvinces] = useState<Province[]>([])
+    const [districtList, setDistrictList] = useState<District[]>([]);
+    const [wardList, setWardList] = useState<Ward[]>([]);
+
     useEffect(() => {
         if (!state && !src) {
             navigate("/invalid-checkout", { replace: true });
@@ -56,29 +76,9 @@ const Checkout = () => {
 
     if (!state && !src) {
         // Render placeholder trong lúc chờ redirect
-        return <LoadingAuth/>;
+        return <LoadingAuth />;
     }
 
-
-    // Shipping form
-    const [fullName, setFullName] = useState("");
-    const [email, setEmail] = useState("");
-    const [phone, setPhone] = useState("");
-    const [addressLine, setAddressLine] = useState("");
-    const [province, setProvince] = useState<string>("");
-    const [district, setDistrict] = useState<string>("");
-    const [ward, setWard] = useState<string>("");
-    const [note, setNote] = useState("");
-
-    // UI state
-    const [shippingFee, setShippingFee] = useState<number | null>(null);
-    const [coupon, setCoupon] = useState("");
-    const [discountAmount, setDiscountAmount] = useState(0);
-
-    // dependent lists
-    const [listProvinces, setListProvinces] = useState<Province[]>([])
-    const [districtList, setDistrictList] = useState<District[]>([]);
-    const [wardList, setWardList] = useState<Ward[]>([]);
 
     const handleMomoPay = async (paymentMethod: string) => {
         setIsOpenPaymentMethod(false)
@@ -94,7 +94,7 @@ const Checkout = () => {
                 notifyError("Hệ thống thanh toán đang gặp vấn đề. Vui lòng thử lại sau")
             }, 1000)
         } else {
-
+            return
         }
 
     };

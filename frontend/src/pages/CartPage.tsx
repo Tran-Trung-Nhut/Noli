@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react"
-import { formatPrice, getGuestToken, notifyError, notifySuccess, notifyWarning, setGuestToken } from "../utils"
+import { formatPrice, getGuestToken, notifyError, notifySuccess, notifyWarning } from "../utils"
 import { useAuth } from "../contexts/AuthContext"
 import cartApi from "../apis/cartApi"
 import type { Cart } from "../dtos/cart.dto"
@@ -44,7 +44,7 @@ const CartPage = () => {
         setCart((await cartApi.getCartByGuestToken(token)).data)
       }
     } catch (error) {
-
+      console.error(error)
     }
   }
 

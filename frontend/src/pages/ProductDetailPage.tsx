@@ -8,6 +8,7 @@ import cartItemApi from "../apis/cartItemApi";
 import { Minus, Plus } from "lucide-react";
 import { HttpStatusCode } from "axios";
 import { ERROR } from "../message";
+import type { ProductVariant } from "../dtos/productVariant.dto";
 
 const ProductDetailPage = () => {
     const [product, setProduct] = useState<ProductDetail | null>(null);
@@ -53,8 +54,8 @@ const ProductDetailPage = () => {
             console.log(data.variants[0].price)
             setPrice(data.variants[0].price)
 
-            setListSize(Array.from(new Set(data.variants.map((v: any) => v.size))))
-            setListColor(Array.from(new Set(data.variants.map((v: any) => v.color))))
+            setListSize(Array.from(new Set(data.variants.map((variant: ProductVariant) => variant.size))))
+            setListColor(Array.from(new Set(data.variants.map((variant: ProductVariant) => variant.color))))
         }
     }
 

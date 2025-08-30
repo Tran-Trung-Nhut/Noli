@@ -6,10 +6,9 @@ import type { Product } from "../dtos/product.dto";
 type Props = {
     products: Product[];
     loading: boolean;
-    onQuickView: (p: Product) => void;
 };
 
-export default function ProductGrid({ products, loading, onQuickView }: Props) {
+export default function ProductGrid({ products, loading }: Props) {
     if (loading) {
         return (
             <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
