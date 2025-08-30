@@ -13,57 +13,136 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User{
-  id  Int @id @default(autoincrement())
-  firstName String
-  lastName String
-  dateOfBirth DateTime
-  phoneNumber String?
-  email String?
-  image String?
-  registeredAt DateTime @default(now())
-  lastLogin DateTime @updatedAt
-  userCartProducts UserCartProduct[]
+model User {
+  id           Int       @id @default(autoincrement())
+  username     String    @unique
+  password     String
+  firstName    String
+  lastName     String
+  dateOfBirth  DateTime?
+  phoneNumber  String?
+  email        String?
+  image        String?
+  registeredAt DateTime  @default(now())
+  lastLogin    DateTime  @updatedAt
+  refreshToken String?
+  carts        Cart[]
+  address      Address[]
 }
 
-model Product{
-  id Int @id @default(autoincrement())
-  name String @unique
-  description String
+model Product {
+  id           Int      @id @default(autoincrement())
+  name         String   @unique
+  description  String
   defaultPrice Float
-  category String[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  image String[]
-  variants ProductVariant[]
+  category     String[]
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  image        String[]
 
+  variants   ProductVariant[]
+  cartItems  CartItem[]
+  orderitems OrderItem[]
 }
 
-model ProductVariant{
-  id Int @id @default(autoincrement())
-  productId Int
-  size String
-  color String
-  price Float
-  stock Int
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
-  userCartProducts UserCartProduct[]
+model ProductVariant {
+  id         Int         @id @default(autoincrement())
+  productId  Int
+  size       String
+  color      String
+  price      Float
+  stock      Int
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+  product    Product     @relation(fields: [productId], references: [id], onDelete: Cascade)
+  cartItems  CartItem[]
+  orderItems OrderItem[]
 
   @@unique([productId, size, color])
 }
 
+model Cart {
+  id            Int        @id @default(autoincrement())
+  userId        Int?
+  guestToken    String     @unique @default(uuid()) @db.Uuid
+  totalAmount   Float      @default(0)
+  numberOfItems Int        @default(0)
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+  status        String     @default("draft")
+  cartItems     CartItem[]
 
-model UserCartProduct{
-  userId Int
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+}
+
+model CartItem {
+  id               Int      @id @default(autoincrement())
+  cartId           Int
+  productId        Int
   productVariantId Int
-  quantity Int
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  quantity         Int      @default(1)
+  priceAtAdding    Float
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
 
-  user User @relation(fields: [userId], references: [id])
-  productVariants ProductVariant @relation(fields: [productVariantId], references: [id])
-  
-  @@unique([userId, productVariantId])
+  cart           Cart           @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  product        Product        @relation(fields: [productId], references: [id], onDelete: Restrict)
+  productVariant ProductVariant @relation(fields: [productVariantId], references: [id], onDelete: Restrict)
+
+  @@unique([productId, productVariantId, cartId])
+}
+
+model Order {
+  id             Int      @id @default(autoincrement())
+  userId         Int?
+  guestToken     String?  @db.Uuid
+  status         String   @default("PENDING_PAYMENT")
+  paymentStatus  String   @default("PENDING")
+  subTotal       Float
+  shippingFee    Float
+  discountAmount Float    @default(0)
+  totalAmount    Float
+  currency       String   @default("VND")
+  addressId      Int
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  address Address @relation(fields: [addressId], references: [id])
+
+  orderItems OrderItem[]
+}
+
+model OrderItem {
+  id               Int @id @default(autoincrement())
+  orderId          Int
+  productId        Int
+  productVariantId Int
+  quantity         Int
+  price            Int
+
+  order          Order          @relation(fields: [orderId], references: [id])
+  product        Product        @relation(fields: [productId], references: [id])
+  productVariant ProductVariant @relation(fields: [productVariantId], references: [id])
+}
+
+model Address {
+  id           Int      @id @default(autoincrement())
+  userId       Int?
+  label        String?
+  fullName     String
+  phone        String
+  provinceId   String
+  provinceName String
+  districtId   String
+  districtName String
+  wardId       String
+  wardName     String
+  addressLine  String
+  postalCode   String?
+  isDefault    Boolean  @default(false)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  user  User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  Order Order[]
 }

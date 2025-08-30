@@ -3,15 +3,20 @@ import { ProductService } from './product.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { GetProductPagingDto } from './dto/get-product-paging.dto';
+import { MESSAGES } from 'src/constantsAndMessage';
 
 @Controller('product')
 export class ProductController {
-  constructor(private readonly productService: ProductService) {}
+  constructor(private readonly productService: ProductService) { }
 
   @Post()
   async create(@Body() createProductDto: CreateProductDto, @Res() res) {
-    const response = await this.productService.create(createProductDto);
-    return res.status(response.status).json(response);
+    try {
+      await this.productService.create(createProductDto);
+      return res.status(HttpStatus.CREATED).json({ message: MESSAGES.PRODUCT.SUCCESS.CREATE });
+    } catch (error) {
+      return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ message: error.message });
+    }
   }
 
   @Get()
@@ -21,14 +26,21 @@ export class ProductController {
 
   @Get('/paging')
   async findPaging(@Query() params: GetProductPagingDto, @Res() res) {
-    const response = await this.productService.findPaging(params);
-    return res.status(response.status).json(response);
+    try {
+      return res.status(HttpStatus.OK).json({data: await this.productService.findPaging(params)});
+    } catch (error) {
+      return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ message: error.message });
+    }
   }
 
-    @Get('/low-availible-paging')
+  @Get('/low-availible-paging')
   async findLowAvailiblePaging(@Query() params: GetProductPagingDto, @Res() res) {
-    const response = await this.productService.findLowAvailiblePaging(params);
-    return res.status(response.status).json(response);
+    try {
+      const response = await this.productService.findLowAvailiblePaging(params);
+      return res.status(HttpStatus.OK).json(response);
+    } catch (error) {
+      return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ message: error.message });
+    }
   }
 
 
@@ -38,19 +50,31 @@ export class ProductController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.productService.findOne(+id);
+  async findOne(@Param('id') id: number, @Res() res) {
+    try {
+      return res.status(HttpStatus.OK).json({ message: MESSAGES.PRODUCT.SUCCESS.FETCH_ONE, data: await this.productService.findOne(+id) });
+    } catch (error) {
+      return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ message: error.message });
+    }
   }
 
   @Patch(':id')
   async update(@Param('id') id: string, @Body() updateProductDto: UpdateProductDto, @Res() res) {
-    const result = await this.productService.update(+id, updateProductDto);
-    return res.status(result.status).json(result)
+    try {
+      await this.productService.update(+id, updateProductDto);
+      return res.status(HttpStatus.OK).json({ message: MESSAGES.PRODUCT.SUCCESS.UPDATE })
+    } catch (error) {
+      return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ message: error.message });
+    }
   }
 
   @Delete(':id')
   async remove(@Param('id') id: string, @Res() res) {
-    const result = await this.productService.remove(+id);
-    return res.status(result.status).json(result);
+    try {
+      const response = await this.productService.remove(+id);
+      return res.status(HttpStatus.OK).json(response)
+    } catch (error) {
+      return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ message: error.message });
+    }
   }
 }

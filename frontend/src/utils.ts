@@ -4,12 +4,24 @@ import type { Product } from "./dtos/product.dto";
 
 export const notifySuccess = (message: string) => toast.success(message, { position: 'top-right', autoClose: 2000 })
 
+export const notifyError = (message: string) => toast.error(message, { position: 'top-right', autoClose: 3000 })
+
+export const notifyWarning = (message: string) => toast.warning(message, { position: 'top-right', autoClose: 3000 })
+
 export const formatPrice = (price: number) => {
     return price.toLocaleString('vi-VN', { minimumFractionDigits: 0 }) + 'đ';
 };
 
+export const getGuestToken = () : string | null => {
+    return localStorage.getItem('guest_token')
+}
+
+export const setGuestToken = (token: string) : void => {
+    localStorage.setItem('guest_token', token)
+}
+
 export const totalPriceOfAllProducts = (products: Product[]): number => {
-    return products.reduce((sum, product) => sum + product.price, 0);
+    return products.reduce((sum, product) => sum + product.defaultPrice, 0);
 };
 
 export const addToCartLocalStorage = (products: Product[]) => {

@@ -17,8 +17,9 @@ import Blank from "./pages/Blank";
 import { ScrollToTop } from "./components/common/ScrollToTop";
 import Home from "./pages/Dashboard/Home";
 import AppLayout from "./layout/AppLayout";
-import AllProductTable from "./pages/AllProductTable";
-import LowAvailibleProductTable from "./pages/LowAvailibleProductTable";
+import LowAvailibleProducts from "./pages/LowAvailibleProducts";
+import AllProducts from "./pages/AllProducts";
+import AllUsers from "./pages/AllUsers";
 
 export default function App() {
   return (
@@ -30,8 +31,10 @@ export default function App() {
           <Route element={<AppLayout />}>
             <Route index path="/" element={<Home />} />
 
-            <Route path="/all-products" element={<AllProductTable/>}/>
-            <Route path="products/low-availibility" element={<LowAvailibleProductTable/>}/>
+            <Route path="/all-products" element={<AllProducts/>}/>
+            <Route path="/low-availibility-products" element={<LowAvailibleProducts/>}/>
+
+            <Route path="/all-users" element={<AllUsers/>}/>
 
             {/* Others Page */}
             <Route path="/profile" element={<UserProfiles />} />

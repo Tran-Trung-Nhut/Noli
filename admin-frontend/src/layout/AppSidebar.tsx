@@ -4,12 +4,12 @@ import logo from "../assets/logo.png"
 
 // Assume these icons are imported from an icon library
 import {
-  BoxCubeIcon,
   ChevronDownIcon,
   HorizontaLDots,
 } from "../icons";
 import { useSidebar } from "../context/SidebarContext";
 import SidebarWidget from "./SidebarWidget";
+import { FaBoxOpen, FaCartShopping, FaUserGroup } from "react-icons/fa6";
 
 type NavItem = {
   name: string;
@@ -21,11 +21,26 @@ type NavItem = {
 
 const navItems: NavItem[] = [
   {
-    icon: <BoxCubeIcon />,
+    icon: <FaBoxOpen />,
     name: "Sản phẩm",
     subItems: [
       { name: "Tất cả sản phẩm", path: "/all-products", pro: false },
-      { name: "Sản phẩm có sẵn thấp", path: "/products/low-availibility", pro: false }
+      { name: "Sản phẩm có sẵn thấp", path: "/low-availibility-products", pro: false }
+    ],
+  },
+  {
+    icon: <FaUserGroup/>,
+    name: "Người Dùng",
+    subItems: [
+      { name: "Tất cả người dùng", path: "/all-users", pro: false },
+      { name: "Người dùng vắng mặt", path: "/", pro: false }
+    ],
+  },
+  {
+    icon: <FaCartShopping />,
+    name: "Đơn mua",
+    subItems: [
+      { name: "Tất cả đơn mua", path: "", pro: false },
     ],
   },
 ];

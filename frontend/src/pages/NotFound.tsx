@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 
 const NotFound = () => {
   const [isVisible, setIsVisible] = useState(false);
@@ -30,12 +31,12 @@ const NotFound = () => {
         <p className="text-2xl font-medium text-white mb-8 drop-shadow-sm">
           Có vẻ như bạn đã đi lạc. Hãy quay lại trang chủ để khám phá thêm.
         </p>
-        <a
-          href="/"
+        <Link
+          to="/"
           className="inline-block bg-sky-500 text-white px-8 py-4 rounded-md font-semibold hover:bg-sky-600 transition duration-300 transform hover:scale-105"
         >
           Quay Lại Trang Chủ
-        </a>
+        </Link>
       </div>
     </div>
   );

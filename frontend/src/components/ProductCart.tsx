@@ -5,11 +5,9 @@ import { formatPrice, isProductInCart } from "../utils";
 const ProductCard = ({ 
     product,
     addToCart,
-    cartProducts
 }: {
     product: Product,
     addToCart: (product: Product) => void,
-    cartProducts: Product[]
 }) => {
     const navigate = useNavigate()
 
@@ -25,11 +23,11 @@ const ProductCard = ({
                 <p 
                 className="text-gray-600" 
                 onClick={() => navigate(`/product/${product.id}`)}>
-                    {formatPrice(product.price)}
+                    {formatPrice(product.defaultPrice)}
                 </p>
             </div>
 
-            <div className="flex justify-center align-center gap-3 pb-3 px-2">
+            {/* <div className="flex justify-center align-center gap-3 pb-3 px-2">
                 <button className="flex-1 md:flex-none bg-sky-500 p-2 rounded-[4px] text-white hover:bg-sky-600">Mua ngay</button>
                 {!isProductInCart(product, cartProducts) ? (
                     <button 
@@ -44,7 +42,7 @@ const ProductCard = ({
                         Đã thêm vào giỏ hàng
                     </button>
                 )}
-            </div>
+            </div> */}
         </div>
     );
 };
