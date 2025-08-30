@@ -7,7 +7,7 @@ import { useAuth } from "../contexts/AuthContext";
 import { ChevronDown, CircleUserRound } from "lucide-react";
 import authApi from "../apis/authApi";
 import { HttpStatusCode } from "axios";
-import { confirm, notifyError, removeGuestToken, setGuestToken } from "../utils";
+import { confirm, notifyError, removeGuestToken } from "../utils";
 
 const Header = () => {
     const [isOpen, setIsOpen] = useState(false);
