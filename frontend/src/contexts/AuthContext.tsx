@@ -35,7 +35,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
     const refreshAccessToken = async () => {
         const result = (await authApi.refresh());
-        
+
+        console.log(result)
+
         if (result.status !== HttpStatusCode.Ok) return
 
         login(result.data.data.userInfo, result.data.data.accessToken);
