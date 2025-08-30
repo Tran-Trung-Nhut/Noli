@@ -41,7 +41,7 @@ const FeaturedProducts = () => {
             <h2 className="text-3xl font-bold text-center mb-6">Sản Phẩm Nổi Bật</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                 {loading ? (
-                    [0, 1, 2, 3].map(i => <ProductCardSkeleton key={i}/>)
+                    Array.from({ length: 4 }).map((_, i) => (<ProductCardSkeleton key={i}/>))
                 ) : (
                     products.map(product => (<ProductCard key={product.id} product={product}/>))
                 )}
