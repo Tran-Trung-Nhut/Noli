@@ -13,6 +13,6 @@ async function bootstrap() {
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
   });
 
-  await app.listen(process.env.PORT ?? 10800);
+  await app.listen(process.env.PORT || 10800);
 }
 bootstrap();
