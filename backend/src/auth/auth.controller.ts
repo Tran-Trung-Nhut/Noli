@@ -40,6 +40,7 @@ export class AuthController {
     @Post('refresh')
     async refresh(@Req() req: Request, @Res() res) {
         const refreshToken = req.cookies?.refreshToken;
+        console.log(req.cookies)
 
         if (!refreshToken) throw new BadRequestException(MESSAGES.AUTH.ERROR.REFRESH_TOKEN_MISSING);
 

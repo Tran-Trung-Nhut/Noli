@@ -33,7 +33,7 @@ const Login = () => {
     };
 
     const handleLoginByGoogle = async () => {
-        window.location.href = "http://localhost:10800/auth/google"
+        window.location.href = `${import.meta.env.VITE_FRONTEND_DOMAIN}/auth/google`
     }
 
     if( userInfo ) navigate("/")
