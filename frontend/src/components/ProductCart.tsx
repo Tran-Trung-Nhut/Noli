@@ -1,13 +1,11 @@
 import { useNavigate } from "react-router-dom";
 import type { Product } from "../dtos/product.dto";
-import { formatPrice, isProductInCart } from "../utils";
+import { formatPrice } from "../utils";
 
 const ProductCard = ({ 
     product,
-    addToCart,
 }: {
     product: Product,
-    addToCart: (product: Product) => void,
 }) => {
     const navigate = useNavigate()
 
