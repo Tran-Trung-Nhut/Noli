@@ -8,7 +8,7 @@ async function bootstrap() {
   app.use(cookieParser())
 
   app.enableCors({
-    origin: [process.env.FRONTEND_DOMAIN],  // hoặc mảng các domain
+    origin: [process.env.FRONTEND_DOMAIN_1, process.env.FRONTEND_DOMAIN_2],  // hoặc mảng các domain
     credentials: true,                  // nếu muốn cho phép cookie
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
   });

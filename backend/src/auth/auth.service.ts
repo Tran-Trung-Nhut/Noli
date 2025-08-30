@@ -23,8 +23,8 @@ export class AuthService {
     setRefreshTokenToCookie(refreshToken: string, @Res() res) {
         res.cookie('refreshToken', refreshToken, {
             httpOnly: true,
-            secure: true,
-            sameSite: 'none',
+            secure: false,
+            sameSite: 'lax',
             maxAge: 30 * 24 * 60 * 60 * 1000, // 7 days
         });
     }
