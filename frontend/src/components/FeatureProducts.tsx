@@ -43,7 +43,7 @@ const FeaturedProducts = () => {
                 {loading ? (
                     [0, 1, 2, 3].map(i => <ProductCardSkeleton key={i}/>)
                 ) : (
-                    products.map(product => (<ProductCard key={product.id} product={product} addToCart={() => { }} />))
+                    products.map(product => (<ProductCard key={product.id} product={product}/>))
                 )}
             </div>
         </section>
