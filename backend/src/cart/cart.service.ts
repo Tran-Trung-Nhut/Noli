@@ -13,11 +13,19 @@ export class CartService {
 
     if (!cart) throw new BadRequestException("Giỏ hàng không tồn tại");
 
-    if (cart.userId === userId) return;
+    if (cart.userId) return;
 
     await this.prismaService.cart.update({ where: { guestToken }, data: { userId, status: 'merged' } });
   }
 
+  async isCartOwnedByUser(guestToken: string, userId: number) {
+    const cart = await this.prismaService.cart.findUnique({ where: { guestToken } });
+
+    if (!cart) throw new BadRequestException();
+
+    if (cart.userId !== userId) return false
+    return true;
+  }
 
   async create(createCartDto: CreateCartDto) {
     return await this.prismaService.cart.create({ data: createCartDto });
@@ -29,7 +37,7 @@ export class CartService {
   }
 
   async findCartByUserId(userId: number) {
-    const result = await this.prismaService.cart.findFirst({ where: { userId } });
+    const result = await this.prismaService.cart.findFirst({ where: { userId: Number(userId) } });
 
     if (!result) return await this.prismaService.cart.create({ data: { userId } });
     return result;
@@ -41,7 +49,7 @@ export class CartService {
 
   async findCartAndAllItemsByUserId(userId: number) {
     const carts = await this.prismaService.cart.findMany({ where: { userId: Number(userId) }, include: { cartItems: { include: { product: true, productVariant: true } } } });
-    
+
     const cartItems = carts.flatMap(cart => cart.cartItems);
     let activeCart = carts[0];
     activeCart.cartItems = cartItems;

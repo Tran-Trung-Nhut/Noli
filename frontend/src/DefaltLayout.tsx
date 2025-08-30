@@ -6,6 +6,7 @@ import { useLayoutEffect, useRef } from 'react';
 import { useAuth } from './contexts/AuthContext';
 import { getGuestToken, setGuestToken } from './utils';
 import cartApi from './apis/cartApi';
+import { HttpStatusCode } from 'axios';
 
 const DefaultLayout = () => {
   const { userInfo } = useAuth()
@@ -14,20 +15,33 @@ const DefaultLayout = () => {
 
   useLayoutEffect(() => {
     const handleCart = async () => {
-      if (getGuestToken()) return
+      const guestToken = getGuestToken()
+
+
+      if (userInfo && guestToken) {
+        const result = await cartApi.isCartOwnedByUser(guestToken, userInfo.id)
+
+        if (result.status !== HttpStatusCode.Ok) return
+
+        if (!result.data.data.isOwned) {
+          setGuestToken((await cartApi.getCartByUserId(userInfo.id || 0)).data.data.guestToken)
+        }
+      }
 
       if (userInfo) {
         setGuestToken((await cartApi.getCartByUserId(userInfo.id || 0)).data.data.guestToken)
+        
       } else {
         setGuestToken((await cartApi.createCartForGuest()).data.data.guestToken)
       }
     }
 
     if (!didRun.current) {
-      handleCart()
       didRun.current = true;
+    } else {
+      handleCart()
     }
-  }, [])
+  }, [userInfo])
 
   return (
     <div>

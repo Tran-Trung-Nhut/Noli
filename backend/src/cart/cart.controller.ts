@@ -24,9 +24,21 @@ export class CartController {
     try {
       return res.status(HttpStatus.OK).json({ data: await this.cartService.findCartByUserId(userId) });
     } catch (error) {
+      console.log(error)
       return res.status(error.status || HttpStatus.INTERNAL_SERVER_ERROR).json({ message: error.message });
     }
   }
+
+  @Post('/is-owned-by-user')
+  async isCartOwnedByUser(@Body() body: { guestToken: string; userId: number }, @Res() res) {
+    try {
+      const isOwned = await this.cartService.isCartOwnedByUser(body.guestToken, body.userId);
+      return res.status(HttpStatus.OK).json({ data: {isOwned} });
+    } catch (error) {
+      return res.status(error.status || HttpStatus.INTERNAL_SERVER_ERROR).json({ message: error.message });
+    }
+  }
+      
 
   @Post()
   async create(@Body() createCartDto: CreateCartDto, @Res() res) {

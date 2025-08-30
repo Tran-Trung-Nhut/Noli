@@ -51,7 +51,6 @@ const ProductDetailPage = () => {
         if (data.variants && data.variants.length > 0) {
             setChosenSize(data.variants[0].size);
             setChosenColor(data.variants[0].color);
-            console.log(data.variants[0].price)
             setPrice(data.variants[0].price)
 
             setListSize(Array.from(new Set(data.variants.map((variant: ProductVariant) => variant.size))))

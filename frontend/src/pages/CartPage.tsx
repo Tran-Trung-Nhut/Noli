@@ -21,8 +21,23 @@ const CartPage = () => {
 
     if (result.status !== HttpStatusCode.Ok) return notifyError('Đã có lỗi xảy ra. Vui lòng thử lại')
 
-    setCart((await cartApi.getCartByGuestToken(token ?? "")).data)
+    setCart(prevCart => {
+      if (!prevCart) return prevCart; // nếu cart = null thì bỏ qua
 
+      const updatedCartItems = prevCart.cartItems.filter(item => item.id !== id);
+
+      const updatedCart: Cart = {
+        ...prevCart,
+        cartItems: updatedCartItems,
+        numberOfItems: updatedCartItems.length,
+        totalAmount: updatedCartItems.reduce(
+          (sum, item) => sum + item.priceAtAdding * item.quantity,
+          0
+        ),
+      };
+
+      return updatedCart;
+    });
     notifySuccess('Đã xóa sản phẩm khỏi giỏ hàng')
   }
 
@@ -36,11 +51,11 @@ const CartPage = () => {
       if (userInfo) {
         const result = await cartApi.getCartItemsByUserId(userInfo.id)
 
-        if (result.status !== HttpStatusCode.Ok) return notifyError("Có lỗi xảy ra. Vui lòng thử lại")
+        if (result.status !== HttpStatusCode.Ok) return
         setCart(result.data)
 
       } else {
-        if(!token) return notifyError("Có lỗi xảy ra. Vui lòng thử lại")
+        if (!token) return notifyError("Có lỗi xảy ra. Vui lòng thử lại")
         setCart((await cartApi.getCartByGuestToken(token)).data)
       }
     } catch (error) {

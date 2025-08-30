@@ -20,6 +20,10 @@ export const setGuestToken = (token: string) : void => {
     localStorage.setItem('guest_token', token)
 }
 
+export const removeGuestToken = () : void => {
+    localStorage.removeItem('guest_token')
+}
+
 export const totalPriceOfAllProducts = (products: Product[]): number => {
     return products.reduce((sum, product) => sum + product.defaultPrice, 0);
 };

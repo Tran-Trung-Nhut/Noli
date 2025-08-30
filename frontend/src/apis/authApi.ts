@@ -19,9 +19,9 @@ const authApi = {
         }
     },
 
-    signup: async (username: string, password: string, firstName: string, lastName: string) => {
+    signup: async (username: string, password: string, firstName: string, lastName: string, guestToken: string | null) => {
         try {
-            return await axiosClient.post("/auth/signup", { username, password, firstName, lastName });
+            return await axiosClient.post("/auth/signup", { username, password, firstName, lastName, guestToken });
         } catch (error: any) {
             return error.response
         }

@@ -25,6 +25,14 @@ const cartApi = {
         }
     },
 
+    async isCartOwnedByUser(guestToken: string, userId: number) {
+        try {
+            return await axiosClient.post('/cart/is-owned-by-user', { guestToken, userId });
+        } catch (error: any) {
+            return error.response;
+        }
+    },
+
     async createCartForGuest(userId?: number) {
         try {
             return await axiosClient.post('/cart', { userId });

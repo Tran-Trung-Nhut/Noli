@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import main_image from "../assets/main_image_v2.jpg";
-import { notifyError } from "../utils";
+import { getGuestToken, notifyError } from "../utils";
 import { ToastContainer } from "react-toastify";
 import { HttpStatusCode } from "axios";
 import LoadingAuth from "../components/LoadingAuth";
@@ -18,7 +18,7 @@ const Signup: React.FC = () => {
     const [showPass, setShowPass] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(false);
 
-    const { userInfo } = useAuth()
+    const { userInfo, login } = useAuth()
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -26,12 +26,14 @@ const Signup: React.FC = () => {
         
         setLoading(true);
 
-        const result = await authApi.signup(username, password, firstName, lastName)
+        const result = await authApi.signup(username, password, firstName, lastName, getGuestToken())
         if (result.status !== HttpStatusCode.Created) {
             setLoading(false)
             notifyError(result.data.message)
             return
         }
+
+        login(result.data.data.userInfo, result.data.data.accessToken)
 
         setTimeout(() => {
             setLoading(false);

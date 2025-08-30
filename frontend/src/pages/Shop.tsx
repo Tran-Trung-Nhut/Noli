@@ -45,8 +45,6 @@ const Shop = () => {
                 maxPrice
             });
 
-            console.log(result)
-
             if (result.status !== HttpStatusCode.Ok) {
                 notifyError("Lỗi hệ thống. Vui lòng thử lại");
                 if (!append) setProducts([]);

@@ -7,7 +7,7 @@ import { useAuth } from "../contexts/AuthContext";
 import { ChevronDown, CircleUserRound } from "lucide-react";
 import authApi from "../apis/authApi";
 import { HttpStatusCode } from "axios";
-import { confirm, notifyError } from "../utils";
+import { confirm, notifyError, removeGuestToken, setGuestToken } from "../utils";
 
 const Header = () => {
     const [isOpen, setIsOpen] = useState(false);
@@ -19,8 +19,12 @@ const Header = () => {
             const result = await authApi.logout(userInfo?.id || 0)
 
             if (result.status !== HttpStatusCode.Ok) return notifyError("Không thể đăng xuất. Vui lòng thử lại")
+            
+            removeGuestToken()
 
             logout()
+
+            navigate("/")
         })
     }
     return (
