@@ -15,7 +15,6 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - run: echo "VITE_BACKEND_DOMAIN=${{ secrets.VITE_BACKEND_DOMAIN }}" > .env
-      - run: echo "VITE_FRONTEND_DOMAIN=${{ secrets.VITE_FRONTEND_DOMAIN }}" >> .env
       - run: npm ci
       - run: npm run build
       - uses: FirebaseExtended/action-hosting-deploy@v0
