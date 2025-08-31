@@ -61,7 +61,7 @@ export class AuthController {
         const user = req.user;
 
         if (!user) {
-            res.redirect(process.env.FRONTEND_DOMAIN + '/login?error=Google authentication failed');
+            res.redirect(process.env.FRONTEND_DOMAIN_1 + '/login?error=Google authentication failed');
         }
 
         try {
@@ -74,9 +74,9 @@ export class AuthController {
 
             this.authService.setRefreshTokenToCookie(result.refreshToken, res)
 
-            return res.redirect(process.env.FRONTEND_DOMAIN + '/auth-google-result');
+            return res.redirect(process.env.FRONTEND_DOMAIN_1 + '/auth-google-result');
         } catch (error) {
-            res.redirect(process.env.FRONTEND_DOMAIN + '/login?error=Google authentication failed')
+            res.redirect(process.env.FRONTEND_DOMAIN_1 + '/login?error=Google authentication failed')
         }
     }
 }
