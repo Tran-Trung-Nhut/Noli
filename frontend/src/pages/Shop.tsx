@@ -61,7 +61,6 @@ const Shop = () => {
             // nếu items < limit => không còn page tiếp theo
             setHasMore(result.data.data.length === limit);
         } catch (error) {
-            console.log(error)
             notifyError("Hệ thống gặp lỗi. Vui lòng thử lại sau");
             setHasMore(false);
         } finally {

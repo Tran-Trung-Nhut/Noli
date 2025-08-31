@@ -9,6 +9,11 @@ import { Request } from 'express';
 export class AuthController {
     constructor(private authService: AuthService) { }
 
+    @Get('ping')
+    async ping(@Res() res) {
+        return res.status(HttpStatus.OK).json({ message: "Server is awake" });
+    }
+
     @Post('login')
     async login(@Body() body: { username: string; password: string; guestToken: string | null }, @Res() res) {
         try {
@@ -40,7 +45,6 @@ export class AuthController {
     @Post('refresh')
     async refresh(@Req() req: Request, @Res() res) {
         const refreshToken = req.cookies?.refreshToken;
-        console.log(req.cookies)
 
         if (!refreshToken) throw new BadRequestException(MESSAGES.AUTH.ERROR.REFRESH_TOKEN_MISSING);
 

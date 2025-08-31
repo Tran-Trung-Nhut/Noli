@@ -12,8 +12,8 @@ export class PaymentsController {
         const partnerCode = process.env.MOMO_PARTNER_CODE;
         const accessKey = process.env.MOMO_ACCESS_KEY;
         const secretKey = process.env.MOMO_SECRET_KEY;
-        const redirectUrl = "http://localhost:5173/payment-result";
-        const ipnUrl = "http://localhost:10800/payment/momo/callback";
+        const redirectUrl = `${process.env.FRONTEND_DOMAIN_1}/payment-result`;
+        const ipnUrl = "/payment/momo/callback";
         const requestId = orderId + new Date().getTime();
         const orderInfo = "Thanh toán qua MoMo";
 

@@ -10,6 +10,14 @@ const authApi = {
         }
     },
 
+    ping: async () => {
+        try {
+            return await axiosClient.get("/auth/ping");
+        } catch (error: any) {
+            return error.response
+        }  
+    },
+
 
     login: async (username: string, password: string, guestToken: string | null) => {
         try {

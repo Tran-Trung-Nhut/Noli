@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
-import { formatPrice, getGuestToken, notifyError, notifySuccess, setGuestToken } from "../utils";
+import { formatPrice, getGuestToken, notifyError, notifySuccess, notifyWarning, setGuestToken } from "../utils";
 import { useAuth } from "../contexts/AuthContext";
 import cartApi from "../apis/cartApi";
 import type { Cart } from "../dtos/cart.dto";
@@ -80,7 +80,7 @@ const Checkout = () => {
     }
 
 
-    const handleMomoPay = async (paymentMethod: string) => {
+    const handlePayment = async (paymentMethod: string) => {
         setIsOpenPaymentMethod(false)
         setLoading(true)
 
@@ -99,12 +99,19 @@ const Checkout = () => {
 
     };
 
+    const handleConfirm = () => {
+        if (!fullName || !phone || !addressLine || !ward || !district || !province) return notifyWarning("Vui lòng điền đầy đủ thông tin giao hàng!")
+        setIsOpenPaymentMethod(true)
+    }
+
     // get cart (same pattern as your Cart component)
     const getCart = async () => {
         try {
             if (userInfo) {
-                // If you have server side user cart, call that endpoint
-                // setCart((await cartApi.getCartByUser(userInfo.id)).data)
+                const result = await cartApi.getCartItemsByUserId(userInfo.id)
+
+                if (result.status !== HttpStatusCode.Ok) return
+                setCart(result.data)
             } else {
                 if (token) {
                     const res = await cartApi.getCartByGuestToken(token);
@@ -236,7 +243,7 @@ const Checkout = () => {
                         subtotal={subtotal}
                         shippingFee={shippingFee}
                         discountAmount={discountAmount}
-                        onConfirm={handleMomoPay}
+                        onConfirm={handlePayment}
                     />
 
                     {/* Right: order summary (45%) - made wider + image slightly larger */}
@@ -316,7 +323,7 @@ const Checkout = () => {
 
                             <div className="mt-4">
                                 <button
-                                    onClick={() => setIsOpenPaymentMethod(true)}
+                                    onClick={() => handleConfirm()}
                                     className="w-full bg-sky-600 text-white py-2 rounded-md font-semibold hover:bg-sky-700"
                                 >
                                     Đặt hàng
