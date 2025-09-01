@@ -46,8 +46,7 @@ export class AuthController {
     async refresh(@Req() req: Request, @Res() res) {
         const refreshToken = req.cookies?.refreshToken;
 
-        if (!refreshToken) throw new BadRequestException(MESSAGES.AUTH.ERROR.REFRESH_TOKEN_MISSING);
-
+        if (!refreshToken) return res.status(HttpStatus.BAD_REQUEST).json({ message: MESSAGES.AUTH.ERROR.REFRESH_TOKEN_MISSING });
         try {
             return res.status(HttpStatus.OK).json({ data: await this.authService.refreshTokens(refreshToken, res) });
         } catch (error) {

@@ -24,8 +24,8 @@ const EditProfileModal = ({
     const handleSubmit = (e: any) => {
         e.preventDefault();
 
-        if(!isValidEmail(formData.email)) return notifyWarning("Định dạng email không chính xác")
-        if(formData.phoneNumber.length < 10) return notifyWarning("Số điện thoại không đúng định dạng")
+        if(formData.email && !isValidEmail(formData.email)) return notifyWarning("Định dạng email không chính xác")
+        if(formData.phoneNumber && formData.phoneNumber.length < 10) return notifyWarning("Số điện thoại không đúng định dạng")
 
         onSave(formData);
         onClose();

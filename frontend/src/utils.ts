@@ -31,6 +31,7 @@ export function isValidEmail(email: string): boolean {
 
 
 export const hasLoggedIn = (): boolean => {
+    console.log(document.cookie);
     return document.cookie.split(";").some(c => c.trim().startsWith("loggedIn="));
 }
 
