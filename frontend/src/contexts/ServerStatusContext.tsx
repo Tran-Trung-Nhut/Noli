@@ -24,8 +24,11 @@ export const ServerWakeProvider = ({ children }: { children: ReactNode }) => {
 
         const result = await authApi.ping()
 
-        if (result.status === HttpStatusCode.Ok) setIsAwake(true)
-        else setIsAwake(false)
+        if (result.status === HttpStatusCode.Ok) {
+            setIsAwake(true)
+        } else {
+            setIsAwake(false)
+        }
 
         if (showOverlayTimeout.current) {
             window.clearTimeout(showOverlayTimeout.current);

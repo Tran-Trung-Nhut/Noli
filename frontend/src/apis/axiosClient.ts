@@ -1,5 +1,4 @@
 import axios from "axios";
-import { hasLoggedIn } from "../utils";
 
 let getAccessToken: (() => string | null) | null = null
 
@@ -16,7 +15,6 @@ const axiosClient = axios.create({
 });
 
 axiosClient.interceptors.request.use((config) => {
-
   const accessToken = getAccessToken ? getAccessToken() : null;
 
   if (accessToken && config.headers) {
@@ -25,20 +23,5 @@ axiosClient.interceptors.request.use((config) => {
 
   return config;
 });
-
-axiosClient.interceptors.response.use(
-  result => result,
-  error => {
-    if (error.response.status === 401) {
-      localStorage.removeItem("accessToken");
-      localStorage.removeItem("userInfo");
-      if (hasLoggedIn()) return window.location.reload();
-
-      window.location.href = '/login?error=Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại';
-    }
-
-    return Promise.reject(error);
-  }
-);
 
 export default axiosClient;

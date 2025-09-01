@@ -4,14 +4,15 @@ import { SignUpDto } from './dto/signup-body.dto';
 import { MESSAGES } from 'src/constantsAndMessage';
 import { AuthGuard } from '@nestjs/passport';
 import { Request } from 'express';
+import { log } from 'console';
 
 @Controller('auth')
 export class AuthController {
     constructor(private authService: AuthService) { }
 
     @Get('ping')
-    async ping(@Res() res) {
-        return res.status(HttpStatus.OK).json({ message: "Server is awake" });
+    async ping(@Req() req, @Res() res) {
+        return res.status(HttpStatus.OK).json({ message: "Server is awake"});
     }
 
     @Post('login')

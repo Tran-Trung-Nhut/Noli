@@ -29,12 +29,6 @@ export function isValidEmail(email: string): boolean {
     return regex.test(email);
 }
 
-
-export const hasLoggedIn = (): boolean => {
-    console.log(document.cookie);
-    return document.cookie.split(";").some(c => c.trim().startsWith("loggedIn="));
-}
-
 export const totalPriceOfAllProducts = (products: Product[]): number => {
     return products.reduce((sum, product) => sum + product.defaultPrice, 0);
 };

@@ -27,13 +27,6 @@ export class AuthService {
             sameSite: 'none',
             maxAge: 30 * 24 * 60 * 60 * 1000, 
         });
-
-        res.cookie('loggedIn', true, {
-            httpOnly: false,
-            secure: true,
-            sameSite: 'none',
-            maxAge: 30 * 24 * 60 * 60 * 1000,
-        });
     }
 
     signAccessToken(payload: JwtPayload) {
@@ -129,12 +122,6 @@ export class AuthService {
 
         res.clearCookie('refreshToken', {
             httpOnly: true,
-            secure: true,
-            sameSite: 'none',
-        });
-
-        res.clearCookie('loggedIn', {
-            httpOnly: false,
             secure: true,
             sameSite: 'none',
         });
