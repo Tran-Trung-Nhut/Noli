@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Mail, User, Phone, Calendar, UserSquare } from "lucide-react";
 import type { UpdateUserDto } from "../dtos/user.dto";
-import { isValidEmail, notifyError, notifyWarning } from "../utils";
+import { isValidEmail, notifyWarning } from "../utils";
 
 const EditProfileModal = ({
     userInfo,
