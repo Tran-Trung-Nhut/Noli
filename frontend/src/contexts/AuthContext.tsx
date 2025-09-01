@@ -44,7 +44,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     };
 
     useEffect(() => {
-        if (!hasLoggedIn()) refreshAccessToken();
+        if (hasLoggedIn()) refreshAccessToken();
     }, []);
 
     useEffect(() => {
