@@ -36,8 +36,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     };
 
     const refreshAccessToken = async () => {
-        if (!hasLoggedIn()) return
-
         const result = await authApi.refresh();
 
         if (result.status !== HttpStatusCode.Ok) return
@@ -46,7 +44,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     };
 
     useEffect(() => {
-        refreshAccessToken();
+        if (!hasLoggedIn()) refreshAccessToken();
     }, []);
 
     useEffect(() => {
