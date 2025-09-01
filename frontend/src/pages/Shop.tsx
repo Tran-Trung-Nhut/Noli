@@ -9,25 +9,34 @@ import ShopToolbar from "../components/ShopToolBar";
 import ProductGrid from "../components/ProductGrid";
 import { HttpStatusCode } from "axios";
 import ProductCardSkeleton from "../components/ProductCartSkeleton";
+import { debounce } from "lodash"
 
 const Shop = () => {
     const [products, setProducts] = useState<Product[]>([]);
     const [loading, setLoading] = useState(false);
 
     // query state
-    const [search, setSearch] = useState("");
+    const [debouncedSearch, setDebouncedSearch] = useState("");
     const [category, setCategory] = useState<string | null>(null);
     const [sortBy, setSortBy] = useState<"createdAt" | "defaultPrice" | "name">("createdAt");
     const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
     const [page, setPage] = useState(1);
     const limit = 12;
 
-    const [minPrice, setMinPrice] = useState<number | null> (null)
-    const [maxPrice, setMaxPrice] = useState<number | null> (null)
+    const [minPrice, setMinPrice] = useState<number | null>(null)
+    const [maxPrice, setMaxPrice] = useState<number | null>(null)
 
     // quick view modal
     const [hasMore, setHasMore] = useState(true);
     const [isFetching, setIsFetching] = useState(false); // prevents concurrent fetches
+
+    const debouncedSetSearch = useMemo(
+        () =>
+            debounce((q: string) => {
+                setDebouncedSearch(q);
+            }, 500), 
+        []
+    );
 
     const fetchPage = async (pageToFetch: number, append = true) => {
         setIsFetching(true);
@@ -39,7 +48,7 @@ const Shop = () => {
                 limit,
                 sortBy,
                 sortOrder,
-                search,
+                search: debouncedSearch,
                 category,
                 minPrice,
                 maxPrice
@@ -53,9 +62,9 @@ const Shop = () => {
             }
 
             if (append) {
-                setProducts((prev) => [...prev, ...result.data.data ]);
+                setProducts((prev) => [...prev, ...result.data.data]);
             } else {
-                setProducts(result.data.data );
+                setProducts(result.data.data);
             }
 
             // nếu items < limit => không còn page tiếp theo
@@ -86,7 +95,7 @@ const Shop = () => {
         // fetch page 1 (replace)
         fetchPage(1, false);
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [search, category, sortBy, sortOrder]);
+    }, [debouncedSearch, category, sortBy, sortOrder]);
 
     // When page increases (trigger by infinite scroll), fetch that page and append
     useEffect(() => {
@@ -104,7 +113,7 @@ const Shop = () => {
 
     const toolbarHandlers = useMemo(
         () => ({
-            setSearch,
+            setSearch: debouncedSetSearch,
             setSortBy,
             setSortOrder,
         }),
@@ -128,7 +137,7 @@ const Shop = () => {
 
                 <div className="flex-1">
                     <ShopToolbar
-                        onSearch={(q) => setSearch(q)}
+                        onSearch={(q) => debouncedSetSearch(q)}
                         onSort={(by, order) => {
                             setSortBy(by);
                             setSortOrder(order);
@@ -146,7 +155,7 @@ const Shop = () => {
                         loader={
                             // loader shown at bottom while fetching next pages
                             <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-6">
-                                {Array.from({ length: 4 }).map((_, i) => (<ProductCardSkeleton key={i}/>))}
+                                {Array.from({ length: 4 }).map((_, i) => (<ProductCardSkeleton key={i} />))}
                             </div>
                         }
                         // optional threshold to prefetch earlier

@@ -35,7 +35,7 @@ export class AuthController {
     @Post('logout')
     async logout(@Body() body: { userId: number }, @Res() res) {
         try {
-            await this.authService.signOut(body.userId);
+            await this.authService.signOut(body.userId, res);
             return res.status(HttpStatus.OK).json({ message: MESSAGES.AUTH.SUCCESS.LOGOUT });
         } catch (error) {
             return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ message: error.message });

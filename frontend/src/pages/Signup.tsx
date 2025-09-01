@@ -7,6 +7,7 @@ import { HttpStatusCode } from "axios";
 import LoadingAuth from "../components/LoadingAuth";
 import authApi from "../apis/authApi";
 import { useAuth } from "../contexts/AuthContext";
+import { ArrowLeft } from "lucide-react";
 
 const Signup: React.FC = () => {
     const navigate = useNavigate();
@@ -23,7 +24,7 @@ const Signup: React.FC = () => {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (password !== confirmPassword) return notifyError("Mật khẩu không khớp!")
-        
+
         setLoading(true);
 
         const result = await authApi.signup(username, password, firstName, lastName, getGuestToken())
@@ -42,12 +43,12 @@ const Signup: React.FC = () => {
         }, 800);
     };
 
-    if(userInfo) navigate("/")
+    if (userInfo) navigate("/")
 
     return (
         <>
             <ToastContainer />
-            {loading && <LoadingAuth/>}
+            {loading && <LoadingAuth />}
             <div className="min-h-screen flex">
                 {/* Left hero (full-height half) */}
                 <div className="hidden lg:block lg:w-1/2 relative">
@@ -67,6 +68,7 @@ const Signup: React.FC = () => {
                 {/* Right form */}
                 <div className="flex-1 flex items-center justify-center p-6 lg:p-20 bg-gray-50">
                     <div className="max-w-md w-full bg-white rounded-2xl shadow-xl p-8">
+                        <button className="flex mb-2 justify-center items-center hover:scale-110" onClick={() => navigate("/")}><ArrowLeft color="gray" /> <span className="text-gray-500">Quay lại</span></button>
                         <h1 className="text-2xl font-bold text-gray-800 mb-2">Tạo tài khoản</h1>
                         <p className="text-sm text-gray-500 mb-6">Điền thông tin để đăng ký tài khoản mới.</p>
 

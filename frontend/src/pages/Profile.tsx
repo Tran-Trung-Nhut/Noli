@@ -1,20 +1,20 @@
-import { Mail, User, Phone, Calendar, CalendarDays, Pencil } from "lucide-react";
+import { Mail, User, Phone, Calendar, CalendarDays, Pencil, Package, Clock, Truck, CheckCircle, XCircle } from "lucide-react";
 import { useEffect, useState } from "react";
 import EditProfileModal from "../components/EditProfile";
 import { useAuth } from "../contexts/AuthContext";
-import { notifyError } from "../utils";
-import { type UserDto } from "../dtos/user.dto";
+import { notifyError, notifySuccess } from "../utils";
+import { type UpdateUserDto, type UserDto } from "../dtos/user.dto";
 import userApi from "../apis/userApi";
 import { HttpStatusCode } from "axios";
 import noImage from "../assets/No_image_user.jpg"
 
 const Profile = () => {
     const [isEditingProfile, setIsEditingProfile] = useState<boolean>(false);
-    const [userProfile, setUserProfile] = useState<UserDto | null> (null)
+    const [userProfile, setUserProfile] = useState<UserDto | null>(null)
     const { userInfo } = useAuth()
 
     const fetchUser = async () => {
-        if(!userInfo) return notifyError("Có lỗi xảy ra vui lòng thử lại sau")
+        if (!userInfo) return notifyError("Có lỗi xảy ra vui lòng thử lại sau")
 
         const result = await userApi.getUserById(userInfo.id)
 
@@ -23,16 +23,35 @@ const Profile = () => {
         setUserProfile(result.data.data)
     }
 
-    useEffect(() => {fetchUser()},[])
+    const handleEditProfile = async (editingUser: UpdateUserDto) => {
+        if (
+            editingUser.dateOfBirth === userProfile?.dateOfBirth &&
+            editingUser.email === userProfile.email &&
+            editingUser.firstName === userProfile.firstName &&
+            editingUser.lastName === userProfile.lastName &&
+            editingUser.phoneNumber === userProfile.phoneNumber
+        ) return notifySuccess("Cập nhật thông tin người dùng thành công.")
+
+        const result = await userApi.updateUser(userProfile?.id || 0, editingUser)
+
+        if (result.status !== HttpStatusCode.Ok) return notifyError("Có lỗi xảy ra, vui lòng thử lại")
+
+        fetchUser()
+
+        return notifySuccess("Cập nhật thông tin người dùng thành công")
+
+    }
+
+    useEffect(() => { fetchUser() }, [])
 
     return (
         <>
             {isEditingProfile && (
                 <EditProfileModal
-                    userInfo={userInfo}
+                    userInfo={userProfile}
                     isOpen={isEditingProfile}
                     onClose={() => setIsEditingProfile(false)}
-                    onSave={() => { }}
+                    onSave={handleEditProfile}
                 />
             )}
 
@@ -111,7 +130,40 @@ const Profile = () => {
                             </div>
                         </div>
                     </div>
+                    {/* Order Summary Section */}
+                    <div className="px-8 pb-10">
+                        <h2 className="text-xl font-bold text-gray-800 mb-4">Tóm tắt đơn hàng</h2>
+                        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
+                            <div className="bg-sky-50 rounded-xl p-4 shadow hover:shadow-md transition flex flex-col items-center">
+                                <Package className="text-sky-500 mb-2" size={28} />
+                                <p className="text-gray-500 text-sm text-center">Tổng đơn</p>
+                                <p className="text-2xl font-bold text-sky-600">128</p>
+                            </div>
+                            <div className="bg-yellow-50 rounded-xl p-4 shadow hover:shadow-md transition flex flex-col items-center">
+                                <Clock className="text-yellow-500 mb-2" size={28} />
+                                <p className="text-gray-500 text-sm text-center">Chờ thanh toán</p>
+                                <p className="text-2xl font-bold text-yellow-600">5</p>
+                            </div>
+                            <div className="bg-blue-50 rounded-xl p-4 shadow hover:shadow-md transition flex flex-col items-center">
+                                <Truck className="text-blue-500 mb-2" size={28} />
+                                <p className="text-gray-500 text-sm text-center">Đang giao</p>
+                                <p className="text-2xl font-bold text-blue-600">12</p>
+                            </div>
+                            <div className="bg-green-50 rounded-xl p-4 shadow hover:shadow-md transition flex flex-col items-center">
+                                <CheckCircle className="text-green-500 mb-2" size={28} />
+                                <p className="text-gray-500 text-sm text-center">Hoàn thành</p>
+                                <p className="text-2xl font-bold text-green-600">100</p>
+                            </div>
+                            <div className="bg-red-50 rounded-xl p-4 shadow hover:shadow-md transition flex flex-col items-center">
+                                <XCircle className="text-red-500 mb-2" size={28} />
+                                <p className="text-gray-500 text-sm text-center">Đã hủy</p>
+                                <p className="text-2xl font-bold text-red-600">11</p>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
+
             </div>
         </>
     );

@@ -1,59 +1,56 @@
-import { Controller, Post, Body, Req, Res } from '@nestjs/common';
-import axios from 'axios';
-import * as crypto from 'crypto';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Res, HttpStatus } from '@nestjs/common';
+import { PaymentService } from './payment.service';
+import { CreatePaymentDto } from './dto/create-payment.dto';
+import { UpdatePaymentDto } from './dto/update-payment.dto';
 
 @Controller('payment')
-export class PaymentsController {
-    @Post('momo')
-    async createPayment(@Body() body, @Res() res) {
-        const { amount, orderId } = body;
+export class PaymentController {
+  constructor(private readonly paymentService: PaymentService) { }
 
-        const endpoint = "https://test-payment.momo.vn/v2/gateway/api/create";
-        const partnerCode = process.env.MOMO_PARTNER_CODE;
-        const accessKey = process.env.MOMO_ACCESS_KEY;
-        const secretKey = process.env.MOMO_SECRET_KEY;
-        const redirectUrl = `${process.env.FRONTEND_DOMAIN_1}/payment-result`;
-        const ipnUrl = "/payment/momo/callback";
-        const requestId = orderId + new Date().getTime();
-        const orderInfo = "Thanh toán qua MoMo";
+  @Post('momo')
+  async createMomoPayment(@Body() body, @Res() res) {
+    const { amount, orderId } = body;
 
-        if (secretKey === undefined || accessKey === undefined || partnerCode === undefined) {
-            return res.status(500).json({ message: "MoMo configuration is missing" });
-        }
+    try {
+      return res.status(HttpStatus.CREATED).json({ data: await this.paymentService.createMomoPayment(amount, orderId) });
+    } catch (error) {
+      return res.status(error.status || HttpStatus.INTERNAL_SERVER_ERROR).json({ message: error.message });
+    }
+  }
 
-        const rawSignature = `accessKey=${accessKey}&amount=${amount}&extraData=&ipnUrl=${ipnUrl}&orderId=${orderId}&orderInfo=${orderInfo}&partnerCode=${partnerCode}&redirectUrl=${redirectUrl}&requestId=${requestId}&requestType=captureWallet`;
-
-        const signature = crypto
-            .createHmac("sha256", secretKey)
-            .update(rawSignature)
-            .digest("hex");
-
-        const payload = {
-            partnerCode,
-            accessKey,
-            requestId,
-            amount,
-            orderId,
-            orderInfo,
-            redirectUrl,
-            ipnUrl,
-            extraData: "",
-            requestType: "captureWallet",
-            signature,
-            lang: "vi",
-        };
-
-        return res.json((await axios.post(endpoint, payload)).data); 
+  @Post('momo/callback')
+  async momoCallback(@Body() body) {
+    if (body.resultCode === 0) {
+      console.log("Payment successful:", body);
+    } else {
+      console.log("Payment failed:", body)
     }
 
-    @Post('momo/callback')
-    async momoCallback(@Body() body) {
-        if (body.resultCode === 0) {
-            console.log("Payment successful:", body);
-        } else {
-            console.log("Payment failed:", body)
-        }
+    return { message: "Callback received" };
+  }
 
-        return { message: "Callback received" };
-    }
-} 
+  @Post()
+  create(@Body() createPaymentDto: CreatePaymentDto) {
+    return this.paymentService.create(createPaymentDto);
+  }
+
+  @Get()
+  findAll() {
+    return this.paymentService.findAll();
+  }
+
+  @Get(':id')
+  findOne(@Param('id') id: string) {
+    return this.paymentService.findOne(+id);
+  }
+
+  @Patch(':id')
+  update(@Param('id') id: string, @Body() updatePaymentDto: UpdatePaymentDto) {
+    return this.paymentService.update(+id, updatePaymentDto);
+  }
+
+  @Delete(':id')
+  remove(@Param('id') id: string) {
+    return this.paymentService.remove(+id);
+  }
+}

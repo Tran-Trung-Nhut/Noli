@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
-import { formatPrice, getGuestToken, notifyError, notifySuccess, notifyWarning, setGuestToken } from "../utils";
+import { formatPrice, getGuestToken, isValidEmail, notifyError, notifySuccess, notifyWarning, setGuestToken } from "../utils";
 import { useAuth } from "../contexts/AuthContext";
 import cartApi from "../apis/cartApi";
 import type { Cart } from "../dtos/cart.dto";
@@ -85,14 +85,17 @@ const Checkout = () => {
         setLoading(true)
 
         if (paymentMethod === 'momo') {
-            const res = await paymentApi.momo({ amount: total, orderId: "MOMOCONFIGURE5422" })
+            const res = await paymentApi.momo({ amount: total, orderId: "MOMOCO434kjs2049" })
 
-            if (res.status === HttpStatusCode.Created) window.location.href = res.data.payUrl;
+            if (res.status !== HttpStatusCode.Created)
+                setTimeout(() => {
+                    setLoading(false)
+                    notifyError("Hệ thống thanh toán đang gặp vấn đề. Vui lòng thử lại sau")
+                }, 1000)
 
-            setTimeout(() => {
-                setLoading(false)
-                notifyError("Hệ thống thanh toán đang gặp vấn đề. Vui lòng thử lại sau")
-            }, 1000)
+
+            window.location.href = res.data.data.payUrl
+
         } else {
             return
         }
@@ -101,6 +104,10 @@ const Checkout = () => {
 
     const handleConfirm = () => {
         if (!fullName || !phone || !addressLine || !ward || !district || !province) return notifyWarning("Vui lòng điền đầy đủ thông tin giao hàng!")
+
+        if(phone.length < 10) return notifyWarning("Số điện thoại không đúng định dạng")
+        if(email && !isValidEmail(email)) return notifyWarning("Email không đúng định dạng")
+
         setIsOpenPaymentMethod(true)
     }
 

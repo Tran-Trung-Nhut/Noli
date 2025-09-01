@@ -10,3 +10,5 @@ export type UserDto = {
     registeredAt: Date
     lastLogin: Date
 }
+
+export type UpdateUserDto = Omit<UserDto, 'id' | 'username' | 'registeredAt' | 'lastLogin' | 'image'>

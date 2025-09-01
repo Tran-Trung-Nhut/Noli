@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { Mail, User, Phone, Calendar, UserSquare } from "lucide-react";
+import type { UpdateUserDto } from "../dtos/user.dto";
+import { isValidEmail, notifyError, notifyWarning } from "../utils";
 
 const EditProfileModal = ({
     userInfo,
@@ -10,7 +12,7 @@ const EditProfileModal = ({
     userInfo: any
     isOpen: boolean
     onClose: () => void,
-    onSave: (formData: any) => void
+    onSave: (formData: UpdateUserDto) => void
 }) => {
     const [formData, setFormData] = useState(userInfo);
 
@@ -21,6 +23,10 @@ const EditProfileModal = ({
 
     const handleSubmit = (e: any) => {
         e.preventDefault();
+
+        if(!isValidEmail(formData.email)) return notifyWarning("Định dạng email không chính xác")
+        if(formData.phoneNumber.length < 10) return notifyWarning("Số điện thoại không đúng định dạng")
+
         onSave(formData);
         onClose();
     };
@@ -29,7 +35,7 @@ const EditProfileModal = ({
 
     return (
         <div className="fixed inset-0 flex items-center justify-center bg-black/50 z-50">
-            <div className="bg-white w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-xl shadow-lg p-4 sm:p-6 relative">
+            <div className="bg-white w-[90%] max-w-2xl max-h-[90vh] overflow-y-auto rounded-xl shadow-lg p-4 sm:p-6 relative">
                 {/* Close button */}
                 <button
                     className="absolute top-3 right-3 text-gray-500 hover:text-gray-700"

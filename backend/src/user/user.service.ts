@@ -1,11 +1,12 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { MESSAGES } from 'src/constantsAndMessage';
 
 @Injectable()
 export class UserService {
-  constructor(private prismaService: PrismaService) {}
+  constructor(private prismaService: PrismaService) { }
 
   create(createUserDto: CreateUserDto) {
     return 'This action adds a new user';
@@ -19,8 +20,18 @@ export class UserService {
     return await this.prismaService.user.findUnique({ where: { id } });
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+  async update(id: number, updateUserDto: UpdateUserDto) {
+    const existingUser = await this.prismaService.user.findUnique({ where: { id } });
+    if (!existingUser) throw new BadRequestException(MESSAGES.USER.ERROR.NOT_FOUND);
+    return await this.prismaService.user.update({
+      where: { id }, data: {
+        firstName: updateUserDto.firstName,
+        lastName: updateUserDto.lastName,
+        phoneNumber: updateUserDto.phoneNumber,
+        email: updateUserDto.email,
+        dateOfBirth: updateUserDto.dateOfBirth ? new Date(updateUserDto.dateOfBirth) : null,
+      }
+    });
   }
 
   remove(id: number) {

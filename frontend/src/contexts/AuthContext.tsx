@@ -1,6 +1,7 @@
 import { HttpStatusCode } from "axios";
 import { createContext, useState, type ReactNode, useContext, useEffect } from "react";
 import authApi from "../apis/authApi";
+import { setAccessTokenGetter } from "../apis/axiosClient";
 
 export type PublicUserInfo = {
     id: number,
@@ -44,6 +45,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     useEffect(() => {
         refreshAccessToken();
     }, []);
+
+    useEffect(() => {
+        setAccessTokenGetter(() => accessToken)
+    }, [accessToken])
 
     return (
         <AuthContext.Provider value={{ login, logout, userInfo, accessToken }}>

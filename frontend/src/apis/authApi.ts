@@ -1,9 +1,11 @@
+import { hasLoggedIn } from "../utils";
 import axiosClient from "./axiosClient";
 
 const authApi = {
 
     refresh: async () => {
         try {
+            if(!hasLoggedIn()) return
             return await axiosClient.post("/auth/refresh");
         } catch (error: any) {
             return error.response

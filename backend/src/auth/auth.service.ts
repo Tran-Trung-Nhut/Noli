@@ -25,7 +25,14 @@ export class AuthService {
             httpOnly: true,
             secure: true,
             sameSite: 'none',
-            maxAge: 30 * 24 * 60 * 60 * 1000, // 7 days
+            maxAge: 30 * 24 * 60 * 60 * 1000, 
+        });
+
+        res.cookie('loggedIn', true, {
+            httpOnly: false,
+            secure: true,
+            sameSite: 'none',
+            maxAge: 30 * 24 * 60 * 60 * 1000,
         });
     }
 
@@ -115,10 +122,22 @@ export class AuthService {
         return this.login(newUser.username, body.password, body.guestToken,res);
     }
 
-    async signOut(userId: number) {
+    async signOut(userId: number, @Res() res) {
         const user = await this.prismaService.user.findUnique({ where: { id: userId } });
         if (!user) throw new BadRequestException(MESSAGES.USER.ERROR.NOT_FOUND);
         await this.prismaService.user.update({ where: { id: userId }, data: { refreshToken: null } });
+
+        res.clearCookie('refreshToken', {
+            httpOnly: true,
+            secure: true,
+            sameSite: 'none',
+        });
+
+        res.clearCookie('loggedIn', {
+            httpOnly: false,
+            secure: true,
+            sameSite: 'none',
+        });
     }
 
     async refreshTokens(refreshToken: string, @Res() res) {

@@ -50,9 +50,14 @@ export class CartService {
   async findCartAndAllItemsByUserId(userId: number) {
     const carts = await this.prismaService.cart.findMany({ where: { userId: Number(userId) }, include: { cartItems: { include: { product: true, productVariant: true } } } });
 
+    const totalProducts: number = carts.reduce((sum, cart) => sum + cart.numberOfItems, 0);
+    const totalAmount: number = carts.reduce((sum, cart) => sum + cart.totalAmount, 0);
+
     const cartItems = carts.flatMap(cart => cart.cartItems);
     let activeCart = carts[0];
     activeCart.cartItems = cartItems;
+    activeCart.numberOfItems = totalProducts;
+    activeCart.totalAmount = totalAmount;
 
     return activeCart;
   }
