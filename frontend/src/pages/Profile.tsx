@@ -137,27 +137,27 @@ const Profile = () => {
                             <div className="bg-sky-50 rounded-xl p-4 shadow hover:shadow-md transition flex flex-col items-center">
                                 <Package className="text-sky-500 mb-2" size={28} />
                                 <p className="text-gray-500 text-sm text-center">Tổng đơn</p>
-                                <p className="text-2xl font-bold text-sky-600">128</p>
+                                <p className="text-2xl font-bold text-sky-600">0</p>
                             </div>
                             <div className="bg-yellow-50 rounded-xl p-4 shadow hover:shadow-md transition flex flex-col items-center">
                                 <Clock className="text-yellow-500 mb-2" size={28} />
                                 <p className="text-gray-500 text-sm text-center">Chờ thanh toán</p>
-                                <p className="text-2xl font-bold text-yellow-600">5</p>
+                                <p className="text-2xl font-bold text-yellow-600">0</p>
                             </div>
                             <div className="bg-blue-50 rounded-xl p-4 shadow hover:shadow-md transition flex flex-col items-center">
                                 <Truck className="text-blue-500 mb-2" size={28} />
                                 <p className="text-gray-500 text-sm text-center">Đang giao</p>
-                                <p className="text-2xl font-bold text-blue-600">12</p>
+                                <p className="text-2xl font-bold text-blue-600">0</p>
                             </div>
                             <div className="bg-green-50 rounded-xl p-4 shadow hover:shadow-md transition flex flex-col items-center">
                                 <CheckCircle className="text-green-500 mb-2" size={28} />
                                 <p className="text-gray-500 text-sm text-center">Hoàn thành</p>
-                                <p className="text-2xl font-bold text-green-600">100</p>
+                                <p className="text-2xl font-bold text-green-600">0</p>
                             </div>
                             <div className="bg-red-50 rounded-xl p-4 shadow hover:shadow-md transition flex flex-col items-center">
                                 <XCircle className="text-red-500 mb-2" size={28} />
                                 <p className="text-gray-500 text-sm text-center">Đã hủy</p>
-                                <p className="text-2xl font-bold text-red-600">11</p>
+                                <p className="text-2xl font-bold text-red-600">0</p>
                             </div>
                         </div>
                     </div>

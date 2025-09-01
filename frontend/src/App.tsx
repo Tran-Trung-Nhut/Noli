@@ -15,6 +15,8 @@ import ProtectedRoute from './contexts/ProtectRoute';
 import Shop from './pages/Shop';
 import { ServerWakeProvider } from './contexts/ServerStatusContext';
 import WakeOverlay from './components/WakeOverlay';
+import About from './pages/About';
+import Contact from './pages/Contact';
 
 
 const App = () => {
@@ -22,7 +24,7 @@ const App = () => {
     <Router>
       <ServerWakeProvider>
         <AuthProvider>
-          <WakeOverlay/>
+          <WakeOverlay />
           <Routes>
             <Route path='*' element={<NotFound />} />
             <Route path='/login' element={<Login />} />
@@ -39,6 +41,8 @@ const App = () => {
               } />
               <Route path='/shop' element={<Shop />} />
               <Route path='/checkout' element={<Checkout />} />
+              <Route path='/about' element={<About />} />
+              <Route path='/contact' element={<Contact />} />
             </Route>
             {/* <Route path='/login' element={<MaintenancePage/>}></Route> */}
           </Routes>
