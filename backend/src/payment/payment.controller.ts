@@ -8,14 +8,10 @@ export class PaymentController {
   constructor(private readonly paymentService: PaymentService) { }
 
   @Post('momo')
-  async createMomoPayment(@Body() body, @Res() res) {
+  async createMomoPayment(@Body() body) {
     const { amount, orderId } = body;
 
-    try {
-      return res.status(HttpStatus.CREATED).json({ data: await this.paymentService.createMomoPayment(amount, orderId) });
-    } catch (error) {
-      return res.status(error.status || HttpStatus.INTERNAL_SERVER_ERROR).json({ message: error.message });
-    }
+    return await this.paymentService.createMomoPayment(amount, orderId)
   }
 
   @Post('momo/callback')

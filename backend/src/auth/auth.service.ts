@@ -43,7 +43,7 @@ export class AuthService {
         })
     }
 
-    async login(username: string, password: string, guestToken: string | null, @Res() res) {
+    async login(username: string, password: string, guestToken: string | null, @Res({passthrough: true}) res) {
         const user = await this.validateUser(username, password);
         await this.prismaService.user.update({ where: { id: user.id }, data: { lastLogin: new Date() } })
 
@@ -97,7 +97,7 @@ export class AuthService {
 
 
 
-    async signup(body: SignUpDto, @Res() res) {
+    async signup(body: SignUpDto, @Res({passthrough: true}) res) {
         const existingUser = await this.prismaService.user.findUnique({ where: { username: body.username } });
         if (existingUser) throw new BadRequestException(MESSAGES.USER.ERROR.EXISTED);
 
@@ -115,7 +115,7 @@ export class AuthService {
         return this.login(newUser.username, body.password, body.guestToken,res);
     }
 
-    async signOut(userId: number, @Res() res) {
+    async signOut(userId: number, @Res({passthrough: true}) res) {
         const user = await this.prismaService.user.findUnique({ where: { id: userId } });
         if (!user) throw new BadRequestException(MESSAGES.USER.ERROR.NOT_FOUND);
         await this.prismaService.user.update({ where: { id: userId }, data: { refreshToken: null } });
@@ -127,7 +127,7 @@ export class AuthService {
         });
     }
 
-    async refreshTokens(refreshToken: string, @Res() res) {
+    async refreshTokens(refreshToken: string, @Res({passthrough: true}) res) {
         let payload: any;
         try {
             payload = await this.jwtService.verify(refreshToken, { secret: process.env.REFRESH_JWT_SECRET });

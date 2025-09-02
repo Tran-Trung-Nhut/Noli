@@ -5,15 +5,11 @@ import { UpdateOrderDto } from './dto/update-order.dto';
 
 @Controller('order')
 export class OrderController {
-  constructor(private readonly orderService: OrderService) {}
+  constructor(private readonly orderService: OrderService) { }
 
   @Post()
-  async create(@Body() createOrderDto: CreateOrderDto, @Res() res) {
-    try {
-      return res.status(HttpStatus.CREATED).json({ data: await this.orderService.create(createOrderDto) });
-    } catch (error) {
-      return res.status(error.status || HttpStatus.INTERNAL_SERVER_ERROR).json({ message: error.message });
-    }
+  async create(@Body() createOrderDto: CreateOrderDto) {
+    return { data: await this.orderService.create(createOrderDto) }
   }
 
   @Get()

@@ -8,25 +8,35 @@ import { MESSAGES } from 'src/constantsAndMessage';
 export class CartItemService {
   constructor(private prismaService: PrismaService) { }
 
-  async create(createCartItemDto: CreateCartItemDto) {
-    const cart = await this.prismaService.cart.findUnique({ where: { guestToken: createCartItemDto.guestToken } })
+  async create(createCartItem: CreateCartItemDto) {
+    const cart = await this.prismaService.cart.findUnique({ where: { guestToken: createCartItem.guestToken } })
     if (!cart) throw new BadRequestException(MESSAGES.CART_ITEM.ERROR.NOT_FOUND);
+
+    const existItem = await this.prismaService.cartItem.findMany({
+      where:{
+        cartId: cart.id,
+        productId: createCartItem.productId,
+        productVariantId: createCartItem.productVariantId
+      }
+    })
+
+    if (existItem.length > 0) throw new BadRequestException("Màu và kích thước này của sản phẩm đã có trong giỏ hàng")
 
     await this.prismaService.$transaction([
       this.prismaService.cartItem.create({
         data: {
-          productId: createCartItemDto.productId,
-          productVariantId: createCartItemDto.productVariantId,
-          quantity: createCartItemDto.quantity,
-          priceAtAdding: createCartItemDto.priceAtAdding,
+          productId: createCartItem.productId,
+          productVariantId: createCartItem.productVariantId,
+          quantity: createCartItem.quantity,
+          priceAtAdding: createCartItem.priceAtAdding,
           cartId: cart.id
         }
       }),
       this.prismaService.cart.update({
         where: { id: cart.id },
         data: {
-          totalAmount: { increment: createCartItemDto.priceAtAdding * createCartItemDto.quantity },
-          numberOfItems: { increment: createCartItemDto.quantity },
+          totalAmount: { increment: createCartItem.priceAtAdding * createCartItem.quantity },
+          numberOfItems: { increment: createCartItem.quantity },
         }
       })
     ])

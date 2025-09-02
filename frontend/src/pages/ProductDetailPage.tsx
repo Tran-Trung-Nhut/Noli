@@ -7,7 +7,6 @@ import productApi from "../apis/productApi";
 import cartItemApi from "../apis/cartItemApi";
 import { Minus, Plus } from "lucide-react";
 import { HttpStatusCode } from "axios";
-import { ERROR } from "../message";
 import type { ProductVariant } from "../dtos/productVariant.dto";
 
 const ProductDetailPage = () => {
@@ -33,7 +32,7 @@ const ProductDetailPage = () => {
 
         const response = await cartItemApi.addItemToCart({ guestToken, priceAtAdding: variant.price, quantity, productId: product?.id, productVariantId: variant.id })
         
-        if (response.status !== HttpStatusCode.Created) return response.data.message === ERROR.EXIST_COLOR_AND_SIZE ? notifyWarning("Màu sắc và kích thước này của sản phẩm đã tồn tại trong giỏ hàng") : notifyError("Lỗi máy chủ. Vui lòng thử lại")
+        if (response.status !== HttpStatusCode.Created) return notifyWarning(response.data.message)
             
         notifySuccess("Đã thêm sản phẩm vào giỏ hàng")
     };

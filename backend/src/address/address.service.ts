@@ -11,7 +11,6 @@ export class AddressService {
 
   async getListProvinces() {
     return (await axios.get(`${process.env.ADDRESS_DOMAIN}/province`)).data;
-
   }
 
   async getListDistrictsByProvinceId(provinceId: string) {

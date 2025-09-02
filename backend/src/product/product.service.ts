@@ -33,8 +33,8 @@ export class ProductService {
 
   }
 
-  findAll() {
-    return this.prismaService.product.findMany();
+  async findAll() {
+    return await this.prismaService.product.findMany();
   }
 
   async findPaging(params: GetProductPagingDto) {

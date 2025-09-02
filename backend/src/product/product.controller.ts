@@ -1,46 +1,34 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query, Res, HttpStatus } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query, Res, HttpStatus, UseInterceptors } from '@nestjs/common';
 import { ProductService } from './product.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { GetProductPagingDto } from './dto/get-product-paging.dto';
 import { MESSAGES } from 'src/constantsAndMessage';
+import { CacheInterceptor } from '@nestjs/cache-manager';
 
+@UseInterceptors(CacheInterceptor)
 @Controller('product')
 export class ProductController {
   constructor(private readonly productService: ProductService) { }
 
   @Post()
-  async create(@Body() createProductDto: CreateProductDto, @Res() res) {
-    try {
-      await this.productService.create(createProductDto);
-      return res.status(HttpStatus.CREATED).json({ message: MESSAGES.PRODUCT.SUCCESS.CREATE });
-    } catch (error) {
-      return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ message: error.message });
-    }
+  async create(@Body() createProductDto: CreateProductDto) {
+    return await this.productService.create(createProductDto);
   }
 
   @Get()
-  findAll() {
-    return this.productService.findAll();
+  async findAll() {
+    return await this.productService.findAll();
   }
 
   @Get('/paging')
-  async findPaging(@Query() params: GetProductPagingDto, @Res() res) {
-    try {
-      return res.status(HttpStatus.OK).json({data: await this.productService.findPaging(params)});
-    } catch (error) {
-      return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ message: error.message });
-    }
+  async findPaging(@Query() params: GetProductPagingDto) {
+    return await this.productService.findPaging(params)
   }
 
   @Get('/low-availible-paging')
   async findLowAvailiblePaging(@Query() params: GetProductPagingDto, @Res() res) {
-    try {
-      const response = await this.productService.findLowAvailiblePaging(params);
-      return res.status(HttpStatus.OK).json(response);
-    } catch (error) {
-      return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ message: error.message });
-    }
+    return { data: this.productService.findLowAvailiblePaging(params) }
   }
 
 
@@ -50,31 +38,21 @@ export class ProductController {
   }
 
   @Get(':id')
-  async findOne(@Param('id') id: number, @Res() res) {
-    try {
-      return res.status(HttpStatus.OK).json({ message: MESSAGES.PRODUCT.SUCCESS.FETCH_ONE, data: await this.productService.findOne(+id) });
-    } catch (error) {
-      return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ message: error.message });
+  async findOne(@Param('id') id: number) {
+    return {
+      message: MESSAGES.PRODUCT.SUCCESS.FETCH_ONE, data: await this.productService.findOne(+id)
     }
   }
 
   @Patch(':id')
   async update(@Param('id') id: string, @Body() updateProductDto: UpdateProductDto, @Res() res) {
-    try {
-      await this.productService.update(+id, updateProductDto);
-      return res.status(HttpStatus.OK).json({ message: MESSAGES.PRODUCT.SUCCESS.UPDATE })
-    } catch (error) {
-      return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ message: error.message });
-    }
+    await this.productService.update(+id, updateProductDto);
+    return { message: MESSAGES.PRODUCT.SUCCESS.UPDATE }
   }
 
   @Delete(':id')
-  async remove(@Param('id') id: string, @Res() res) {
-    try {
-      const response = await this.productService.remove(+id);
-      return res.status(HttpStatus.OK).json(response)
-    } catch (error) {
-      return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ message: error.message });
-    }
+  async remove(@Param('id') id: string) {
+    await this.productService.remove(+id);
+    return { message: MESSAGES.PRODUCT.SUCCESS.DELETE}
   }
 }

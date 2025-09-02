@@ -1,3 +1,0 @@
-export const ERROR = {
-    EXIST_COLOR_AND_SIZE: "\nInvalid `this.prismaService.cartItem.create()` invocation in\nC:\\Users\\Lenovo X1 Carbon\\Desktop\\Noli\\backend\\src\\cart-item\\cart-item.service.ts:16:35\n\n  13 if (!cart) throw new BadRequestException(MESSAGES.CART_ITEM.ERROR.NOT_FOUND);\n  14 \n  15 await this.prismaService.$transaction([\n→ 16   this.prismaService.cartItem.create(\nUnique constraint failed on the fields: (`productId`,`productVariantId`,`cartId`)",
-}

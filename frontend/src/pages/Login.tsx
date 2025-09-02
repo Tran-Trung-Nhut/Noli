@@ -22,14 +22,14 @@ const Login = () => {
 
         setLoading(true);
         const result = await authApi.login(username, password, getGuestToken())
-        if (result.status !== HttpStatusCode.Ok) {
+        if (result.status !== HttpStatusCode.Created) {
             setLoading(false)
             notifyError(result.data.message)
             return
         }
         
         setLoading(false);
-        login(result.data.data.userInfo, result.data.data.accessToken)
+        login(result.data.userInfo, result.data.accessToken)
         navigate("/");
     };
 

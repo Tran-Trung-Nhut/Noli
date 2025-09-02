@@ -1,58 +1,41 @@
-import { Controller, Post, Body, Res, HttpStatus, Get, UseGuards, Req, BadRequestException } from '@nestjs/common';
+import { Controller, Post, Body, Res, HttpStatus, Get, UseGuards, Req, BadRequestException, UnauthorizedException } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { SignUpDto } from './dto/signup-body.dto';
 import { MESSAGES } from 'src/constantsAndMessage';
 import { AuthGuard } from '@nestjs/passport';
 import { Request } from 'express';
-import { log } from 'console';
 
 @Controller('auth')
 export class AuthController {
     constructor(private authService: AuthService) { }
 
     @Get('ping')
-    async ping(@Req() req, @Res() res) {
-        return res.status(HttpStatus.OK).json({ message: "Server is awake"});
+    async ping() {
+        return { message: "Server is awake" }
     }
 
     @Post('login')
-    async login(@Body() body: { username: string; password: string; guestToken: string | null }, @Res() res) {
-        try {
-            return res.status(HttpStatus.OK).json({ data: await this.authService.login(body.username, body.password, body.guestToken, res) });
-        } catch (error) {
-            return res.status(error.status).json({ message: error.message });
-        }
+    async login(@Body() body: { username: string; password: string; guestToken: string | null }, @Res({ passthrough: true }) res) {
+        return await this.authService.login(body.username, body.password, body.guestToken, res)
     }
 
     @Post('signup')
-    async signup(@Body() body: SignUpDto, @Res() res) {
-        try {
-            return res.status(HttpStatus.CREATED).json({ message: MESSAGES.USER.SUCCESS.CREATE, data: await this.authService.signup(body, res) });
-        } catch (error) {
-            return res.status(error.status || HttpStatus.INTERNAL_SERVER_ERROR).json({ message: error.message });
-        }
+    async signup(@Body() body: SignUpDto, @Res({ passthrough: true }) res) {
+        return await this.authService.signup(body, res)
     }
 
     @Post('logout')
-    async logout(@Body() body: { userId: number }, @Res() res) {
-        try {
-            await this.authService.signOut(body.userId, res);
-            return res.status(HttpStatus.OK).json({ message: MESSAGES.AUTH.SUCCESS.LOGOUT });
-        } catch (error) {
-            return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ message: error.message });
-        }
+    async logout(@Body() body: { userId: number }, @Res({passthrough: true}) res) {
+        await this.authService.signOut(body.userId, res);
+        return {message: MESSAGES.AUTH.SUCCESS.LOGOUT}
     }
 
     @Post('refresh')
-    async refresh(@Req() req: Request, @Res() res) {
+    async refresh(@Req() req: Request, @Res({ passthrough: true }) res) {
         const refreshToken = req.cookies?.refreshToken;
 
-        if (!refreshToken) return res.status(HttpStatus.BAD_REQUEST).json({ message: MESSAGES.AUTH.ERROR.REFRESH_TOKEN_MISSING });
-        try {
-            return res.status(HttpStatus.OK).json({ data: await this.authService.refreshTokens(refreshToken, res) });
-        } catch (error) {
-            return res.status(error.status || HttpStatus.INTERNAL_SERVER_ERROR).json({ message: error.message });
-        }
+        if (!refreshToken) throw new UnauthorizedException(MESSAGES.AUTH.ERROR.REFRESH_TOKEN_MISSING);
+        return await this.authService.refreshTokens(refreshToken, res)
     }
 
     @Get('google')
@@ -61,7 +44,7 @@ export class AuthController {
 
     @Get('google/callback')
     @UseGuards(AuthGuard('google'))
-    async googleLoginCallback(@Req() req, @Res() res) {
+    async googleLoginCallback(@Req() req, @Res({ passthrough: true }) res) {
         const user = req.user;
 
         if (!user) {
@@ -76,7 +59,7 @@ export class AuthController {
                 user.picture
             );
 
-            this.authService.setRefreshTokenToCookie(result.refreshToken, res)
+            await this.authService.setRefreshTokenToCookie(result.refreshToken, res)
 
             return res.redirect(process.env.FRONTEND_DOMAIN_1 + '/auth-google-result');
         } catch (error) {

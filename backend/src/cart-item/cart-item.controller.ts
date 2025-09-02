@@ -2,18 +2,15 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, Res, HttpStatus } fr
 import { CartItemService } from './cart-item.service';
 import { CreateCartItemDto } from './dto/create-cart-item.dto';
 import { UpdateCartItemDto } from './dto/update-cart-item.dto';
+import { MESSAGES } from 'src/constantsAndMessage';
 
 @Controller('cart-item')
 export class CartItemController {
   constructor(private readonly cartItemService: CartItemService) { }
 
   @Post()
-  async create(@Body() createCartItemDto: CreateCartItemDto, @Res() res) {
-    try {
-      return res.status(HttpStatus.CREATED).json(await this.cartItemService.create(createCartItemDto));
-    } catch (error) {
-      return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ message: error.message });
-    }
+  async create(@Body() createCartItemDto: CreateCartItemDto) {
+    return { data: await this.cartItemService.create(createCartItemDto) }
   }
 
   @Get()
@@ -32,11 +29,8 @@ export class CartItemController {
   }
 
   @Delete(':id')
-  async remove(@Param('id') id: string, @Res() res) {
-    try {
-      res.status(HttpStatus.OK).json(await this.cartItemService.remove(+id));
-    } catch (error) {
-      return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ message: error.message });
-    }
+  async remove(@Param('id') id: string) {
+    await this.cartItemService.remove(+id)
+    return { message: MESSAGES.CART_ITEM.SUCCESS.DELETE }
   }
 }

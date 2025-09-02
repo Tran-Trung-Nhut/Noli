@@ -23,17 +23,15 @@ const DefaultLayout = () => {
         const result = await cartApi.isCartOwnedByUser(guestToken, userInfo.id)
 
         if (result.status !== HttpStatusCode.Ok) return
-
-        if (!result.data.data.isOwned) {
-          setGuestToken((await cartApi.getCartByUserId(userInfo.id || 0)).data.data.guestToken)
+        if (!result.data.isOwned) {
+          setGuestToken((await cartApi.getCartByUserId(userInfo.id || 0)).data.guestToken)
         }
       }
 
       if (userInfo) {
         setGuestToken((await cartApi.getCartByUserId(userInfo.id || 0)).data.data.guestToken)
-        
       } else {
-        setGuestToken((await cartApi.createCartForGuest()).data.data.guestToken)
+        if(!guestToken) setGuestToken((await cartApi.createCartForGuest()).data.data.guestToken)
       }
     }
 

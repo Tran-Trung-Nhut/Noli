@@ -1,11 +1,9 @@
 
 import { useEffect, useState } from "react";
 import type { Product } from "../dtos/product.dto";
-import { notifyError } from "../utils";
 import ProductCard from "./ProductCart";
 import ProductCardSkeleton from "./ProductCartSkeleton";
 import productApi from "../apis/productApi";
-import { HttpStatusCode } from "axios";
 
 
 const FeaturedProducts = () => {
@@ -24,13 +22,7 @@ const FeaturedProducts = () => {
                 category: null
             }
         ))
-
-        if (result.status !== HttpStatusCode.Ok){
-            return setTimeout(() => {
-                notifyError("Hệ thống đang gặp trục trặc. Truy cập lại sau")
-            }, 10000)
-        }
-        setProducts(result.data.data)
+        setProducts(result.data)
         setLoading(false)
     }
 

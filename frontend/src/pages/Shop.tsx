@@ -62,13 +62,13 @@ const Shop = () => {
             }
 
             if (append) {
-                setProducts((prev) => [...prev, ...result.data.data]);
+                setProducts((prev) => [...prev, ...result.data]);
             } else {
-                setProducts(result.data.data);
+                setProducts(result.data);
             }
 
             // nếu items < limit => không còn page tiếp theo
-            setHasMore(result.data.data.length === limit);
+            setHasMore(result.data.length === limit);
         } catch (error) {
             notifyError("Hệ thống gặp lỗi. Vui lòng thử lại sau");
             setHasMore(false);

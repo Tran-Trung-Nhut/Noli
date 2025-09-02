@@ -9,23 +9,14 @@ export class ProductVariantController {
   constructor(private readonly productVariantService: ProductVariantService) { }
 
   @Post(':productId')
-  async create(@Body() createProductVariantDto: CreateProductVariantDto, @Param('productId') productId: number, @Res() res) {
-    try {
-      await this.productVariantService.create(createProductVariantDto, Number(productId));
-      return res.status(HttpStatus.CREATED).json({ message: MESSAGES.PRODUCT_VARIANT.SUCCESS.CREATE });
-    } catch (error) {
-      return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ message: error.message });
-    }
+  async create(@Body() createProductVariantDto: CreateProductVariantDto, @Param('productId') productId: number) {
+    await this.productVariantService.create(createProductVariantDto, Number(productId));
+    return { message: MESSAGES.PRODUCT_VARIANT.SUCCESS.CREATE }
   }
 
   @Get(':productId')
   async findAllByProductId(@Param('productId') productId: number, @Res() res) {
-    try {
-      const variants = await this.productVariantService.findAllByProductId(Number(productId));
-      return res.status(HttpStatus.OK).json(variants)
-    } catch (error) {
-      return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ message: error.message });
-    }
+    return { data: await this.productVariantService.findAllByProductId(Number(productId)) }
   }
 
   @Get(':id')
@@ -34,22 +25,12 @@ export class ProductVariantController {
   }
 
   @Patch(':id')
-  async update(@Param('id') id: string, @Body() updateProductVariantDto: UpdateProductVariantDto, @Res() res) {
-    try {
-      const variant = await this.productVariantService.update(+id, updateProductVariantDto);
-      return res.status(HttpStatus.OK).json(variant)
-    } catch (error) {
-      return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ message: error.message });
-    }
+  async update(@Param('id') id: string, @Body() updateProductVariantDto: UpdateProductVariantDto) {
+    return { message: await this.productVariantService.update(+id, updateProductVariantDto) }
   }
 
   @Delete(':id')
-  async remove(@Param('id') id: string, @Res() res) {
-    try {
-      const variant = await this.productVariantService.remove(+id);
-      return res.status(HttpStatus.OK).json({message: MESSAGES.PRODUCT_VARIANT.SUCCESS.DELETE, data: variant})
-    } catch (error) {
-      return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ message: error.message }); 
-    }
+  async remove(@Param('id') id: string) {
+    return { message: MESSAGES.PRODUCT_VARIANT.SUCCESS.DELETE, data: await this.productVariantService.remove(+id) }
   }
 }

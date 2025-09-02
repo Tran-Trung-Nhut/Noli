@@ -7,10 +7,12 @@ import { type UpdateUserDto, type UserDto } from "../dtos/user.dto";
 import userApi from "../apis/userApi";
 import { HttpStatusCode } from "axios";
 import noImage from "../assets/No_image_user.jpg"
+import LoadingAuth from "../components/LoadingAuth";
 
 const Profile = () => {
     const [isEditingProfile, setIsEditingProfile] = useState<boolean>(false);
     const [userProfile, setUserProfile] = useState<UserDto | null>(null)
+    const [loading, setLoading] = useState<boolean>(false)
     const { userInfo } = useAuth()
 
     const fetchUser = async () => {
@@ -24,22 +26,27 @@ const Profile = () => {
     }
 
     const handleEditProfile = async (editingUser: UpdateUserDto) => {
+        setLoading(true)
         if (
             editingUser.dateOfBirth === userProfile?.dateOfBirth &&
             editingUser.email === userProfile.email &&
             editingUser.firstName === userProfile.firstName &&
             editingUser.lastName === userProfile.lastName &&
             editingUser.phoneNumber === userProfile.phoneNumber
-        ) return notifySuccess("Cập nhật thông tin người dùng thành công.")
+        ) {
+            setLoading(false)
+            return notifySuccess("Cập nhật thông tin người dùng thành công.")
+        }
 
         const result = await userApi.updateUser(userProfile?.id || 0, editingUser)
 
-        if (result.status !== HttpStatusCode.Ok) return notifyError("Có lỗi xảy ra, vui lòng thử lại")
-
-        fetchUser()
-
-        return notifySuccess("Cập nhật thông tin người dùng thành công")
-
+        if (result.status !== HttpStatusCode.Ok) {
+            setLoading(false)
+            return notifyError("Có lỗi xảy ra, vui lòng thử lại")
+        }
+        await fetchUser()
+        setLoading(false)
+        notifySuccess("Cập nhật thông tin người dùng thành công")
     }
 
     useEffect(() => { fetchUser() }, [])
@@ -54,6 +61,8 @@ const Profile = () => {
                     onSave={handleEditProfile}
                 />
             )}
+
+            {loading && <LoadingAuth/>}
 
             <div className="min-h-screen bg-gradient-to-b from-sky-50 to-white flex items-center justify-center p-6">
                 <div className="w-full max-w-3xl bg-white shadow-xl rounded-2xl overflow-hidden">

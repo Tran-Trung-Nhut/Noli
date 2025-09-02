@@ -102,13 +102,13 @@ const DeliveryDetail = ({
 
         if (result.status !== HttpStatusCode.Ok) return setLoading(false)
 
-        if (result.data.data.length === 0) {
+        if (result.data.length === 0) {
             return fetchUser()
         }
 
-        setAddressList(result.data.data)
+        setAddressList(result.data)
 
-        const defaultAddr = result.data.data.find((a: AddressDto) => a.isDefault)
+        const defaultAddr = result.data.find((a: AddressDto) => a.isDefault)
         setChosenAddress(defaultAddr ?? null)
 
         setLoading(false)
@@ -118,14 +118,14 @@ const DeliveryDetail = ({
         confirm("Xóa địa chỉ", "Bạn có chắc muốn xóa địa chỉ này?", async () => {
             setLoading(true)
             const result = await addressApi.deleteAddress(id)
-
             if (result.status !== HttpStatusCode.Ok) return notifyError("Có lỗi xảy ra. Vui lòng thử lại sau")
 
             notifySuccess("Xóa địa chỉ thành công")
-            if (chosenAddress?.id === result.data.data.id) setChosenAddress(null)
+
+            if (chosenAddress?.id === result.data.id) setChosenAddress(null)
 
             if (addressList.length === 1) setAddressList([])
-            else setAddressList(addressList.filter(address => address.id === result.data.data.id))
+            else setAddressList(addressList.filter(address => address.id !== result.data.id))
             setLoading(false)
         })
     }
@@ -157,7 +157,10 @@ const DeliveryDetail = ({
         if (result.status !== HttpStatusCode.Created) return notifyError("Lỗi khi lưu thông tin giao hàng. Vui lòng thử lại sau!")
         setIsAddingAddress(false)
 
-        if (userInfo) fetchAddressList(); else setAddressList([result.data.data])
+        if (userInfo) fetchAddressList(); else {
+            setAddressList([result.data])
+            setChosenAddress(result.data)
+        }
 
         notifySuccess("Lưu thông tin giao hàng thành công")
 

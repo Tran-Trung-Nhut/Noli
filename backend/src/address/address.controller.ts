@@ -9,48 +9,28 @@ export class AddressController {
   constructor(private readonly addressService: AddressService) { }
 
   @Get('provinces')
-  async getListProvinces(@Res() res) {
-    try {
-      return res.status(HttpStatus.OK).json({ data: await this.addressService.getListProvinces() });
-    } catch (error) {
-      return res.status(error.status || HttpStatusCode.InternalServerError).json({ message: error.message });
-    }
+  async getListProvinces() {
+    return await this.addressService.getListProvinces()
   }
 
   @Get('districts/:provinceId')
-  async getListDistricts(@Param('provinceId') provinceId: string, @Res() res) {
-    try {
-      return res.status(HttpStatus.OK).json({ data: await this.addressService.getListDistrictsByProvinceId(provinceId) });
-    } catch (error) {
-      return res.status(error.status || HttpStatusCode.InternalServerError).json({ message: error.message });
-    }
+  async getListDistricts(@Param('provinceId') provinceId: string) {
+    return await this.addressService.getListDistrictsByProvinceId(provinceId)
   }
 
   @Get('wards/:districtId')
-  async getListWards(@Param('districtId') districtId: string, @Res() res) {
-    try {
-      return res.status(HttpStatus.OK).json({ data: await this.addressService.getListWardsByDistrictId(districtId) });
-    } catch (error) {
-      return res.status(error.status || HttpStatusCode.InternalServerError).json({ message: error.message });
-    }
+  async getListWards(@Param('districtId') districtId: string) {
+    return await this.addressService.getListWardsByDistrictId(districtId)
   }
 
   @Post()
-  async create(@Body() createAddressDto: CreateAddressDto, @Res() res) {
-    try {
-      return res.status(HttpStatus.CREATED).json({ data: await this.addressService.create(createAddressDto) });
-    } catch (error) {
-      return res.status(error.status || HttpStatusCode.InternalServerError).json({ message: error.message });
-    }
+  async create(@Body() createAddressDto: CreateAddressDto) {
+    return await this.addressService.create(createAddressDto)
   }
 
   @Get('/user/:userId')
-  async getListAddressByUserId(@Param('userId') userId: number, @Res() res) {
-    try {
-      return res.status(HttpStatus.OK).json({ data: await this.addressService.getListAddressByUserId(userId) });
-    } catch (error) {
-      return res.status(error.status || HttpStatusCode.InternalServerError).json({ message: error.message });
-    }
+  async getListAddressByUserId(@Param('userId') userId: number) {
+    return await this.addressService.getListAddressByUserId(userId)
   }
 
   @Get()
@@ -59,12 +39,8 @@ export class AddressController {
   }
 
   @Get(':id')
-  async findOne(@Param('id') id: string, @Res() res) {
-    try {
-      return res.status(HttpStatus.OK).json({ data: await this.addressService.findOne(+id) });
-    } catch (error) {
-      return res.status(error.status || HttpStatusCode.InternalServerError).json({ message: error.message });
-    }
+  async findOne(@Param('id') id: string) {
+    return await this.addressService.findOne(+id)
   }
 
   @Patch(':id')
@@ -73,11 +49,7 @@ export class AddressController {
   }
 
   @Delete(':id')
-  async remove(@Param('id') id: string, @Res() res) {
-    try {
-      return res.status(HttpStatus.OK).json({ data: await this.addressService.remove(+id) })
-    } catch (error) {
-      return res.status(error.status || HttpStatusCode.InternalServerError).json({ message: error.message });
-    }
+  async remove(@Param('id') id: string) {
+    return await this.addressService.remove(+id)
   }
 }

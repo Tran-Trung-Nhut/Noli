@@ -34,7 +34,7 @@ const Signup: React.FC = () => {
             return
         }
 
-        login(result.data.data.userInfo, result.data.data.accessToken)
+        login(result.data.userInfo, result.data.accessToken)
 
         setTimeout(() => {
             setLoading(false);

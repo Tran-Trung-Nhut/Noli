@@ -19,15 +19,13 @@ const GoogleAuthLoading = () => {
 
             const result = await authApi.refresh()
 
-            if (result.status !== HttpStatusCode.Ok) navigate('/login?error=Đăng nhập bằng google thất bại. Vui lòng thử lại sao')
+            if (result.status !== HttpStatusCode.Created) return navigate('/login?error=Đăng nhập bằng google thất bại. Vui lòng thử lại sao')
 
-            
+        
+            login(result.data.userInfo, result.data.accessToken)
 
-            login(result.data.data.userInfo, result.data.data.accessToken)
+            await cartApi.mergeCart(getGuestToken(), result.data.userInfo.id)
 
-            await cartApi.mergeCart(getGuestToken(), result.data.data.userInfo.id)
-
-            setLoading(false)
             navigate('/')
         };
 

@@ -21,7 +21,6 @@ export const ServerWakeProvider = ({ children }: { children: ReactNode }) => {
         if (calledRef.current) return;
         calledRef.current = true;
         setIsWaking(true);
-
         const result = await authApi.ping()
 
         if (result.status === HttpStatusCode.Ok) {

@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { CacheModule } from '@nestjs/cache-manager';
 import { PrismaModule } from './prisma/prisma.module';
 import { ProductModule } from './product/product.module';
 import { ProductVariantModule } from './product-variant/product-variant.module';
@@ -11,7 +12,24 @@ import { PaymentModule } from './payment/payment.module';
 import { OrderModule } from './order/order.module';
 import { OrderItemModule } from './order-item/order-item.module';
 @Module({
-  imports: [PrismaModule, ProductModule, ProductVariantModule, CartModule, CartItemModule, AuthModule, UserModule, AddressModule, PaymentModule, OrderModule, OrderItemModule],
+  imports: [
+    PrismaModule, 
+    ProductModule, 
+    ProductVariantModule, 
+    CartModule, 
+    CartItemModule, 
+    AuthModule, 
+    UserModule, 
+    AddressModule, 
+    PaymentModule, 
+    OrderModule, 
+    OrderItemModule,
+    CacheModule.register({
+      ttl: 60000,
+      max: 1000,
+      isGlobal: true
+    })
+  ],
   controllers: [],
   providers: [],
 })

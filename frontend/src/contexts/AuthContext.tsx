@@ -1,4 +1,3 @@
-import { HttpStatusCode } from "axios";
 import { createContext, useState, type ReactNode, useContext, useEffect } from "react";
 import authApi from "../apis/authApi";
 import { setAccessTokenGetter } from "../apis/axiosClient";
@@ -37,10 +36,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
     const refreshAccessToken = async () => {
         const result = await authApi.refresh();
-
-        if (result.status !== HttpStatusCode.Ok) return
-
-        login(result.data.data.userInfo, result.data.data.accessToken);
+        login(result.data.userInfo, result.data.accessToken);
     };
 
     useEffect(() => {

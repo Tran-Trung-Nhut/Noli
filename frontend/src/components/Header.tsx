@@ -6,8 +6,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import { ChevronDown } from "lucide-react";
 import authApi from "../apis/authApi";
-import { HttpStatusCode } from "axios";
-import { confirm, notifyError, removeGuestToken } from "../utils";
+import { confirm, removeGuestToken } from "../utils";
 
 const Header: React.FC = () => {
     const [isOpen, setIsOpen] = useState(false);
@@ -26,8 +25,8 @@ const Header: React.FC = () => {
 
     const handleLogOut = async () => {
         await confirm("Đăng xuất", "Bạn có chắc chắn đăng xuất khỏi hệ thống?", async () => {
-            const result = await authApi.logout(userInfo?.id || 0);
-            if (result.status !== HttpStatusCode.Ok) return notifyError("Không thể đăng xuất. Vui lòng thử lại");
+            await authApi.logout(userInfo?.id || 0);
+
             removeGuestToken();
             logout();
             setIsOpen(false);
