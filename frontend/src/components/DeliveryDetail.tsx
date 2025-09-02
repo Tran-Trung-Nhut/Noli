@@ -58,7 +58,7 @@ const DeliveryDetail = ({
     label: string
     setLabel: (value: string) => void
     chosenAddress: AddressDto | null,
-    setChosenAddress: (value: AddressDto) => void
+    setChosenAddress: (value: AddressDto | null) => void
 }) => {
     const { userInfo } = useAuth()
     const [addressList, setAddressList] = useState<AddressDto[]>([])
@@ -114,9 +114,10 @@ const DeliveryDetail = ({
             if (result.status !== HttpStatusCode.Ok) return notifyError("Có lỗi xảy ra. Vui lòng thử lại sau")
 
             notifySuccess("Xóa địa chỉ thành công")
+            if(chosenAddress?.id === result.data.data.id) setChosenAddress(null)
 
-            if(!(result.data.data.userId)) setAddressList([])
-            else fetchAddressList()
+            if (addressList.length === 1) setAddressList([])
+            else setAddressList(addressList.filter(address => address.id === result.data.data.id))
         })
     }
 
