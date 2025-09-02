@@ -61,7 +61,7 @@ export class AddressController {
   @Get(':id')
   async findOne(@Param('id') id: string, @Res() res) {
     try {
-      return  res.status(HttpStatus.OK).json({ data: await this.addressService.findOne(+id) });
+      return res.status(HttpStatus.OK).json({ data: await this.addressService.findOne(+id) });
     } catch (error) {
       return res.status(error.status || HttpStatusCode.InternalServerError).json({ message: error.message });
     }
@@ -73,7 +73,11 @@ export class AddressController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.addressService.remove(+id);
+  async remove(@Param('id') id: string, @Res() res) {
+    try {
+      return res.status(HttpStatus.OK).json({ data: await this.addressService.remove(+id) })
+    } catch (error) {
+      return res.status(error.status || HttpStatusCode.InternalServerError).json({ message: error.message });
+    }
   }
 }

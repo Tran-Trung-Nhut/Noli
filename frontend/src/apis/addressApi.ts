@@ -41,6 +41,14 @@ const addressApi = {
         } catch (error: any) {
             return error.response;
         }
+    },
+
+    deleteAddress: async (id: number) => {
+        try {
+            return await axiosClient.delete(`/address/${id}`)
+        } catch (error: any) {
+            return error.response
+        }
     }
 };
 

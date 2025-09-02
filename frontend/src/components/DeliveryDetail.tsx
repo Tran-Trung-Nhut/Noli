@@ -5,7 +5,7 @@ import type { District, Province, Ward } from "../pages/Checkout"
 import { useEffect, useState } from "react"
 import addressApi from "../apis/addressApi"
 import { type AddressDto } from "../dtos/address.dto"
-import { getDistrictNameByDistrictId, getProvinceNameByProvinceId, getWardNameByWardId, isValidEmail, notifyError, notifySuccess, notifyWarning } from "../utils"
+import { confirm, getDistrictNameByDistrictId, getProvinceNameByProvinceId, getWardNameByWardId, isValidEmail, notifyError, notifySuccess, notifyWarning } from "../utils"
 
 const DeliveryDetail = ({
     fullName,
@@ -107,6 +107,19 @@ const DeliveryDetail = ({
         setChosenAddress(defaultAddr ?? null)
     }
 
+    const handleDeleteAddress = (id: number) => {
+        confirm("Xóa địa chỉ", "Bạn có chắc muốn xóa địa chỉ này?", async () => {
+            const result = await addressApi.deleteAddress(id)
+
+            if (result.status !== HttpStatusCode.Ok) return notifyError("Có lỗi xảy ra. Vui lòng thử lại sau")
+
+            notifySuccess("Xóa địa chỉ thành công")
+
+            if(!(result.data.data.userId)) setAddressList([])
+            else fetchAddressList()
+        })
+    }
+
     const handleSaveAddress = async () => {
         if (!fullName || !phone || !province || !district || !ward || !addressLine) return notifyWarning("Vui lòng điền đủ thông tin cần thiết")
 
@@ -136,7 +149,7 @@ const DeliveryDetail = ({
 
         setIsAddingAddress(false)
 
-        fetchAddressList()
+        if (userInfo) fetchAddressList(); else setAddressList([result.data.data])
     }
 
     useEffect(() => { fetchAddressList() }, [userInfo])
@@ -267,9 +280,11 @@ const DeliveryDetail = ({
                         {/* header nhỏ (tuỳ chọn) */}
                         <div className="md:flex px-3 py-2 bg-gray-50 text-sm text-gray-600 justify-between items-center">
                             <p>Chọn một địa chỉ để giao hàng</p>
-                            <button className="p-1 border rounded-lg hover:scale-110 mt-2" onClick={() => setIsAddingAddress(true)}>
-                                + Thêm địa chỉ giao hàng
-                            </button>
+                            {userInfo &&
+                                <button className="p-1 border rounded-lg hover:scale-110 mt-2" onClick={() => setIsAddingAddress(true)}>
+                                    + Thêm địa chỉ giao hàng
+                                </button>
+                            }
                         </div>
 
                         {/* danh sách scroll */}
@@ -317,7 +332,7 @@ const DeliveryDetail = ({
 
                                             <button
                                                 type="button"
-                                                onClick={() => { /* xóa address */ }}
+                                                onClick={() => handleDeleteAddress(address.id)}
                                                 className="text-xs px-3 py-1 border rounded text-red-600 hover:bg-red-50 disabled:opacity-60"
                                             >
                                                 Xóa

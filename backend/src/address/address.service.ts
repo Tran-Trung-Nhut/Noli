@@ -59,7 +59,9 @@ export class AddressService {
     return `This action updates a #${id} address`;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} address`;
+  async remove(id: number) {
+    const existUser = await this.prismaService.address.findUnique({where: {id}})
+    if(!existUser) throw new BadRequestException("Địa chỉ không tồn tại")
+    return await this.prismaService.address.delete({where: {id}});
   }
 }
