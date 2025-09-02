@@ -8,6 +8,7 @@ import { type AddressDto } from "../dtos/address.dto"
 import { confirm, getDistrictNameByDistrictId, getProvinceNameByProvinceId, getWardNameByWardId, isValidEmail, notifyError, notifySuccess, notifyWarning } from "../utils"
 
 const DeliveryDetail = ({
+    setLoading,
     fullName,
     setFullName,
     email,
@@ -34,6 +35,7 @@ const DeliveryDetail = ({
     chosenAddress,
     setChosenAddress
 }: {
+    setLoading: (value: boolean) => void
     fullName: string
     setFullName: (value: string) => void
     email: string
@@ -92,6 +94,7 @@ const DeliveryDetail = ({
 
     const fetchAddressList = async () => {
         if (!userInfo) return
+        setLoading(true)
 
         const result = await addressApi.getListAddressByUserId(userInfo.id)
 
@@ -105,28 +108,33 @@ const DeliveryDetail = ({
 
         const defaultAddr = result.data.data.find((a: AddressDto) => a.isDefault)
         setChosenAddress(defaultAddr ?? null)
+
+        setLoading(false)
     }
 
     const handleDeleteAddress = (id: number) => {
         confirm("Xóa địa chỉ", "Bạn có chắc muốn xóa địa chỉ này?", async () => {
+            setLoading(true)
             const result = await addressApi.deleteAddress(id)
 
             if (result.status !== HttpStatusCode.Ok) return notifyError("Có lỗi xảy ra. Vui lòng thử lại sau")
 
             notifySuccess("Xóa địa chỉ thành công")
-            if(chosenAddress?.id === result.data.data.id) setChosenAddress(null)
+            if (chosenAddress?.id === result.data.data.id) setChosenAddress(null)
 
             if (addressList.length === 1) setAddressList([])
             else setAddressList(addressList.filter(address => address.id === result.data.data.id))
+            setLoading(false)
         })
     }
 
     const handleSaveAddress = async () => {
         if (!fullName || !phone || !province || !district || !ward || !addressLine) return notifyWarning("Vui lòng điền đủ thông tin cần thiết")
 
-
         if (phone.length < 10) return notifyWarning("Số điện thoại không đúng định dạng")
         if (email && !isValidEmail(email)) return notifyWarning("Email không đúng định dạng")
+
+        setLoading(true)
 
         const result = await addressApi.createAddress({
             ...(userInfo ? { userId: userInfo.id } : {}),
@@ -145,12 +153,14 @@ const DeliveryDetail = ({
         })
 
         if (result.status !== HttpStatusCode.Created) return notifyError("Lỗi khi lưu thông tin giao hàng. Vui lòng thử lại sau!")
-
-        notifySuccess("Lưu thông tin giao hàng thành công")
-
         setIsAddingAddress(false)
 
         if (userInfo) fetchAddressList(); else setAddressList([result.data.data])
+
+        notifySuccess("Lưu thông tin giao hàng thành công")
+
+        setLoading(false)
+
     }
 
     useEffect(() => { fetchAddressList() }, [userInfo])

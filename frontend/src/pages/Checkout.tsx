@@ -115,6 +115,7 @@ const Checkout = () => {
 
     // get cart (same pattern as your Cart component)
     const getCart = async () => {
+        setLoading(true)
         try {
             if (userInfo) {
                 const result = await cartApi.getCartItemsByUserId(userInfo.id)
@@ -137,6 +138,8 @@ const Checkout = () => {
             }
         } catch (err) {
             console.error(err);
+        } finally {
+            setLoading(false)
         }
     };
 
@@ -225,6 +228,7 @@ const Checkout = () => {
                 <div className="flex flex-col lg:flex-row gap-8">
                     {/* Left: shipping info (55%) */}
                     <DeliveryDetail
+                        setLoading={setLoading}
                         fullName={fullName}
                         setFullName={setFullName}
                         email={email}
