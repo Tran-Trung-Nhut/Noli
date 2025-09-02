@@ -17,3 +17,4 @@ export class Ward {
     ward_name: string
     ward_type: string;
 }
+

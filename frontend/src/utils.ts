@@ -1,6 +1,7 @@
 import { toast } from "react-toastify";
 import Swal from 'sweetalert2';
 import type { Product } from "./dtos/product.dto";
+import type { District, Province, Ward } from "./pages/Checkout";
 
 export const notifySuccess = (message: string) => toast.success(message, { position: 'top-right', autoClose: 2000 })
 
@@ -51,6 +52,30 @@ export const removeFromCartLocalStorage = (id: number) => {
 
 export const isProductInCart = (product: Product, cartProducts: Product[]): boolean => {
     return cartProducts.some(productInCart => { if (productInCart.id === product.id) return true }) ?? false
+}
+
+export const getProvinceNameByProvinceId = (provinceId: string, provinceList: Province[]) : string => {
+    for(const province of provinceList){
+        if (province.province_id === provinceId) return province.province_name
+    }
+
+    return ""
+}
+
+export const getDistrictNameByDistrictId = (districtId: string, districtList: District[]) : string => {
+    for(const district of districtList){
+        if (district.district_id === districtId) return district.district_name
+    }
+
+    return ""
+}
+
+export const getWardNameByWardId = (wardId: string, wardList: Ward[]) : string => {
+    for(const ward of wardList){
+        if (ward.ward_id === wardId) return ward.ward_name
+    }
+
+    return ""
 }
 
 

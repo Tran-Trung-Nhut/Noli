@@ -132,7 +132,7 @@ const Footer = () => {
                     <div>
                         <h5 className="font-semibold text-white">Liên hệ</h5>
                         <address className="not-italic mt-4 text-sm text-gray-300 space-y-2">
-                            <div>ĐT: <a href="tel:+840123456789" className="hover:text-white">0123-456-789</a></div>
+                            <div>ĐT: <a href="tel:+84328282023" className="hover:text-white">0328-282-023</a></div>
                             <div>Email: <a href="mailto:hello@nolishop.example" className="hover:text-white">hello@noli.example</a></div>
                             <div>Địa chỉ: Nhơn Trạch, Đồng Nai</div>
                             <div className="flex items-center gap-3 mt-3">

@@ -58,12 +58,12 @@ const Contact = () => {
                         <dl className="mt-4 text-sm text-gray-600 space-y-2">
                             <div>
                                 <dt className="font-medium">Địa chỉ</dt>
-                                <dd>Đồng Tháp, Việt Nam</dd>
+                                <dd>Nhơn Trạch, Đồng Nai, Việt Nam</dd>
                             </div>
                             <div>
                                 <dt className="font-medium">Điện thoại</dt>
                                 <dd>
-                                    <a href="tel:+840123456789" className="underline hover:text-gray-900">0123-456-789</a>
+                                    <a href="tel:+84328282023" className="underline hover:text-gray-900">0328-282-023</a>
                                 </dd>
                             </div>
                             <div>
@@ -112,7 +112,7 @@ const Contact = () => {
                         <form onSubmit={handleSubmit} className="mt-6 space-y-4">
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <label className="flex flex-col">
-                                    <span className="text-sm font-medium">Họ & tên</span>
+                                    <span className="text-sm font-medium">Họ và tên</span>
                                     <input
                                         value={form.name}
                                         onChange={(e) => update("name", e.target.value)}
@@ -186,7 +186,7 @@ const Contact = () => {
                                     {status.type === "sending" ? "Đang gửi..." : "Gửi liên hệ"}
                                 </button>
 
-                                <div className="text-sm text-gray-500">Hoặc gọi chúng tôi: <a href="tel:+840123456789" className="underline hover:text-gray-900">0123-456-789</a></div>
+                                <div className="text-sm text-gray-500">Hoặc gọi chúng tôi: <a href="tel:+84328282023" className="underline hover:text-gray-900">0328-282-023</a></div>
                             </div>
                         </form>
                     </div>
@@ -207,7 +207,7 @@ const Contact = () => {
 
             {/* Small CTA */}
             <section className="max-w-6xl mx-auto px-6 py-12 text-center">
-                <p className="text-gray-600">Bạn cần hỗ trợ ngay? Gọi <a href="tel:+840123456789" className="underline hover:text-gray-900">0123-456-789</a></p>
+                <p className="text-gray-600">Bạn cần hỗ trợ ngay? Gọi <a href="tel:+84328282023" className="underline hover:text-gray-900">0328-282-023</a></p>
             </section>
         </main>
     );

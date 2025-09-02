@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
-import { formatPrice, getGuestToken, isValidEmail, notifyError, notifySuccess, notifyWarning, setGuestToken } from "../utils";
+import { formatPrice, getGuestToken, notifyError, notifySuccess, notifyWarning, setGuestToken } from "../utils";
 import { useAuth } from "../contexts/AuthContext";
 import cartApi from "../apis/cartApi";
 import type { Cart } from "../dtos/cart.dto";
@@ -12,6 +12,7 @@ import { HttpStatusCode } from "axios";
 import LoadingAuth from "../components/LoadingAuth";
 import paymentApi from "../apis/paymentApi";
 import addressApi from "../apis/addressApi";
+import { type AddressDto } from "../dtos/address.dto";
 
 export type Province = {
     province_name: string,
@@ -57,6 +58,9 @@ const Checkout = () => {
     const [district, setDistrict] = useState<string>("");
     const [ward, setWard] = useState<string>("");
     const [note, setNote] = useState<string>("");
+    const [isDefault, setIsDefault] = useState<boolean>(false)
+    const [label, setLabel] = useState<string>("")
+    const [chosenAddress, setChosenAddress] = useState<AddressDto | null>(null)
 
     // UI state
     const [shippingFee, setShippingFee] = useState<number | null>(null);
@@ -103,10 +107,8 @@ const Checkout = () => {
     };
 
     const handleConfirm = () => {
-        if (!fullName || !phone || !addressLine || !ward || !district || !province) return notifyWarning("Vui lòng điền đầy đủ thông tin giao hàng!")
 
-        if(phone.length < 10) return notifyWarning("Số điện thoại không đúng định dạng")
-        if(email && !isValidEmail(email)) return notifyWarning("Email không đúng định dạng")
+        if(!chosenAddress) return notifyWarning("Vui lòng chọn địa chỉ giao hàng")
 
         setIsOpenPaymentMethod(true)
     }
@@ -242,6 +244,13 @@ const Checkout = () => {
                         wardList={wardList}
                         note={note}
                         setNote={setNote}
+                        isDefault={isDefault}
+                        setIsDefault={setIsDefault}
+                        label={label}
+                        setLabel={setLabel}
+                        chosenAddress={chosenAddress}
+                        setChosenAddress={setChosenAddress}
+            
                     />
 
                     <PaymentMethodModal

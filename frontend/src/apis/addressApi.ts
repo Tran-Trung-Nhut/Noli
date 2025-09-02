@@ -1,3 +1,4 @@
+import type { CreateAddressDto } from "../dtos/address.dto";
 import axiosClient from "./axiosClient";
 
 const addressApi = {
@@ -22,6 +23,22 @@ const addressApi = {
             return await axiosClient.get(`/address/wards/${districtId}`);
         }
         catch (error: any) {
+            return error.response;
+        }
+    },
+
+    getListAddressByUserId: async (userId: number) => {
+        try {
+            return await axiosClient.get(`/address/user/${userId}`);
+        } catch (error: any){
+            return error.response;
+        }
+    },
+
+    createAddress: async (data: CreateAddressDto) => {
+        try {
+            return await axiosClient.post('/address', data);
+        } catch (error: any) {
             return error.response;
         }
     }

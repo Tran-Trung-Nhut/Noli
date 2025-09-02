@@ -14,7 +14,7 @@ type Props = {
 export default function FiltersSidebar({ selectedCategory, onCategoryChange, minPrice, maxPrice, onMinPriceChange, onMaxPriceChange, handleApplyFilter}: Props) {
     const [categories] = useState<{label: string, value: string}[]>([
         {label: "Túi xách", value: "hand_bag"},
-        {label: "Túi đeo vai", value: "sholder_bag"},
+        {label: "Túi đeo vai", value: "shoulder_bag"},
         {label: "Balo mini", value: "mini_balo"}
     ]);
 

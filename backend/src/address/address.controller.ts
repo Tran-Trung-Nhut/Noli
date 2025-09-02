@@ -36,8 +36,21 @@ export class AddressController {
   }
 
   @Post()
-  create(@Body() createAddressDto: CreateAddressDto) {
-    return this.addressService.create(createAddressDto);
+  async create(@Body() createAddressDto: CreateAddressDto, @Res() res) {
+    try {
+      return res.status(HttpStatus.CREATED).json({ data: await this.addressService.create(createAddressDto) });
+    } catch (error) {
+      return res.status(error.status || HttpStatusCode.InternalServerError).json({ message: error.message });
+    }
+  }
+
+  @Get('/user/:userId')
+  async getListAddressByUserId(@Param('userId') userId: number, @Res() res) {
+    try {
+      return res.status(HttpStatus.OK).json({ data: await this.addressService.getListAddressByUserId(userId) });
+    } catch (error) {
+      return res.status(error.status || HttpStatusCode.InternalServerError).json({ message: error.message });
+    }
   }
 
   @Get()
@@ -46,8 +59,12 @@ export class AddressController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.addressService.findOne(+id);
+  async findOne(@Param('id') id: string, @Res() res) {
+    try {
+      return  res.status(HttpStatus.OK).json({ data: await this.addressService.findOne(+id) });
+    } catch (error) {
+      return res.status(error.status || HttpStatusCode.InternalServerError).json({ message: error.message });
+    }
   }
 
   @Patch(':id')

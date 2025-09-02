@@ -8,8 +8,10 @@ import { AuthModule } from './auth/auth.module';
 import { UserModule } from './user/user.module';
 import { AddressModule } from './address/address.module';
 import { PaymentModule } from './payment/payment.module';
+import { OrderModule } from './order/order.module';
+import { OrderItemModule } from './order-item/order-item.module';
 @Module({
-  imports: [PrismaModule, ProductModule, ProductVariantModule, CartModule, CartItemModule, AuthModule, UserModule, AddressModule, PaymentModule],
+  imports: [PrismaModule, ProductModule, ProductVariantModule, CartModule, CartItemModule, AuthModule, UserModule, AddressModule, PaymentModule, OrderModule, OrderItemModule],
   controllers: [],
   providers: [],
 })
