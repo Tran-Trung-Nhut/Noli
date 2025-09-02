@@ -7,6 +7,7 @@ import { useAuth } from './contexts/AuthContext';
 import { getGuestToken, setGuestToken } from './utils';
 import cartApi from './apis/cartApi';
 import { HttpStatusCode } from 'axios';
+import ScrollToTop from './contexts/ScrollToTop';
 
 const DefaultLayout = () => {
   const { userInfo } = useAuth()
@@ -45,6 +46,7 @@ const DefaultLayout = () => {
 
   return (
     <div>
+      <ScrollToTop/>
       <ToastContainer />
       <Navbar />
       <main>
