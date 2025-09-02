@@ -1,12 +1,17 @@
-import { BadRequestException, Injectable, InternalServerErrorException } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { CreateCartItemDto } from './dto/create-cart-item.dto';
 import { UpdateCartItemDto } from './dto/update-cart-item.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { MESSAGES } from 'src/constantsAndMessage';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { Cache } from 'cache-manager';
 
 @Injectable()
 export class CartItemService {
-  constructor(private prismaService: PrismaService) { }
+  constructor(
+    private prismaService: PrismaService,
+    @Inject(CACHE_MANAGER) private cacheManager: Cache
+  ) { }
 
   async create(createCartItem: CreateCartItemDto) {
     const cart = await this.prismaService.cart.findUnique({ where: { guestToken: createCartItem.guestToken } })
@@ -40,6 +45,8 @@ export class CartItemService {
         }
       })
     ])
+
+    await this.cacheManager.clear()
   }
 
   findAll() {
@@ -68,5 +75,7 @@ export class CartItemService {
         }
       })
     ])
+
+    await this.cacheManager.clear()
   }
 }
