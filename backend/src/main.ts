@@ -8,11 +8,11 @@ async function bootstrap() {
   app.use(cookieParser())
 
   app.enableCors({
-    origin: [process.env.FRONTEND_DOMAIN_1, process.env.FRONTEND_DOMAIN_2],  // hoặc mảng các domain
-    credentials: true,                  // nếu muốn cho phép cookie
+    origin: [process.env.FRONTEND_DOMAIN_1, process.env.FRONTEND_DOMAIN_2],
+    credentials: true,
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
   });
 
-  await app.listen(process.env.PORT || 10800);
+  await app.listen(process.env.PORT || 10800, '0.0.0.0');
 }
 bootstrap();
