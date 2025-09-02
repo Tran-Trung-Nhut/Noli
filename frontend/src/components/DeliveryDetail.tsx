@@ -81,24 +81,26 @@ const DeliveryDetail = ({
     }
 
     const fetchUser = async () => {
-        if (!userInfo) return
+        if (!userInfo) return;
+        setLoading(true)
 
         const result = await userApi.getUserById(userInfo.id)
 
-        if (result.status !== HttpStatusCode.Ok) return
+        if (result.status !== HttpStatusCode.Ok) return setLoading(false)
 
         setFullName(result.data.data.firstName + " " + result.data.data.lastName)
         setPhone(result.data.data.phoneNumber)
         setEmail(result.data.data.email)
+        setLoading(false)
     }
 
     const fetchAddressList = async () => {
-        if (!userInfo) return
+        if (!userInfo) return;
         setLoading(true)
 
         const result = await addressApi.getListAddressByUserId(userInfo.id)
 
-        if (result.status !== HttpStatusCode.Ok) return
+        if (result.status !== HttpStatusCode.Ok) return setLoading(false)
 
         if (result.data.data.length === 0) {
             return fetchUser()

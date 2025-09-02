@@ -115,11 +115,12 @@ const Checkout = () => {
 
     // get cart (same pattern as your Cart component)
     const getCart = async () => {
+        setLoading(true)
         try {
             if (userInfo) {
                 const result = await cartApi.getCartItemsByUserId(userInfo.id)
 
-                if (result.status !== HttpStatusCode.Ok) return
+                if (result.status !== HttpStatusCode.Ok) return setLoading(false)
                 setCart(result.data)
             } else {
                 if (token) {
@@ -137,6 +138,8 @@ const Checkout = () => {
             }
         } catch (err) {
             console.error(err);
+        } finally {
+            setLoading(false)
         }
     };
 
