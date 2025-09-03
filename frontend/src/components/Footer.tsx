@@ -1,7 +1,8 @@
 import { RefreshCcw, ShieldCheck, Truck } from "lucide-react";
-import { FaFacebookSquare, FaInstagram } from "react-icons/fa";
+import { FaFacebookSquare } from "react-icons/fa";
 import logo from "../assets/logo.png"
 import { Link } from "react-router-dom";
+import { FaTiktok } from "react-icons/fa6";
 
 const Footer = () => {
     return (
@@ -140,8 +141,8 @@ const Footer = () => {
                                 <a aria-label="facebook" href="https://www.facebook.com/profile.php?id=100071433255220" className="p-1 rounded-full hover:bg-gray-100 hover:text-black">
                                     <FaFacebookSquare size={24}/>
                                 </a>
-                                <a aria-label="instagram" href="#" className="p-1 rounded-full hover:bg-gray-100 hover:text-black">
-                                    <FaInstagram size={24}/>
+                                <a aria-label="instagram" href="https://www.tiktok.com/@hongoc00" className="p-1 rounded-full hover:bg-gray-100 hover:text-black">
+                                    <FaTiktok size={24}/>
                                 </a>
                             </div>
                         </address>
