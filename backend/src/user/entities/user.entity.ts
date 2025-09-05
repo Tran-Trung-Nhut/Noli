@@ -7,6 +7,7 @@ export class User {
     phoneNumber: string | null;
     dateOfBirth: Date | null
     image: string | null;
+    gender: string | null
     registeredAt: Date
     lastLogin: Date
 }

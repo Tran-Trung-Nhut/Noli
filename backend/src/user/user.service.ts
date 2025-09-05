@@ -30,6 +30,7 @@ export class UserService {
         phoneNumber: updateUserDto.phoneNumber,
         email: updateUserDto.email,
         dateOfBirth: updateUserDto.dateOfBirth ? new Date(updateUserDto.dateOfBirth) : null,
+        gender: updateUserDto.gender
       }
     });
   }

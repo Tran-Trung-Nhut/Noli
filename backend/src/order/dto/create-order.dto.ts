@@ -1,3 +1,5 @@
+import { CreateOrderItemDto } from "src/order-item/dto/create-order-item.dto";
+
 export class CreateOrderDto {
     userId?: number;
     guestToken?: string;
@@ -10,4 +12,6 @@ export class CreateOrderDto {
     addressId: number;
     note?: string;
     email?: string;
+
+    orderItems: CreateOrderItemDto[]
 }

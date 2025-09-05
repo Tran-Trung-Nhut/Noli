@@ -24,6 +24,7 @@ model User {
   phoneNumber  String?
   email        String?
   image        String?
+  gender       String?
   registeredAt DateTime  @default(now())
   lastLogin    DateTime  @updatedAt
   refreshToken String?

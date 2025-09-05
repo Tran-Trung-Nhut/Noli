@@ -9,8 +9,30 @@ export class OrderService {
 
   async create(createOrderDto: CreateOrderDto) {
     return await this.prismaService.order.create({
-      data: createOrderDto
-    })
+      data: {
+        userId: createOrderDto.userId,
+        guestToken: createOrderDto.guestToken,
+        status: createOrderDto.status,
+        shippingFee: createOrderDto.shippingFee,
+        subTotal: createOrderDto.subTotal,
+        discountAmount: createOrderDto.discount,
+        totalAmount: createOrderDto.totalAmount,
+        addressId: createOrderDto.addressId,
+        orderItems: {
+          create: createOrderDto.orderItems.map((item) => ({
+            product: {
+              connect: { id: item.productId },
+            },
+            productVariant: {
+              connect: { id: item.productVariantId}
+            },
+            quantity: item.quantity,
+            price: item.price,
+          })),
+        },
+      },
+    });
+
   }
 
   findAll() {
