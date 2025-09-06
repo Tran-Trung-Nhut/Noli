@@ -12,6 +12,8 @@ export class CreateOrderDto {
     addressId: number;
     note?: string;
     email?: string;
+    paymentMethod: string;
+    transactionId?: string
 
     orderItems: CreateOrderItemDto[]
 }

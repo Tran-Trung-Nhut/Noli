@@ -9,7 +9,12 @@ export class OrderController {
 
   @Post()
   async create(@Body() createOrderDto: CreateOrderDto) {
-    return { data: await this.orderService.create(createOrderDto) }
+    return await this.orderService.create(createOrderDto)
+  }
+
+  @Get('/summary/:userId')
+  async getOrderSummary (@Param('userId') userId: number){
+    return this.orderService.getOrderSummary(userId)
   }
 
   @Get()
@@ -18,13 +23,18 @@ export class OrderController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.orderService.findOne(+id);
+  async findOne(@Param('id') id: string) {
+    return this.orderService.findOne(+id)
   }
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateOrderDto: UpdateOrderDto) {
     return this.orderService.update(+id, updateOrderDto);
+  }
+
+  @Patch('/status/:id')
+  async updateOrderStatus(@Param('id') id: string, @Body() data: {status: string}) {
+    return await this.orderService.updateOrderStatus(+id, data.status);
   }
 
   @Delete(':id')

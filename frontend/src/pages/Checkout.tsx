@@ -75,6 +75,8 @@ const Checkout = () => {
     const [districtList, setDistrictList] = useState<District[]>([]);
     const [wardList, setWardList] = useState<Ward[]>([]);
 
+    const orderId = useRef<number | null>(null)
+
     useEffect(() => {
         if (!state && !src) {
             navigate("/invalid-checkout", { replace: true });
@@ -92,8 +94,11 @@ const Checkout = () => {
         setLoading(true)
 
         if (paymentMethod === 'momo') {
-            const res = await paymentApi.momo({ amount: total, orderId: "MOMldoedkfldlfldfsa9" })
-            console.log(res)
+            if (!orderId) {
+                setLoading(false)
+                notifyError("Có lỗi xảy ra. Hãy vào đơn hàng của bạn để thanh toán sau")
+            }
+            const res = await paymentApi.momo({ amount: total, orderId: `MOMOPAYMENT${orderId.current}` })
             if (res.status !== HttpStatusCode.Created) {
                 setTimeout(() => {
                     setLoading(false)
@@ -105,7 +110,20 @@ const Checkout = () => {
             window.location.href = res.data.payUrl
 
         } else {
-            return
+            setLoadingMessage("Đang xác nhận đơn hàng. Vui lòng đợi trong giây lát!")
+            if (!orderId) {
+                notifyError("Có lỗi xảy ra. Hãy vào đơn hàng của bạn để thanh toán sau")
+                return setLoading(false)
+            }
+            const result = await orderApi.updateOrderStatus((orderId.current || 0), "DELIVERY")
+
+            if (result.status !== HttpStatusCode.Ok) {
+                notifyError("Có lỗi xảy ra. Hãy vào đơn hàng của bạn để thanh toán sau")
+                return setLoading(false)
+            }
+
+
+            setTimeout(() => { navigate(`/payment-result?orderId=${result.data.id}`) }, 3000)
         }
 
     };
@@ -157,12 +175,13 @@ const Checkout = () => {
             notifyError("Có lỗi xảy ra. Vui lòng thử lại")
         }
 
+        orderId.current = result.data.id
+
         setTimeout(() => {
             setLoading(false)
             setIsOpenPaymentMethod(true)
             setLoadingMessage("")
         }, 1000)
-
     }
 
     // get cart (same pattern as your Cart component)

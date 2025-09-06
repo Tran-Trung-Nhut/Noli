@@ -8,7 +8,6 @@ export class CreateAddressDto {
     wardId: string
     wardName: string
     addressLine: string
-    phoneNumber: string
     fullName: string
     isDefault?: boolean
     label?: string

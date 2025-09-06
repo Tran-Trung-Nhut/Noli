@@ -17,3 +17,5 @@ export type AddressDto = {
 }
 
 export type CreateAddressDto = Omit<AddressDto, 'id' | 'postalCode' >
+
+export type UpdateAddressDto = CreateAddressDto

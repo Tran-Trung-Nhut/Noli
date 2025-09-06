@@ -8,10 +8,16 @@ import userApi from "../apis/userApi";
 import { HttpStatusCode } from "axios";
 import noImage from "../assets/No_image_user.jpg"
 import LoadingAuth from "../components/LoadingAuth";
+import orderApi from "../apis/orderApi";
 
 const Profile = () => {
     const [isEditingProfile, setIsEditingProfile] = useState<boolean>(false);
     const [userProfile, setUserProfile] = useState<UserDto | null>(null)
+    const [totalOrders, setTotalOrders] = useState<number>(0)
+    const [totalPendingPayment, setTotalPendingPayment] = useState<number>(0)
+    const [totalDelivery, setTotalDelivery] = useState<number>(0)
+    const [totalCompleted, setTotalCompleted] = useState<number>(0)
+    const [totalCancel, setTotalCancel] = useState<number>(0)
     const [loading, setLoading] = useState<boolean>(false)
     const { userInfo } = useAuth()
 
@@ -56,7 +62,27 @@ const Profile = () => {
         notifySuccess("Cập nhật thông tin người dùng thành công")
     }
 
-    useEffect(() => { fetchUser() }, [])
+    const fetchOrderSummary = async () => {
+        setLoading(true)
+
+        if(!userInfo) return setLoading(false)
+
+        const result = await orderApi.getOrderSummary(userInfo.id)
+
+        if (result.status !== HttpStatusCode.Ok) return setLoading(false)
+
+        setTotalOrders(result.data[0])
+        setTotalPendingPayment(result.data[1])
+        setTotalDelivery(result.data[2])
+        setTotalCompleted(result.data[3])
+        setTotalCancel(result.data[4])
+        setLoading(false)
+    }
+
+    useEffect(() => { 
+        fetchUser() 
+        fetchOrderSummary()
+    }, [])
 
     return (
         <>
@@ -169,27 +195,27 @@ const Profile = () => {
                             <div className="bg-sky-50 rounded-xl p-4 shadow hover:shadow-md transition flex flex-col items-center">
                                 <Package className="text-sky-500 mb-2" size={28} />
                                 <p className="text-gray-500 text-sm text-center">Tổng đơn</p>
-                                <p className="text-2xl font-bold text-sky-600">0</p>
+                                <p className="text-2xl font-bold text-sky-600">{totalOrders}</p>
                             </div>
                             <div className="bg-yellow-50 rounded-xl p-4 shadow hover:shadow-md transition flex flex-col items-center">
                                 <Clock className="text-yellow-500 mb-2" size={28} />
                                 <p className="text-gray-500 text-sm text-center">Chờ thanh toán</p>
-                                <p className="text-2xl font-bold text-yellow-600">0</p>
+                                <p className="text-2xl font-bold text-yellow-600">{totalPendingPayment}</p>
                             </div>
                             <div className="bg-blue-50 rounded-xl p-4 shadow hover:shadow-md transition flex flex-col items-center">
                                 <Truck className="text-blue-500 mb-2" size={28} />
                                 <p className="text-gray-500 text-sm text-center">Đang giao</p>
-                                <p className="text-2xl font-bold text-blue-600">0</p>
+                                <p className="text-2xl font-bold text-blue-600">{totalDelivery}</p>
                             </div>
                             <div className="bg-green-50 rounded-xl p-4 shadow hover:shadow-md transition flex flex-col items-center">
                                 <CheckCircle className="text-green-500 mb-2" size={28} />
                                 <p className="text-gray-500 text-sm text-center">Hoàn thành</p>
-                                <p className="text-2xl font-bold text-green-600">0</p>
+                                <p className="text-2xl font-bold text-green-600">{totalCompleted}</p>
                             </div>
                             <div className="bg-red-50 rounded-xl p-4 shadow hover:shadow-md transition flex flex-col items-center">
                                 <XCircle className="text-red-500 mb-2" size={28} />
                                 <p className="text-gray-500 text-sm text-center">Đã hủy</p>
-                                <p className="text-2xl font-bold text-red-600">0</p>
+                                <p className="text-2xl font-bold text-red-600">{totalCancel}</p>
                             </div>
                         </div>
                     </div>

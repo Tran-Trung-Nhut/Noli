@@ -3,10 +3,12 @@ import { CreatePaymentDto } from './dto/create-payment.dto';
 import { UpdatePaymentDto } from './dto/update-payment.dto';
 import * as crypto from 'crypto';
 import axios from 'axios';
-import { error } from 'console';
+import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class PaymentService {
+  constructor(private readonly prismaService: PrismaService){}
+
 
   async createMomoPayment(amount: number, orderId: string) {
     const endpoint = "https://test-payment.momo.vn/v2/gateway/api/create";
@@ -40,13 +42,17 @@ export class PaymentService {
       signature,
       lang: "vi",
     };
-    const result = (await axios.post(endpoint, payload)).data
+    const result = (await axios.post(endpoint, payload))
 
-    if (result.resultCode !== 0) {
+    if (result.data.resultCode !== 0) {
       throw new InternalServerErrorException("Thanh toán thất bại, vui lòng thử lại");
     }
 
-    return result;
+    const numberPart = orderId.replace("MOMOPAYMENT", "")
+
+    await this.prismaService.order.update({where:{id: Number(numberPart)}, data: {paymentMethod: 'MOMO', status: "PENDING_PAYMENT"}})
+
+    return result.data;
   }
 
   create(createPaymentDto: CreatePaymentDto) {

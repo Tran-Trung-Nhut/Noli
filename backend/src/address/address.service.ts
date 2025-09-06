@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadGatewayException, BadRequestException, Injectable } from '@nestjs/common';
 import { CreateAddressDto } from './dto/create-address.dto';
 import { UpdateAddressDto } from './dto/update-address.dto';
 import axios from 'axios';
@@ -22,6 +22,16 @@ export class AddressService {
   }
 
   async create(createAddressDto: CreateAddressDto) {
+    if(createAddressDto.isDefault === true && (await this.prismaService.address.count({where: {isDefault: true}})) > 0){ 
+      return await this.prismaService.$transaction([
+        this.prismaService.address.updateMany({where: {isDefault: true}, data: {isDefault: false}}),
+
+        this.prismaService.address.create({
+          data: createAddressDto
+        })
+      ])
+    }
+
     return await this.prismaService.address.create({
       data: createAddressDto
     })
@@ -54,13 +64,54 @@ export class AddressService {
     return await this.prismaService.address.findUnique({ where: { id } });
   }
 
-  update(id: number, updateAddressDto: UpdateAddressDto) {
-    return `This action updates a #${id} address`;
+  async update(id: number, updateAddressDto: UpdateAddressDto) {
+    const existAddress = await this.prismaService.address.findUnique({ where: { id } })
+    if (!existAddress) throw new BadGatewayException("Không tồn tại địa chỉ")
+
+    if (updateAddressDto.isDefault !== existAddress.isDefault && updateAddressDto.isDefault === true) {
+      return await this.prismaService.$transaction([
+        this.prismaService.address.updateMany({ where: { isDefault: true }, data: { isDefault: false } }),
+
+        this.prismaService.address.update({
+          where: { id }, data: {
+            userId: updateAddressDto.userId,
+            phone: updateAddressDto.phone,
+            provinceId: updateAddressDto.provinceId,
+            provinceName: updateAddressDto.provinceName,
+            districtId: updateAddressDto.districtId,
+            districtName: updateAddressDto.provinceName,
+            wardId: updateAddressDto.wardId,
+            wardName: updateAddressDto.wardName,
+            addressLine: updateAddressDto.addressLine,
+            fullName: updateAddressDto.fullName,
+            isDefault: updateAddressDto.isDefault,
+            label: updateAddressDto.label
+          }
+        })
+      ])
+    } else {
+      return this.prismaService.address.update({
+        where: { id }, data: {
+          userId: updateAddressDto.userId,
+          phone: updateAddressDto.phone,
+          provinceId: updateAddressDto.provinceId,
+          provinceName: updateAddressDto.provinceName,
+          districtId: updateAddressDto.districtId,
+          districtName: updateAddressDto.provinceName,
+          wardId: updateAddressDto.wardId,
+          wardName: updateAddressDto.wardName,
+          addressLine: updateAddressDto.addressLine,
+          fullName: updateAddressDto.fullName,
+          isDefault: updateAddressDto.isDefault,
+          label: updateAddressDto.label
+        }
+      })
+    }
   }
 
   async remove(id: number) {
-    const existUser = await this.prismaService.address.findUnique({where: {id}})
-    if(!existUser) throw new BadRequestException("Địa chỉ không tồn tại")
-    return await this.prismaService.address.delete({where: {id}});
+    const existUser = await this.prismaService.address.findUnique({ where: { id } })
+    if (!existUser) throw new BadRequestException("Địa chỉ không tồn tại")
+    return await this.prismaService.address.delete({ where: { id } });
   }
 }

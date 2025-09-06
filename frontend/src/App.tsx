@@ -17,6 +17,7 @@ import { ServerWakeProvider } from './contexts/ServerStatusContext';
 import WakeOverlay from './components/WakeOverlay';
 import About from './pages/About';
 import Contact from './pages/Contact';
+import PaymentResult from './pages/PaymentResult';
 
 
 const App = () => {
@@ -43,6 +44,7 @@ const App = () => {
               <Route path='/checkout' element={<Checkout />} />
               <Route path='/about' element={<About />} />
               <Route path='/contact' element={<Contact />} />
+              <Route path='/payment-result' element={<PaymentResult/>}/>
             </Route>
             {/* <Route path='/login' element={<MaintenancePage/>}></Route> */}
           </Routes>

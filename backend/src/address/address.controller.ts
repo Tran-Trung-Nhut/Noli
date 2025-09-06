@@ -44,7 +44,7 @@ export class AddressController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateAddressDto: UpdateAddressDto) {
+  async update(@Param('id') id: string, @Body() updateAddressDto: UpdateAddressDto) {
     return this.addressService.update(+id, updateAddressDto);
   }
 

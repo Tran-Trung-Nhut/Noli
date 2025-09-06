@@ -1,4 +1,28 @@
-export class Address {}
+import { Type } from "class-transformer"
+import { IsInt } from "class-validator"
+
+export class Address {
+    @IsInt()
+    @Type(() => Number)
+    id: number
+    
+    userId?: number
+    label?: string
+    fullName: string
+    email?: string
+    phone: string
+    provinceId: string
+    provinceName: string
+    districtId: string
+    districtName: string
+    wardId: string
+    wardName: string
+    addressLine: string
+    postalCode?: string
+    isDefault: boolean
+    createdAt: Date
+    updatedAt: Date
+}
 
 export class Province {
     provice_id: string;

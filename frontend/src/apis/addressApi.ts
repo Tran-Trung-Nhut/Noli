@@ -1,4 +1,4 @@
-import type { CreateAddressDto } from "../dtos/address.dto";
+import type { CreateAddressDto, UpdateAddressDto } from "../dtos/address.dto";
 import axiosClient from "./axiosClient";
 
 const addressApi = {
@@ -40,6 +40,14 @@ const addressApi = {
             return await axiosClient.post('/address', data);
         } catch (error: any) {
             return error.response;
+        }
+    },
+
+    updateAddress: async (id: number, data: UpdateAddressDto) => {
+        try{
+            return await axiosClient.patch(`/address/${id}`, data)
+        } catch(error: any){
+            return error.response
         }
     },
 

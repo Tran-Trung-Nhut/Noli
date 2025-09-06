@@ -99,6 +99,8 @@ model Order {
   userId         Int?
   guestToken     String?  @db.Uuid
   status         String   @default("PENDING_PAYMENT")
+  paymentMethod  String   @default("COD")
+  transactionId  String?
   paymentStatus  String   @default("PENDING")
   subTotal       Float
   shippingFee    Float

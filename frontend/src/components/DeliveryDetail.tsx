@@ -168,6 +168,24 @@ const DeliveryDetail = ({
 
     }
 
+    const handleSetToDefault = async (address: AddressDto) => {
+        setLoading(true)
+
+        let updateAddress = address
+
+        updateAddress.isDefault = true
+
+        const result = await addressApi.updateAddress(address.id, updateAddress)
+
+        if (result.status !== HttpStatusCode.Ok) {
+            setLoading(false)
+            notifyError("Có lỗi xảy ra. Vui lòng thử lại sau")
+        }
+
+        fetchAddressList()
+        setLoading(false)
+    }
+
     useEffect(() => { fetchAddressList() }, [userInfo])
 
     return (
@@ -357,7 +375,7 @@ const DeliveryDetail = ({
                                             {!address.isDefault && (
                                                 <button
                                                     type="button"
-                                                    onClick={() => { /* đặt mặc định */ }}
+                                                    onClick={() => handleSetToDefault(address)}
                                                     className="text-xs px-3 py-1 border rounded text-sky-600 hover:bg-sky-50 disabled:opacity-60"
                                                 >
                                                     Đặt làm mặc định
