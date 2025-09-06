@@ -9,6 +9,7 @@ import { HttpStatusCode } from "axios";
 import noImage from "../assets/No_image_user.jpg"
 import LoadingAuth from "../components/LoadingAuth";
 import orderApi from "../apis/orderApi";
+import OrderList from "../components/OrderList";
 
 const Profile = () => {
     const [isEditingProfile, setIsEditingProfile] = useState<boolean>(false);
@@ -18,6 +19,7 @@ const Profile = () => {
     const [totalDelivery, setTotalDelivery] = useState<number>(0)
     const [totalCompleted, setTotalCompleted] = useState<number>(0)
     const [totalCancel, setTotalCancel] = useState<number>(0)
+    const [chosenSummaryOrder, setChosenSummaryOrder] = useState<string | null>(null)
     const [loading, setLoading] = useState<boolean>(false)
     const { userInfo } = useAuth()
 
@@ -44,7 +46,7 @@ const Profile = () => {
             editingUser.email === userProfile.email &&
             editingUser.firstName === userProfile.firstName &&
             editingUser.lastName === userProfile.lastName &&
-            editingUser.phoneNumber === userProfile.phoneNumber && 
+            editingUser.phoneNumber === userProfile.phoneNumber &&
             editingUser.gender === userProfile.gender
         ) {
             setLoading(false)
@@ -65,7 +67,7 @@ const Profile = () => {
     const fetchOrderSummary = async () => {
         setLoading(true)
 
-        if(!userInfo) return setLoading(false)
+        if (!userInfo) return setLoading(false)
 
         const result = await orderApi.getOrderSummary(userInfo.id)
 
@@ -79,8 +81,8 @@ const Profile = () => {
         setLoading(false)
     }
 
-    useEffect(() => { 
-        fetchUser() 
+    useEffect(() => {
+        fetchUser()
         fetchOrderSummary()
     }, [])
 
@@ -98,7 +100,7 @@ const Profile = () => {
             {loading && <LoadingAuth />}
 
             <div className="min-h-screen bg-gradient-to-b from-sky-50 to-white flex items-center justify-center p-6">
-                <div className="w-full max-w-3xl bg-white shadow-xl rounded-2xl overflow-hidden">
+                <div className="w-full max-w-[90%] bg-white shadow-xl rounded-2xl overflow-hidden">
                     {/* Header */}
                     <div className="bg-sky-500 h-32 relative">
                         <div className="absolute left-1/2 transform -translate-x-1/2 bottom-[-48px]">
@@ -138,88 +140,101 @@ const Profile = () => {
                         </div>
 
                         {/* Info Grid */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-gray-700">
-                            {/* Cột trái */}
-                            <div className="flex items-center gap-2">
-                                <User size={20} className="text-sky-500" />
-                                <span className="font-medium">Username:</span>
-                                <span>{userProfile?.username || "username"}</span>
-                            </div>
+                        <div className="md:flex md:justify-center md:items-center">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-gray-700">
+                                {/* Cột trái */}
+                                <div className="flex items-center gap-2">
+                                    <User size={20} className="text-sky-500" />
+                                    <span className="font-medium">Username:</span>
+                                    <span>{userProfile?.username || "username"}</span>
+                                </div>
 
-                            {/* Cột phải */}
-                            <div className="flex items-center gap-2">
-                                <Mail size={20} className="text-sky-500" />
-                                <span className="font-medium">Email:</span>
-                                <span>{userProfile?.email || "Chưa có email"}</span>
-                            </div>
+                                {/* Cột phải */}
+                                <div className="flex items-center gap-2">
+                                    <Mail size={20} className="text-sky-500" />
+                                    <span className="font-medium">Email:</span>
+                                    <span>{userProfile?.email || "Chưa có email"}</span>
+                                </div>
 
-                            {/* Cột trái */}
-                            <div className="flex items-center gap-2">
-                                <Phone size={20} className="text-sky-500" />
-                                <span className="font-medium">Điện thoại:</span>
-                                <span>{userProfile?.phoneNumber || "Chưa có số điện thoại"}</span>
-                            </div>
+                                {/* Cột trái */}
+                                <div className="flex items-center gap-2">
+                                    <Phone size={20} className="text-sky-500" />
+                                    <span className="font-medium">Điện thoại:</span>
+                                    <span>{userProfile?.phoneNumber || "Chưa có số điện thoại"}</span>
+                                </div>
 
-                            {/* Cột phải */}
-                            <div className="flex items-center gap-2">
-                                <Calendar size={20} className="text-sky-500" />
-                                <span className="font-medium">Ngày sinh:</span>
-                                <span>
-                                    {userProfile?.dateOfBirth
-                                        ? new Date(userProfile?.dateOfBirth).toLocaleDateString("vi-VN")
-                                        : "Chưa cập nhật"}
-                                </span>
-                            </div>
+                                {/* Cột phải */}
+                                <div className="flex items-center gap-2">
+                                    <Calendar size={20} className="text-sky-500" />
+                                    <span className="font-medium">Ngày sinh:</span>
+                                    <span>
+                                        {userProfile?.dateOfBirth
+                                            ? new Date(userProfile?.dateOfBirth).toLocaleDateString("vi-VN")
+                                            : "Chưa cập nhật"}
+                                    </span>
+                                </div>
 
-                            {/* Cột trái */}
-                            <div className="flex items-center gap-2">
-                                <User size={20} className="text-sky-500" />
-                                <span className="font-medium">Giới tính:</span>
-                                <span>{getGender(userProfile?.gender ?? null)}</span>
-                            </div>
+                                {/* Cột trái */}
+                                <div className="flex items-center gap-2">
+                                    <User size={20} className="text-sky-500" />
+                                    <span className="font-medium">Giới tính:</span>
+                                    <span>{getGender(userProfile?.gender ?? null)}</span>
+                                </div>
 
-                            {/* Cột phải */}
-                            <div className="flex items-center gap-2">
-                                <CalendarDays size={20} className="text-sky-500" />
-                                <span className="font-medium">Ngày đăng ký:</span>
-                                <span>
-                                    {new Date(userProfile?.registeredAt || "01-01-2000").toLocaleDateString("vi-VN")}
-                                </span>
+                                {/* Cột phải */}
+                                <div className="flex items-center gap-2">
+                                    <CalendarDays size={20} className="text-sky-500" />
+                                    <span className="font-medium">Ngày đăng ký:</span>
+                                    <span>
+                                        {new Date(userProfile?.registeredAt || "01-01-2000").toLocaleDateString("vi-VN")}
+                                    </span>
+                                </div>
                             </div>
                         </div>
                     </div>
                     {/* Order Summary Section */}
                     <div className="px-8 pb-10">
-                        <h2 className="text-xl font-bold text-gray-800 mb-4">Tóm tắt đơn hàng</h2>
+                        <h2 className="text-xl font-bold text-gray-800 mb-4 text-center border-t-2">Đơn hàng của bạn</h2>
                         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
-                            <div className="bg-sky-50 rounded-xl p-4 shadow hover:shadow-md transition flex flex-col items-center">
+                            <button className={`${chosenSummaryOrder === "ALL"? "bg-sky-300" : "bg-sky-50 hover:shadow-md"} rounded-xl p-4 shadow transition flex flex-col items-center`}
+                            disabled={chosenSummaryOrder === "ALL"}
+                            onClick={() => setChosenSummaryOrder('ALL')}>
                                 <Package className="text-sky-500 mb-2" size={28} />
                                 <p className="text-gray-500 text-sm text-center">Tổng đơn</p>
                                 <p className="text-2xl font-bold text-sky-600">{totalOrders}</p>
-                            </div>
-                            <div className="bg-yellow-50 rounded-xl p-4 shadow hover:shadow-md transition flex flex-col items-center">
+                            </button>
+                            <button className={`${chosenSummaryOrder === "PENDING_PAYMENT"? "bg-yellow-300" : "bg-yellow-50 hover:shadow-md"} rounded-xl p-4 shadow transition flex flex-col items-center`}
+                            disabled={chosenSummaryOrder === "PENDING_PAYMENT"}
+                            onClick={() => setChosenSummaryOrder('PENDING_PAYMENT')}>
                                 <Clock className="text-yellow-500 mb-2" size={28} />
                                 <p className="text-gray-500 text-sm text-center">Chờ thanh toán</p>
                                 <p className="text-2xl font-bold text-yellow-600">{totalPendingPayment}</p>
-                            </div>
-                            <div className="bg-blue-50 rounded-xl p-4 shadow hover:shadow-md transition flex flex-col items-center">
+                            </button>
+                            <button className={`${chosenSummaryOrder === "DELIVERY"? "bg-blue-300" : "bg-blue-50 hover:shadow-md"} rounded-xl p-4 shadow transition flex flex-col items-center`}
+                            disabled={chosenSummaryOrder === "DELIVERY"}
+                            onClick={() => setChosenSummaryOrder('DELIVERY')}>
                                 <Truck className="text-blue-500 mb-2" size={28} />
                                 <p className="text-gray-500 text-sm text-center">Đang giao</p>
                                 <p className="text-2xl font-bold text-blue-600">{totalDelivery}</p>
-                            </div>
-                            <div className="bg-green-50 rounded-xl p-4 shadow hover:shadow-md transition flex flex-col items-center">
+                            </button>
+                            <button className={`${chosenSummaryOrder === "COMPLETED"? "bg-green-300" : "bg-green-50 hover:shadow-md"} rounded-xl p-4 shadow transition flex flex-col items-center`}
+                            disabled={chosenSummaryOrder === "COMPLETED"}
+                            onClick={() => setChosenSummaryOrder('COMPLETED')}>
                                 <CheckCircle className="text-green-500 mb-2" size={28} />
                                 <p className="text-gray-500 text-sm text-center">Hoàn thành</p>
                                 <p className="text-2xl font-bold text-green-600">{totalCompleted}</p>
-                            </div>
-                            <div className="bg-red-50 rounded-xl p-4 shadow hover:shadow-md transition flex flex-col items-center">
+                            </button>
+                            <button 
+                            className={`${chosenSummaryOrder === "cancel"? "bg-red-300" : "bg-red-50 hover:shadow-md"} rounded-xl p-4 shadow transition flex flex-col items-center`}
+                            disabled={chosenSummaryOrder === "CANCEL"}
+                            onClick={() => setChosenSummaryOrder('CANCEL')}>
                                 <XCircle className="text-red-500 mb-2" size={28} />
                                 <p className="text-gray-500 text-sm text-center">Đã hủy</p>
                                 <p className="text-2xl font-bold text-red-600">{totalCancel}</p>
-                            </div>
+                            </button>
                         </div>
                     </div>
-
+                    {userProfile && chosenSummaryOrder && <OrderList userProfile={userProfile} chosen={chosenSummaryOrder}/>}
                 </div>
 
             </div>

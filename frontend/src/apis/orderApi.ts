@@ -5,7 +5,7 @@ const orderApi = {
     async createOrder(order: CreateOrderDto, fromCart: boolean) {
         try{
             return await axiosClient.post('/order', order, {
-                params: fromCart
+                params: {fromCart}
             })
         }catch(error: any){
             return error.response
@@ -26,6 +26,24 @@ const orderApi = {
             return await axiosClient.get(`/order/${id}`)
         } catch (error: any) {
             return error.response            
+        }
+    },
+
+    async getOrderByUserId (userId: number, status: string) {
+        try {
+            return await axiosClient.get(`/order/userId/${userId}`, {
+                params: {status}
+            })
+        } catch (error: any) {
+            return error.response   
+        }
+    },
+
+    async getOrder (id: number) {
+        try {
+            return await axiosClient.get(`/order/${id}`)
+        } catch (error: any) {
+            return error.response
         }
     },
 

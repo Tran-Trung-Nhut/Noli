@@ -88,6 +88,25 @@ const Checkout = () => {
         return <LoadingAuth />;
     }
 
+    const removeFromCheckout = async (id: number) => {
+        setCart(prevCart => {
+            if (!prevCart) return prevCart
+
+            const updatedCartItems = prevCart.cartItems.filter(item => item.id !== id);
+
+            const updatedCart: Cart = {
+                ...prevCart,
+                cartItems: updatedCartItems,
+                numberOfItems: updatedCartItems.length,
+                totalAmount: updatedCartItems.reduce(
+                    (sum, item) => sum + item.priceAtAdding * item.quantity,
+                    0
+                ),
+            };
+
+            return updatedCart;
+        });
+    }
 
     const handlePayment = async (paymentMethod: string) => {
         setIsOpenPaymentMethod(false)
@@ -172,7 +191,7 @@ const Checkout = () => {
         if (result.status !== HttpStatusCode.Created) {
             setLoading(false)
             setLoadingMessage("")
-            notifyError("Có lỗi xảy ra. Vui lòng thử lại")
+            return notifyError("Có lỗi xảy ra. Vui lòng thử lại")
         }
 
         orderId.current = result.data.id
@@ -184,7 +203,6 @@ const Checkout = () => {
         }, 1000)
     }
 
-    // get cart (same pattern as your Cart component)
     const getCart = async () => {
         setLoading(true)
         try {
@@ -349,7 +367,7 @@ const Checkout = () => {
                                                 <div className="text-xs text-gray-500">{ci.product.name ?? ""}</div>
                                             </div>
                                             <div className="text-sm font-semibold text-gray-900">{formatPrice(ci.priceAtAdding * ci.quantity)}</div>
-                                            <button className="ml-2 text-xs text-red-500" onClick={() => { }}>Xóa</button>
+                                            <button className="ml-2 text-xs text-red-500" onClick={() => removeFromCheckout(ci.id)}>Xóa</button>
                                         </div>
                                     ))
                                 ) : (
@@ -363,7 +381,6 @@ const Checkout = () => {
                                             <div className="text-xs text-gray-500">{state.productVariant.size !== 'no_size' ? state.productVariant.size + ", " + state.productVariant.color : state.productVariant.color}</div>
                                         </div>
                                         <div className="text-sm font-semibold text-gray-900">{formatPrice(state.productVariant.price * state.quantity)}</div>
-                                        <button className="ml-2 text-xs text-red-500" onClick={() => { }}>Xóa</button>
                                     </div>
                                 )}
                             </div>

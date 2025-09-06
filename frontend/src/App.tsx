@@ -18,6 +18,7 @@ import WakeOverlay from './components/WakeOverlay';
 import About from './pages/About';
 import Contact from './pages/Contact';
 import PaymentResult from './pages/PaymentResult';
+import OrderDetailPage from './pages/OrderDetailPage';
 
 
 const App = () => {
@@ -45,6 +46,11 @@ const App = () => {
               <Route path='/about' element={<About />} />
               <Route path='/contact' element={<Contact />} />
               <Route path='/payment-result' element={<PaymentResult/>}/>
+              <Route path='/order' element={
+                <ProtectedRoute>
+                  <OrderDetailPage/>
+                </ProtectedRoute>
+              }/>
             </Route>
             {/* <Route path='/login' element={<MaintenancePage/>}></Route> */}
           </Routes>

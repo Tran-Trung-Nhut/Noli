@@ -11,6 +11,8 @@ import { AddressModule } from './address/address.module';
 import { PaymentModule } from './payment/payment.module';
 import { OrderModule } from './order/order.module';
 import { OrderItemModule } from './order-item/order-item.module';
+import { redisStore } from 'cache-manager-redis-yet';
+
 @Module({
   imports: [
     PrismaModule, 
@@ -24,10 +26,18 @@ import { OrderItemModule } from './order-item/order-item.module';
     PaymentModule, 
     OrderModule, 
     OrderItemModule,
-    CacheModule.register({
-      ttl: 60000,
-      max: 1000,
-      isGlobal: true
+    CacheModule.registerAsync({
+      isGlobal: true,
+      useFactory: async () => ({
+        store: await redisStore({
+          socket: {
+            host: process.env.REDIS_HOST,
+            port: Number(process.env.REDIS_PORT)
+          },
+          password: process.env.REDIS_PASSWORD,
+          ttl: 60 * 1000
+        })
+      })
     })
   ],
   controllers: [],

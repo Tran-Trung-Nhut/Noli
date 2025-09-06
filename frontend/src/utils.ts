@@ -13,8 +13,30 @@ export const formatPrice = (price: number) => {
     return price.toLocaleString('vi-VN', { minimumFractionDigits: 0 }) + 'đ';
 };
 
+export const formatDateTime = (iso?: string) => {
+    if (!iso) return "-";
+    const d = new Date(iso);
+    return d.toLocaleTimeString("vi-VN", {
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+    }) +
+        " " +
+        d.toLocaleDateString("vi-VN", {
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric",
+        })
+}
 
-export const getGender = (gender: string | null) : string => {
+export const getPaymentMethod = (paymentMethod: string | undefined) => {
+    switch (paymentMethod) {
+        case "MOMO": return "Thanh toán qua Momo"
+        default: return "Thanh toán khi nhận hàng"
+    }
+} 
+
+export const getGender = (gender: string | null): string => {
     switch (gender) {
         case "male": return "Nam"
         case "female": return "Nữ"
@@ -64,24 +86,24 @@ export const isProductInCart = (product: Product, cartProducts: Product[]): bool
     return cartProducts.some(productInCart => { if (productInCart.id === product.id) return true }) ?? false
 }
 
-export const getProvinceNameByProvinceId = (provinceId: string, provinceList: Province[]) : string => {
-    for(const province of provinceList){
+export const getProvinceNameByProvinceId = (provinceId: string, provinceList: Province[]): string => {
+    for (const province of provinceList) {
         if (province.province_id === provinceId) return province.province_name
     }
 
     return ""
 }
 
-export const getDistrictNameByDistrictId = (districtId: string, districtList: District[]) : string => {
-    for(const district of districtList){
+export const getDistrictNameByDistrictId = (districtId: string, districtList: District[]): string => {
+    for (const district of districtList) {
         if (district.district_id === districtId) return district.district_name
     }
 
     return ""
 }
 
-export const getWardNameByWardId = (wardId: string, wardList: Ward[]) : string => {
-    for(const ward of wardList){
+export const getWardNameByWardId = (wardId: string, wardList: Ward[]): string => {
+    for (const ward of wardList) {
         if (ward.ward_id === wardId) return ward.ward_name
     }
 

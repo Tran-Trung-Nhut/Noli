@@ -6,18 +6,7 @@ import { type OrderShowDto } from "../dtos/order.dto";
 import LoadingAuth from "../components/LoadingAuth";
 import orderApi from "../apis/orderApi";
 import { HttpStatusCode } from "axios";
-import { formatPrice, notifyError } from "../utils";
-
-/**
- * PaymentResult component (React + Tailwind)
- * - Responsive, accessible payment success / failure page
- * - Reads query params: ?status=success|failure&order=12345&amount=250000&txn=ABC123&method=MB
- * - Provides actions: View order, Continue shopping, Print invoice, Copy transaction id
- * - No external libs required
- *
- * Usage: Mount this component on the route you redirect to after payment (e.g. /payment/result)
- * Server-side: When payment gateway redirects back, include reliable params (or fetch order from server by ID).
- */
+import { formatPrice, getPaymentMethod, notifyError } from "../utils";
 
 type ResultStatus = "success" | "failure";
 
@@ -28,6 +17,7 @@ function useQueryParams() {
 const PaymentResult = () => {
     const [order, setOrder] = useState<OrderShowDto | null>(null)
     const qs = useQueryParams();
+    const navigate = useNavigate()
 
 
     const partnerCode = (qs.get("partnerCode") || "COD")
@@ -41,7 +31,6 @@ const PaymentResult = () => {
         const status = (qs.get("resultCode") || "0");
         statusQuery = "success" as ResultStatus
         if (Number(status) === 1006) statusQuery = 'failure'
-        orderId = qs.get("orderId") || "-";
         txn = qs.get("transId") || "-";
         message = qs.get("message") || undefined;
     }
@@ -49,7 +38,6 @@ const PaymentResult = () => {
 
     const [copied, setCopied] = useState<boolean>(false);
     const [loading] = useState<boolean>(false);
-    const navigate = useNavigate()
 
     useEffect(() => {
         if (copied) {
@@ -103,6 +91,8 @@ const PaymentResult = () => {
     // }
 
     const fetchOrderItems = async () => {
+        if (orderId === "-") navigate('/invalid')
+
         const numberPart = orderId.replace("MOMOPAYMENT", "")
 
         const result = await orderApi.getOrderAndOrderItems(Number(numberPart))
@@ -188,7 +178,7 @@ const PaymentResult = () => {
 
                                         <div className="mt-2 flex items-center justify-between text-sm text-gray-600">
                                             <div>Phương thức</div>
-                                            <div className="font-medium text-gray-800">{order?.paymentMethod}</div>
+                                            <div className="font-medium text-gray-800">{getPaymentMethod(order?.paymentMethod)}</div>
                                         </div>
 
                                         <div className="mt-2 flex items-center justify-between text-sm text-gray-600">
@@ -219,7 +209,7 @@ const PaymentResult = () => {
                                                 <div key={orderItem.id} className="flex items-start justify-between">
                                                     <div className="flex items-start gap-3">
                                                         <div className="w-12 h-12 bg-gray-100 rounded overflow-hidden">
-                                                            <img src={orderItem.product.image[0]}/>
+                                                            <img src={orderItem.product.image[0]} />
                                                         </div>
                                                         <div>
                                                             <div className="text-sm font-medium">{orderItem.product.name}</div>
@@ -237,15 +227,15 @@ const PaymentResult = () => {
                                                 </div>
                                                 <div className="flex mt-1 items-center justify-between">
                                                     <div className="text-sm ">Phí vận chuyển</div>
-                                                    <div className="text-sm text-gray-900">{formatPrice(order?.shippingFee || 0 )}</div>
+                                                    <div className="text-sm text-gray-900">{formatPrice(order?.shippingFee || 0)}</div>
                                                 </div>
                                                 <div className="flex mt-1 items-center justify-between">
                                                     <div className="text-sm ">Giảm giá</div>
-                                                    <div className="text-sm text-gray-900">-{formatPrice(order?.discountAmount || 0 )}</div>
+                                                    <div className="text-sm text-gray-900">-{formatPrice(order?.discountAmount || 0)}</div>
                                                 </div>
                                                 <div className="border-t pt-3 flex items-center justify-between">
                                                     <div className="text-sm font-medium">Tổng cộng</div>
-                                                    <div className="text-lg font-bold text-gray-900">{formatPrice(order?.totalAmount || 0 )}</div>
+                                                    <div className="text-lg font-bold text-gray-900">{formatPrice(order?.totalAmount || 0)}</div>
                                                 </div>
                                             </div>
                                         </div>
