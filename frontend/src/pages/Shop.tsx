@@ -67,7 +67,6 @@ const Shop = () => {
                 setProducts(result.data);
             }
 
-            // nếu items < limit => không còn page tiếp theo
             setHasMore(result.data.length === limit);
         } catch (error) {
             notifyError("Hệ thống gặp lỗi. Vui lòng thử lại sau");
@@ -83,27 +82,20 @@ const Shop = () => {
 
         setPage(1);
         setHasMore(true);
-        // fetch page 1 (replace)
         fetchPage(1, false);
     }
 
     useEffect(() => {
-        // reset
         setProducts([]);
         setPage(1);
         setHasMore(true);
-        // fetch page 1 (replace)
         fetchPage(1, false);
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [debouncedSearch, category, sortBy, sortOrder]);
 
-    // When page increases (trigger by infinite scroll), fetch that page and append
     useEffect(() => {
-        // If page is 1 and we already fetched it via filter effect, avoid double fetch.
-        // We fetch page > 1 here only.
+
         if (page === 1) return;
         fetchPage(page, true);
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [page]);
 
     const loadMore = () => {
@@ -159,7 +151,7 @@ const Shop = () => {
                             </div>
                         }
                         // optional threshold to prefetch earlier
-                        scrollThreshold="200px"
+                        scrollThreshold={0.75}
                     >
                         <ProductGrid products={products} loading={loading} />
                     </InfiniteScroll>

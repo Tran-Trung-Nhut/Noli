@@ -13,6 +13,16 @@ export const formatPrice = (price: number) => {
     return price.toLocaleString('vi-VN', { minimumFractionDigits: 0 }) + 'đ';
 };
 
+
+export const getGender = (gender: string | null) : string => {
+    switch (gender) {
+        case "male": return "Nam"
+        case "female": return "Nữ"
+        case "other": return "Khác"
+        default: return "Chưa cập nhật"
+    }
+}
+
 export const getGuestToken = (): string | null => {
     return localStorage.getItem('guest_token')
 }

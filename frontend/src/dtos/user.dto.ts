@@ -7,6 +7,7 @@ export type UserDto = {
     phoneNumber: string | null
     email: string | null
     image: string | null
+    gender: string | null
     registeredAt: Date
     lastLogin: Date
 }

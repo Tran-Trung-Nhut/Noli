@@ -24,12 +24,22 @@ const EditProfileModal = ({
     const handleSubmit = (e: any) => {
         e.preventDefault();
 
-        if(formData.email && !isValidEmail(formData.email)) return notifyWarning("Định dạng email không chính xác")
-        if(formData.phoneNumber && formData.phoneNumber.length < 10) return notifyWarning("Số điện thoại không đúng định dạng")
+        if (formData.email && !isValidEmail(formData.email)) return notifyWarning("Định dạng email không chính xác")
+        if (formData.phoneNumber && formData.phoneNumber.length < 10) return notifyWarning("Số điện thoại không đúng định dạng")
 
         onSave(formData);
         onClose();
     };
+
+    function formatDateForInput(date: string | Date | null | undefined): string {
+        if (!date) return ""; 
+
+        const d = new Date(date);
+        if (isNaN(d.getTime())) return "";
+
+        return d.toISOString().split("T")[0];
+    }
+
 
     if (!isOpen) return null;
 
@@ -138,10 +148,52 @@ const EditProfileModal = ({
                         <input
                             type="date"
                             name="dateOfBirth"
-                            value={formData.dateOfBirth}
+                            value={formatDateForInput(formData.dateOfBirth)}
                             onChange={handleChange}
                             className="w-full border rounded-lg px-3 py-2 focus:ring focus:ring-sky-200"
                         />
+                    </div>
+
+                    <div className="flex gap-5">
+                        <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-1">
+                            <User className="text-sky-500" size={18} />
+                            Giới tính
+                        </label>
+                        <div className="flex gap-6">
+                            <label className="flex items-center gap-2">
+                                <input
+                                    type="radio"
+                                    name="gender"
+                                    value="male"
+                                    checked={formData.gender === "male"}
+                                    onChange={handleChange}
+                                    className="text-sky-500 focus:ring-sky-200"
+                                />
+                                Nam
+                            </label>
+                            <label className="flex items-center gap-2">
+                                <input
+                                    type="radio"
+                                    name="gender"
+                                    value="female"
+                                    checked={formData.gender === "female"}
+                                    onChange={handleChange}
+                                    className="text-sky-500 focus:ring-sky-200"
+                                />
+                                Nữ
+                            </label>
+                            <label className="flex items-center gap-2">
+                                <input
+                                    type="radio"
+                                    name="gender"
+                                    value="other"
+                                    checked={formData.gender === "other"}
+                                    onChange={handleChange}
+                                    className="text-sky-500 focus:ring-sky-200"
+                                />
+                                Khác
+                            </label>
+                        </div>
                     </div>
 
                     {/* Buttons */}

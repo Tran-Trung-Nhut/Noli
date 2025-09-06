@@ -13,6 +13,8 @@ import LoadingAuth from "../components/LoadingAuth";
 import paymentApi from "../apis/paymentApi";
 import addressApi from "../apis/addressApi";
 import { type AddressDto } from "../dtos/address.dto";
+import orderApi from "../apis/orderApi";
+import type { CreateOrderItemDto } from "../dtos/orderItem.dto";
 
 export type Province = {
     province_name: string,
@@ -44,6 +46,7 @@ const Checkout = () => {
     const [searchParams] = useSearchParams();
     const src = searchParams.get("src");
     const [loading, setLoading] = useState<boolean>(false)
+    const [loadingMessage, setLoadingMessage] = useState<string>("")
 
     const navigate = useNavigate()
     const location = useLocation();
@@ -107,11 +110,59 @@ const Checkout = () => {
 
     };
 
-    const handleConfirm = () => {
-
+    const handleConfirm = async () => {
         if (!chosenAddress) return notifyWarning("Vui lòng chọn địa chỉ giao hàng")
 
-        setIsOpenPaymentMethod(true)
+        setLoadingMessage("Đang tạo đơn hàng")
+        setLoading(true)
+
+        let listItems: CreateOrderItemDto[] = []
+        if (src === 'cart') {
+            for (const item of cart?.cartItems || []) {
+                const orderItem: CreateOrderItemDto = {
+                    productId: item.productId,
+                    productVariantId: item.productVariantId,
+                    price: item.priceAtAdding,
+                    quantity: item.quantity
+                }
+
+                listItems.push(orderItem)
+            }
+        } else {
+            const orderItem: CreateOrderItemDto = {
+                productId: state.product.id,
+                productVariantId: state.productVariant.id,
+                price: state.productVariant.price,
+                quantity: state.quantity
+            }
+
+            listItems.push(orderItem)
+        }
+
+        const result = await orderApi.createOrder({
+            ...(userInfo ? { userId: userInfo.id } : {}),
+            ...(getGuestToken() ? { guestToken: getGuestToken() || undefined } : {}),
+            status: "DRAFT",
+            shippingFee: shippingFee ? shippingFee : 0,
+            subTotal: subtotal,
+            discountAmount,
+            totalAmount: total,
+            addressId: chosenAddress.id,
+            orderItems: listItems
+        }, src === 'cart')
+
+        if (result.status !== HttpStatusCode.Created) {
+            setLoading(false)
+            setLoadingMessage("")
+            notifyError("Có lỗi xảy ra. Vui lòng thử lại")
+        }
+
+        setTimeout(() => {
+            setLoading(false)
+            setIsOpenPaymentMethod(true)
+            setLoadingMessage("")
+        }, 1000)
+
     }
 
     // get cart (same pattern as your Cart component)
@@ -211,7 +262,7 @@ const Checkout = () => {
 
     return (
         <>
-            {loading && <LoadingAuth />}
+            {loading && <LoadingAuth message={loadingMessage} />}
             <div className="container mx-auto px-4 py-8 min-h-[640px]">
                 <h1 className="text-3xl font-extrabold text-center text-sky-600 mb-6">Thanh Toán</h1>
                 <div className="text-gray-500 mb-6 pb-2 border-b-2">
@@ -343,7 +394,7 @@ const Checkout = () => {
                                     onClick={() => handleConfirm()}
                                     className="w-full bg-sky-600 text-white py-2 rounded-md font-semibold hover:bg-sky-700"
                                 >
-                                    Đặt hàng
+                                    Xác nhận đặt hàng
                                 </button>
                             </div>
 

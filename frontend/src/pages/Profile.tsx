@@ -2,7 +2,7 @@ import { Mail, User, Phone, Calendar, CalendarDays, Pencil, Package, Clock, Truc
 import { useEffect, useState } from "react";
 import EditProfileModal from "../components/EditProfile";
 import { useAuth } from "../contexts/AuthContext";
-import { notifyError, notifySuccess } from "../utils";
+import { getGender, notifyError, notifySuccess } from "../utils";
 import { type UpdateUserDto, type UserDto } from "../dtos/user.dto";
 import userApi from "../apis/userApi";
 import { HttpStatusCode } from "axios";
@@ -17,12 +17,18 @@ const Profile = () => {
 
     const fetchUser = async () => {
         if (!userInfo) return notifyError("Có lỗi xảy ra vui lòng thử lại sau")
+        setLoading(true)
 
         const result = await userApi.getUserById(userInfo.id)
 
-        if (result.status !== HttpStatusCode.Ok) return notifyError("Có lỗi xảy ra vui lòng thử lại sau")
+        if (result.status !== HttpStatusCode.Ok) {
+            setLoading(false)
+            return notifyError("Có lỗi xảy ra vui lòng thử lại sau")
+        }
 
         setUserProfile(result.data.data)
+
+        setLoading(false)
     }
 
     const handleEditProfile = async (editingUser: UpdateUserDto) => {
@@ -32,7 +38,8 @@ const Profile = () => {
             editingUser.email === userProfile.email &&
             editingUser.firstName === userProfile.firstName &&
             editingUser.lastName === userProfile.lastName &&
-            editingUser.phoneNumber === userProfile.phoneNumber
+            editingUser.phoneNumber === userProfile.phoneNumber && 
+            editingUser.gender === userProfile.gender
         ) {
             setLoading(false)
             return notifySuccess("Cập nhật thông tin người dùng thành công.")
@@ -62,7 +69,7 @@ const Profile = () => {
                 />
             )}
 
-            {loading && <LoadingAuth/>}
+            {loading && <LoadingAuth />}
 
             <div className="min-h-screen bg-gradient-to-b from-sky-50 to-white flex items-center justify-center p-6">
                 <div className="w-full max-w-3xl bg-white shadow-xl rounded-2xl overflow-hidden">
@@ -106,21 +113,28 @@ const Profile = () => {
 
                         {/* Info Grid */}
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-gray-700">
+                            {/* Cột trái */}
                             <div className="flex items-center gap-2">
                                 <User size={20} className="text-sky-500" />
                                 <span className="font-medium">Username:</span>
                                 <span>{userProfile?.username || "username"}</span>
                             </div>
+
+                            {/* Cột phải */}
                             <div className="flex items-center gap-2">
                                 <Mail size={20} className="text-sky-500" />
                                 <span className="font-medium">Email:</span>
                                 <span>{userProfile?.email || "Chưa có email"}</span>
                             </div>
+
+                            {/* Cột trái */}
                             <div className="flex items-center gap-2">
                                 <Phone size={20} className="text-sky-500" />
                                 <span className="font-medium">Điện thoại:</span>
                                 <span>{userProfile?.phoneNumber || "Chưa có số điện thoại"}</span>
                             </div>
+
+                            {/* Cột phải */}
                             <div className="flex items-center gap-2">
                                 <Calendar size={20} className="text-sky-500" />
                                 <span className="font-medium">Ngày sinh:</span>
@@ -130,7 +144,16 @@ const Profile = () => {
                                         : "Chưa cập nhật"}
                                 </span>
                             </div>
-                            <div className="flex items-center gap-2 md:col-span-2">
+
+                            {/* Cột trái */}
+                            <div className="flex items-center gap-2">
+                                <User size={20} className="text-sky-500" />
+                                <span className="font-medium">Giới tính:</span>
+                                <span>{getGender(userProfile?.gender ?? null)}</span>
+                            </div>
+
+                            {/* Cột phải */}
+                            <div className="flex items-center gap-2">
                                 <CalendarDays size={20} className="text-sky-500" />
                                 <span className="font-medium">Ngày đăng ký:</span>
                                 <span>

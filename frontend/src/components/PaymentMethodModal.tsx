@@ -53,7 +53,7 @@ const PaymentMethodModal = ({
                     </label>
 
                     <div className="pt-2 border-t text-sm">
-                        <div className="text-sm text-gray-600 italic mb-2">Vui lòng kiểm tra thông tin đơn hàng thật kỹ trước khi xác nhận và thanh toán</div>
+                        <div className="text-sm text-gray-600 italic mb-2">Vui lòng kiểm tra thông tin đơn hàng thật kỹ trước khi thanh toán</div>
                         <div className="flex justify-between">
                             <span>Tạm tính</span>
                             <span>{formatPrice(subtotal)}</span>

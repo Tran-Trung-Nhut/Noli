@@ -1,0 +1,20 @@
+import type { CreateOrderItemDto } from "./orderItem.dto"
+
+export type OrderDto = {
+    id: number
+    userId?: number
+    guestToken?: string
+    status: string
+    paymentStatus: string
+    subTotal: number
+    shippingFee: number
+    discountAmount: number
+    totalAmount: number
+    currency: string
+    addressId: number
+    note?: string
+    createdAt: Date
+    updatedAt: Date
+}
+
+export type CreateOrderDto = Omit<OrderDto, 'id' | 'paymentStatus' | 'currency' | 'createdAt' | 'updatedAt'> & {orderItems: CreateOrderItemDto[]}

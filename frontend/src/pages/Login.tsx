@@ -126,9 +126,9 @@ const Login = () => {
                             <div className="flex-1 h-px bg-gray-200" />
                         </div>
 
-                        <div className="mt-4 grid grid-cols-2 gap-3">
+                        <div className="mt-4 flex">
                             <button 
-                            className="flex items-center justify-center gap-2 py-2 rounded-md border border-gray-200 hover:shadow-sm"
+                            className="flex items-center justify-center gap-2 py-2 rounded-md border border-gray-200 hover:shadow-sm w-full"
                             onClick={() => handleLoginByGoogle()}>
                                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                     <path d="M21 12.24c0-.72-.06-1.26-.18-1.8H12v3.42h4.92c-.06.54-.36 1.26-.9 1.92l1.44 1.08C18.6 17.34 19.86 15.9 21 12.24z" fill="#4285F4" />
@@ -139,12 +139,12 @@ const Login = () => {
                                 Google
                             </button>
 
-                            <button className="flex items-center justify-center gap-2 py-2 rounded-md border border-gray-200 hover:shadow-sm">
+                            {/* <button className="flex items-center justify-center gap-2 py-2 rounded-md border border-gray-200 hover:shadow-sm">
                                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                     <path d="M22 12.07C22 6.48 17.52 2 11.93 2 6.34 2 2 6.48 2 12.07c0 4.99 3.66 9.12 8.44 9.93v-7.03H7.9v-2.9h2.54V9.4c0-2.5 1.5-3.88 3.8-3.88 1.1 0 2.24.2 2.24.2v2.46h-1.26c-1.24 0-1.62.76-1.62 1.54v1.86h2.78l-.44 2.9h-2.34V22c4.78-.81 8.44-4.94 8.44-9.93z" fill="#1877F2" />
                                 </svg>
                                 Facebook
-                            </button>
+                            </button> */}
                         </div>
 
                         <p className="mt-6 text-sm text-center text-gray-500">
