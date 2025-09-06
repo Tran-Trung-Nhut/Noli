@@ -37,6 +37,7 @@ export class OrderService {
             totalAmount: createOrderDto.totalAmount,
             addressId: createOrderDto.addressId,
             paymentStatus: createOrderDto.paymentStatus,
+            note: createOrderDto.note,
             orderItems: {
               create: createOrderDto.orderItems.map((item) => ({
                 product: { connect: { id: item.productId } },
@@ -76,7 +77,7 @@ export class OrderService {
 
           const numberOfItems = cart.cartItems.reduce((sum, item) => sum + item.quantity, 0)
 
-          await prisma.cart.update({where: {id: cart.id}, data: {totalAmount, numberOfItems}})
+          await prisma.cart.update({ where: { id: cart.id }, data: { totalAmount, numberOfItems } })
 
         }
 
@@ -97,6 +98,7 @@ export class OrderService {
           totalAmount: createOrderDto.totalAmount,
           addressId: createOrderDto.addressId,
           paymentStatus: createOrderDto.paymentStatus,
+          note: createOrderDto.note,
           orderItems: {
             create: createOrderDto.orderItems.map((item) => ({
               product: {

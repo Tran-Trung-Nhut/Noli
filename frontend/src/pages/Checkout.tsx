@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
-import { formatPrice, getGuestToken, notifyError, notifySuccess, notifyWarning, setGuestToken } from "../utils";
+import { confirm, formatPrice, getGuestToken, notifyError, notifySuccess, notifyWarning, setGuestToken } from "../utils";
 import { useAuth } from "../contexts/AuthContext";
 import cartApi from "../apis/cartApi";
 import type { Cart } from "../dtos/cart.dto";
@@ -185,7 +185,8 @@ const Checkout = () => {
             discountAmount,
             totalAmount: total,
             addressId: chosenAddress.id,
-            orderItems: listItems
+            orderItems: listItems,
+            note
         }, src === 'cart')
 
         if (result.status !== HttpStatusCode.Created) {
@@ -201,6 +202,19 @@ const Checkout = () => {
             setIsOpenPaymentMethod(true)
             setLoadingMessage("")
         }, 1000)
+    }
+
+    const onClosePaymentMethodModal = () => {
+        if (!userInfo) {
+            confirm("Hủy chọn phương thức thanh toán", "Bạn sẽ phải thực hiện lại các bước từ đầu!", () => setIsOpenPaymentMethod(false))
+        } else {
+            confirm("Hủy chọn phương thức thanh toán", "Bạn có chắc muốn đóng lại? Tôi sẽ chuyển hướng bạn vào đơn hàng để thuận tiện cho việc theo dõi và thanh toán đơn hàng sắp tới", () => {
+                setLoadingMessage("Đang chuyển hướng trang")
+                setLoading(true)
+
+                setTimeout(() => {navigate('/profile')}, 2000)
+            })
+        }
     }
 
     const getCart = async () => {
@@ -341,7 +355,7 @@ const Checkout = () => {
 
                     <PaymentMethodModal
                         isOpen={isOpenPaymentMethod}
-                        onClose={() => setIsOpenPaymentMethod(false)}
+                        onClose={() => onClosePaymentMethodModal()}
                         subtotal={subtotal}
                         shippingFee={shippingFee}
                         discountAmount={discountAmount}
