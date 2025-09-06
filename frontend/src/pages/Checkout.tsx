@@ -209,6 +209,7 @@ const Checkout = () => {
             confirm("Hủy chọn phương thức thanh toán", "Bạn sẽ phải thực hiện lại các bước từ đầu!", () => setIsOpenPaymentMethod(false))
         } else {
             confirm("Hủy chọn phương thức thanh toán", "Bạn có chắc muốn đóng lại? Tôi sẽ chuyển hướng bạn vào đơn hàng để thuận tiện cho việc theo dõi và thanh toán đơn hàng sắp tới", () => {
+                setIsOpenPaymentMethod(false)
                 setLoadingMessage("Đang chuyển hướng trang")
                 setLoading(true)
 
