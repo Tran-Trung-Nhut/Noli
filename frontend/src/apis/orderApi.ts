@@ -21,14 +21,6 @@ const orderApi = {
         }
     },
 
-    async getOrderAndOrderItems (id: number){
-        try {
-            return await axiosClient.get(`/order/${id}`)
-        } catch (error: any) {
-            return error.response            
-        }
-    },
-
     async getOrderByUserId (userId: number, status: string) {
         try {
             return await axiosClient.get(`/order/userId/${userId}`, {

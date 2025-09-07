@@ -1,5 +1,5 @@
 import { FaExternalLinkAlt } from "react-icons/fa";
-import { formatDateTime, formatPrice } from "../utils";
+import { formatDateTime, formatPrice, getOrderCurrentStatus } from "../utils";
 import { useEffect, useState } from "react";
 import { type OrderDto } from "../dtos/order.dto";
 import type { UserDto } from "../dtos/user.dto";
@@ -7,6 +7,7 @@ import orderApi from "../apis/orderApi";
 import { HttpStatusCode } from "axios";
 import type { AddressDto } from "../dtos/address.dto";
 import { useNavigate } from "react-router-dom";
+import type { OrderStatusDto } from "../dtos/orderStatus.dto";
 
 
 export const STATUS_COLOR_MAP: Record<string, {
@@ -62,13 +63,12 @@ const OrderList = ({
 }) => {
     const navigate = useNavigate()
     const [loading, setLoading] = useState<boolean>(false)
-    const [orders, setOrders] = useState<(OrderDto & { address: AddressDto, totalQuantity: number })[]>([])
+    const [orders, setOrders] = useState<(OrderDto & { address: AddressDto, totalQuantity: number, orderStatuses: OrderStatusDto[] })[]>([])
 
     const fetchOrders = async () => {
         setLoading(true)
 
         const result = await orderApi.getOrderByUserId(userProfile.id, chosen)
-
         if (result.status !== HttpStatusCode.Ok) return setLoading(false)
 
         setOrders(result.data)
@@ -114,7 +114,7 @@ const OrderList = ({
 
                                 <td className="p-4 align-middle hidden md:block">
                                     <div className="inline-flex justify-center items-center gap-2 px-3 py-1 rounded-full bg-gray-50">
-                                        <span className={`text-sm text-center ${STATUS_COLOR_MAP[order.status].tailwindBg} ${STATUS_COLOR_MAP[order.status].tailwindText}`}>{STATUS_COLOR_MAP[order.status].label}</span>
+                                        <span className={`text-sm text-center ${STATUS_COLOR_MAP[getOrderCurrentStatus(order.orderStatuses)].tailwindBg} ${STATUS_COLOR_MAP[getOrderCurrentStatus(order.orderStatuses)].tailwindText}`}>{STATUS_COLOR_MAP[getOrderCurrentStatus(order.orderStatuses)].label}</span>
                                     </div>
                                 </td>
 

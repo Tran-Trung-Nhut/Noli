@@ -5,11 +5,13 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { MESSAGES } from 'src/constantsAndMessage';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Cache } from 'cache-manager';
+import { OrderStatusService } from 'src/order-status/order-status.service';
 
 @Injectable()
 export class OrderService {
   constructor(
     private readonly prismaService: PrismaService,
+    private readonly orderStatusService: OrderStatusService,
     @Inject(CACHE_MANAGER) private cacheManager: Cache
   ) { }
 
@@ -30,7 +32,6 @@ export class OrderService {
           data: {
             userId: createOrderDto.userId ?? null,
             guestToken: createOrderDto.guestToken ?? null,
-            status: createOrderDto.status,
             shippingFee: createOrderDto.shippingFee,
             subTotal: createOrderDto.subTotal,
             discountAmount: createOrderDto.discount,
@@ -46,6 +47,9 @@ export class OrderService {
                 price: item.price,
               })),
             },
+            orderStatuses: {
+              create: { status: "DRAFT" }
+            }
           },
           include: { orderItems: true },
         });
@@ -91,7 +95,6 @@ export class OrderService {
         data: {
           userId: createOrderDto.userId,
           guestToken: createOrderDto.guestToken,
-          status: createOrderDto.status,
           shippingFee: createOrderDto.shippingFee,
           subTotal: createOrderDto.subTotal,
           discountAmount: createOrderDto.discount,
@@ -111,6 +114,9 @@ export class OrderService {
               price: item.price,
             })),
           },
+          orderStatuses: {
+            create: { status: "DRAFT" }
+          }
         },
       });
     }
@@ -124,10 +130,50 @@ export class OrderService {
 
     return await this.prismaService.$transaction([
       this.prismaService.order.count({ where: { userId: Number(userId) } }),
-      this.prismaService.order.count({ where: { userId: Number(userId), status: "PENDING_PAYMENT" } }),
-      this.prismaService.order.count({ where: { userId: Number(userId), status: "DELIVERY" } }),
-      this.prismaService.order.count({ where: { userId: Number(userId), status: "COMPLETED" } }),
-      this.prismaService.order.count({ where: { userId: Number(userId), status: "CANCEL" } })
+      this.prismaService.order.count({
+        where: {
+          userId: Number(userId),
+          orderStatuses: {
+            some: {
+              isCurrentStatus: true,
+              status: "PENDING_PAYMENT"
+            }
+          }
+        }
+      }),
+      this.prismaService.order.count({
+        where: {
+          userId: Number(userId),
+          orderStatuses: {
+            some: {
+              isCurrentStatus: true,
+              status: "DELIVERY"
+            }
+          }
+        }
+      }),
+      this.prismaService.order.count({
+        where: {
+          userId: Number(userId),
+          orderStatuses: {
+            some: {
+              isCurrentStatus: true,
+              status: "COMPLETED"
+            }
+          }
+        }
+      }),
+      this.prismaService.order.count({
+        where: {
+          userId: Number(userId),
+          orderStatuses: {
+            some: {
+              isCurrentStatus: true,
+              status: "CANCEL"
+            }
+          }
+        }
+      }),
     ])
   }
 
@@ -143,7 +189,14 @@ export class OrderService {
     const result = await this.prismaService.order.findMany({
       where: {
         userId: Number(userId),
-        ...(status !== 'ALL' ? { status } : {})
+        ...(status !== 'ALL' ? {
+          orderStatuses: {
+            some: {
+              isCurrentStatus: true,
+              status
+            }
+          }
+        } : {})
       },
       include: {
         address: true,
@@ -151,9 +204,11 @@ export class OrderService {
           select: {
             quantity: true
           }
-        }
+        },
+        orderStatuses: true
       }
     })
+
 
     return result.map(o => ({
       ...o,
@@ -171,7 +226,8 @@ export class OrderService {
             productVariant: true
           }
         },
-        address: true
+        address: true,
+        orderStatuses: true
       }
     });
   }
@@ -185,7 +241,7 @@ export class OrderService {
 
     if (!existOrder) throw new BadRequestException("Đơn hàng không tồn tại")
 
-    return await this.prismaService.order.update({ where: { id }, data: { status } })
+    return await this.orderStatusService.create({ orderId: id, status })
   }
 
   remove(id: number) {

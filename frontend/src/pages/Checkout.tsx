@@ -79,7 +79,7 @@ const Checkout = () => {
 
     useEffect(() => {
         if (!state && !src) {
-            navigate("/invalid-checkout", { replace: true });
+            navigate("/invalid", { replace: true });
         }
     }, [state, src, navigate]);
 
@@ -141,8 +141,7 @@ const Checkout = () => {
                 return setLoading(false)
             }
 
-
-            setTimeout(() => { navigate(`/payment-result?orderId=${result.data.id}`) }, 3000)
+            setTimeout(() => { navigate(`/payment-result?orderId=${result.data.orderId}`) }, 3000)
         }
 
     };
@@ -179,7 +178,6 @@ const Checkout = () => {
         const result = await orderApi.createOrder({
             ...(userInfo ? { userId: userInfo.id } : {}),
             ...(getGuestToken() ? { guestToken: getGuestToken() || undefined } : {}),
-            status: "DRAFT",
             shippingFee: shippingFee ? shippingFee : 0,
             subTotal: subtotal,
             discountAmount,

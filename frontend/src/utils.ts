@@ -2,6 +2,7 @@ import { toast } from "react-toastify";
 import Swal from 'sweetalert2';
 import type { Product } from "./dtos/product.dto";
 import type { District, Province, Ward } from "./pages/Checkout";
+import type { OrderStatusDto } from "./dtos/orderStatus.dto";
 
 export const notifySuccess = (message: string) => toast.success(message, { position: 'top-right', autoClose: 2000 })
 
@@ -28,6 +29,15 @@ export const formatDateTime = (iso?: string) => {
             year: "numeric",
         })
 }
+
+export const getOrderCurrentStatus = (orderStatuses: OrderStatusDto[]) : string => {
+    for(const orderStatus of orderStatuses){
+        if (orderStatus.isCurrentStatus) return orderStatus.status
+    }
+
+    return "UNKNOWN"
+}   
+
 
 export const getPaymentMethod = (paymentMethod: string | undefined) => {
     switch (paymentMethod) {

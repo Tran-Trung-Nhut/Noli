@@ -12,6 +12,7 @@ import { PaymentModule } from './payment/payment.module';
 import { OrderModule } from './order/order.module';
 import { OrderItemModule } from './order-item/order-item.module';
 import { redisStore } from 'cache-manager-redis-yet';
+import { OrderStatusModule } from './order-status/order-status.module';
 
 @Module({
   imports: [
@@ -38,7 +39,8 @@ import { redisStore } from 'cache-manager-redis-yet';
           ttl: 60 * 1000
         })
       })
-    })
+    }),
+    OrderStatusModule
   ],
   controllers: [],
   providers: [],

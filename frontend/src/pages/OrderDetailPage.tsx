@@ -9,7 +9,7 @@ import {
     FaRedoAlt,
     FaPhoneAlt,
 } from "react-icons/fa";
-import { confirm, formatDateTime, formatPrice, getPaymentMethod, notifyError, notifySuccess } from "../utils"; // giữ như bạn đang dùng
+import { confirm, formatDateTime, formatPrice, getOrderCurrentStatus, getPaymentMethod, notifyError, notifySuccess } from "../utils"; // giữ như bạn đang dùng
 
 // --- Types (tùy chỉnh nếu cần) ---
 
@@ -20,31 +20,31 @@ const STATUS_META: Record<
     { label: string; icon: JSX.Element; text: string; bg: string }
 > = {
     DRAFT: {
-        label: "Bản nháp",
+        label: "Tạo đơn hàng thành công",
         icon: <FaExternalLinkAlt />,
         text: "text-gray-600",
         bg: "bg-gray-50",
     },
     PENDING_PAYMENT: {
-        label: "Chờ thanh toán",
+        label: "Đơn hàng đã được xác nhận và chờ thanh toán",
         icon: <FaCreditCard />,
         text: "text-amber-700",
         bg: "bg-amber-50",
     },
     DELIVERY: {
-        label: "Đang giao",
+        label: "Đơn hàng đang trên đường vận chuyển",
         icon: <FaTruck />,
         text: "text-sky-500",
         bg: "bg-sky-50",
     },
     COMPLETED: {
-        label: "Hoàn thành",
+        label: "Đơn hàng đã đến tay người nhận",
         icon: <FaCheckCircle /> as any, // fallback if not imported; will be replaced below
         text: "text-emerald-600",
         bg: "bg-emerald-50",
     },
     CANCEL: {
-        label: "Đã hủy",
+        label: "Đơn hàng đã bị hủy",
         icon: <FaTimesCircle />,
         text: "text-rose-600",
         bg: "bg-rose-50",
@@ -54,11 +54,13 @@ const STATUS_META: Record<
 // Small fix: import FaCheckCircle properly
 import { FaCheckCircle } from "react-icons/fa";
 import { useLocation, useNavigate } from "react-router-dom";
-import { type OrderShowDto } from "../dtos/order.dto";
 import LoadingAuth from "../components/LoadingAuth";
 import orderApi from "../apis/orderApi";
 import { HttpStatusCode } from "axios";
 import type { AddressDto } from "../dtos/address.dto";
+import type { OrderItemShow } from "../dtos/orderItem.dto";
+import type { OrderDto } from "../dtos/order.dto";
+import type { OrderStatusDto } from "../dtos/orderStatus.dto";
 
 // --- Mock order (used if no prop passed) ---
 
@@ -68,7 +70,7 @@ const OrderDetailPage = () => {
     const state = location.state as { orderId: number }
 
 
-    const [order, setOrder] = useState<OrderShowDto & { address: AddressDto } | null>(null)
+    const [order, setOrder] = useState<OrderDto & { orderItems: OrderItemShow[], address: AddressDto, orderStatuses: OrderStatusDto[] } | null>(null)
     const [loading, setLoading] = useState<boolean>(false)
     const navigate = useNavigate()
 
@@ -128,9 +130,9 @@ const OrderDetailPage = () => {
                             </div>
 
                             {/* Status badge + actions (desktop) */}
-                            <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full ${STATUS_META[order.status].bg}`}>
-                                <span className={`text-sm ${STATUS_META[order.status].text}`}>{STATUS_META[order.status].icon}</span>
-                                <span className={`text-sm font-medium ${STATUS_META[order.status].text}`}>{STATUS_META[order.status].label}</span>
+                            <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full ${STATUS_META[getOrderCurrentStatus(order.orderStatuses)].bg}`}>
+                                <span className={`text-sm ${STATUS_META[getOrderCurrentStatus(order.orderStatuses)].text}`}>{STATUS_META[getOrderCurrentStatus(order.orderStatuses)].icon}</span>
+                                <span className={`text-sm font-medium ${STATUS_META[getOrderCurrentStatus(order.orderStatuses)].text}`}>{STATUS_META[getOrderCurrentStatus(order.orderStatuses)].label}</span>
                             </div>
                         </div>
 
@@ -172,36 +174,36 @@ const OrderDetailPage = () => {
                                     </div>
 
                                     {/* Timeline */}
-                                    {/* <div>
-                <h3 className="text-lg font-semibold mb-3">Lịch sử đơn hàng</h3>
-                <div className="space-y-4">
-                  {order.history && order.history.length > 0 ? (
-                    order.history.map((h, i) => {
-                      const m = STATUS_META[h.status];
-                      return (
-                        <div key={i} className="flex items-start gap-3">
-                          <div className="flex-shrink-0">
-                            <div className={`w-9 h-9 rounded-full flex items-center justify-center ${m.bg}`}>
-                              <span className={`${m.text}`}>{m.icon}</span>
-                            </div>
-                          </div>
-                          <div className="flex-1">
-                            <div className="flex items-center justify-between">
-                              <div>
-                                <div className="font-medium text-slate-800">{m.label}</div>
-                                {h.note && <div className="text-sm text-gray-500 mt-0.5">{h.note}</div>}
-                              </div>
-                              <div className="text-xs text-gray-400">{formatDateTime(h.time)}</div>
-                            </div>
-                          </div>
-                        </div>
-                      );
-                    })
-                  ) : (
-                    <div className="text-sm text-gray-500">Không có lịch sử.</div>
-                  )}
-                </div>
-              </div> */}
+                                    <div>
+                                        <h3 className="text-lg font-semibold mb-3">Lịch sử đơn hàng</h3>
+                                        <div className="space-y-4">
+                                            {order.orderStatuses && order.orderStatuses.length > 0 ? (
+                                                order.orderStatuses.map(orderStatus => {
+                                                    const m = STATUS_META[orderStatus.status];
+                                                    return (
+                                                        <div key={orderStatus.id} className="flex items-start gap-3">
+                                                            <div className="flex-shrink-0">
+                                                                <div className={`w-9 h-9 rounded-full flex items-center justify-center ${m.bg}`}>
+                                                                    <span className={`${m.text}`}>{m.icon}</span>
+                                                                </div>
+                                                            </div>
+                                                            <div className="flex-1">
+                                                                <div className="flex items-center justify-between">
+                                                                    <div>
+                                                                        <div className="font-medium text-slate-800">{m.label}</div>
+                                                                        {/* {h.note && <div className="text-sm text-gray-500 mt-0.5">{orderStatus.note}</div>} */}
+                                                                    </div>
+                                                                    <div className="text-xs text-gray-400">{formatDateTime(orderStatus.createdAt.toString())}</div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    );
+                                                })
+                                            ) : (
+                                                <div className="text-sm text-gray-500">Không có lịch sử.</div>
+                                            )}
+                                        </div>
+                                    </div>
 
                                     {/* Customer note */}
                                     {order.note && (
@@ -258,7 +260,7 @@ const OrderDetailPage = () => {
 
                                     {/* Actions for mobile & summary */}
                                     <div className="space-y-2">
-                                        {order.status === 'COMPLETED' && (
+                                        {getOrderCurrentStatus(order.orderStatuses) === 'COMPLETED' && (
                                             <button
                                                 onClick={() => { }}
                                                 className="w-full px-4 py-2 bg-indigo-600 text-white rounded-md shadow hover:bg-indigo-700 transition"
@@ -267,7 +269,7 @@ const OrderDetailPage = () => {
                                             </button>
                                         )}
 
-                                        {order.status === 'DELIVERY' && (
+                                        {getOrderCurrentStatus(order.orderStatuses) === 'DELIVERY' && (
                                             <button
                                                 onClick={() => { }}
                                                 className="w-full px-4 py-2 bg-white border rounded-md hover:shadow transition flex items-center justify-center gap-2"
@@ -277,7 +279,7 @@ const OrderDetailPage = () => {
                                         )}
 
                                         <div className="flex gap-2">
-                                            {(order.status === 'DRAFT' || order.status === 'PENDING_PAYMENT') && (
+                                            {(getOrderCurrentStatus(order.orderStatuses) === 'DRAFT' || getOrderCurrentStatus(order.orderStatuses) === 'PENDING_PAYMENT') && (
                                                 <button
                                                     onClick={() => cancelOrder()}
                                                     className="flex-1 px-4 py-2 bg-white border rounded-md hover:shadow transition"

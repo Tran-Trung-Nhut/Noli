@@ -2,11 +2,12 @@ import { FileText } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { FaShop } from "react-icons/fa6";
 import { useNavigate } from "react-router-dom";
-import { type OrderShowDto } from "../dtos/order.dto";
 import LoadingAuth from "../components/LoadingAuth";
 import orderApi from "../apis/orderApi";
 import { HttpStatusCode } from "axios";
-import { formatPrice, getPaymentMethod, notifyError } from "../utils";
+import { formatDateTime, formatPrice, getPaymentMethod, notifyError } from "../utils";
+import type { OrderDto } from "../dtos/order.dto";
+import type { OrderItemShow } from "../dtos/orderItem.dto";
 
 type ResultStatus = "success" | "failure";
 
@@ -15,7 +16,7 @@ function useQueryParams() {
 }
 
 const PaymentResult = () => {
-    const [order, setOrder] = useState<OrderShowDto | null>(null)
+    const [order, setOrder] = useState<OrderDto & {orderItems: OrderItemShow[]} | null>(null)
     const qs = useQueryParams();
     const navigate = useNavigate()
 
@@ -95,12 +96,11 @@ const PaymentResult = () => {
 
         const numberPart = orderId.replace("MOMOPAYMENT", "")
 
-        const result = await orderApi.getOrderAndOrderItems(Number(numberPart))
+        const result = await orderApi.getOrder(Number(numberPart))
 
         if (result.status !== HttpStatusCode.Ok) {
             notifyError("Có lỗi xảy ra. Trở về trang chủ")
         }
-
         setOrder(result.data)
     }
 
@@ -191,7 +191,7 @@ const PaymentResult = () => {
                                             </div>
                                         </div>
 
-                                        <div className="mt-3 text-xs text-gray-500">Ngày: {new Date().toLocaleString()}</div>
+                                        <div className="mt-3 text-xs text-gray-500">Ngày: {formatDateTime(order?.createdAt.toString())}</div>
                                     </div>
 
                                     <div className="mt-4 text-sm text-gray-600">

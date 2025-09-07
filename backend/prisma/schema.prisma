@@ -98,7 +98,6 @@ model Order {
   id             Int      @id @default(autoincrement())
   userId         Int?
   guestToken     String?  @db.Uuid
-  status         String   @default("PENDING_PAYMENT")
   paymentMethod  String   @default("COD")
   transactionId  String?
   paymentStatus  String   @default("PENDING")
@@ -114,7 +113,21 @@ model Order {
 
   address Address @relation(fields: [addressId], references: [id])
 
-  orderItems OrderItem[]
+  orderStatuses OrderStatus[]
+  orderItems    OrderItem[]
+}
+
+model OrderStatus {
+  id               Int      @id @default(autoincrement())
+  orderId          Int
+  status           String
+  previousStatusId Int?     @unique
+  isCurrentStatus  Boolean  @default(true)
+  createdAt        DateTime @default(now())
+
+  order          Order        @relation(fields: [orderId], references: [id])
+  previousStatus OrderStatus? @relation("OrderStatusToPrevious", fields: [previousStatusId], references: [id])
+  nextStatus     OrderStatus? @relation("OrderStatusToPrevious")
 }
 
 model OrderItem {
@@ -125,7 +138,7 @@ model OrderItem {
   quantity         Int
   price            Int
 
-  order          Order          @relation(fields: [orderId], references: [id])
+  order          Order          @relation(fields: [orderId], references: [id], onDelete: Cascade)
   product        Product        @relation(fields: [productId], references: [id])
   productVariant ProductVariant @relation(fields: [productVariantId], references: [id])
 }

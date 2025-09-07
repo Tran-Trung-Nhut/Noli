@@ -19,6 +19,7 @@ import About from './pages/About';
 import Contact from './pages/Contact';
 import PaymentResult from './pages/PaymentResult';
 import OrderDetailPage from './pages/OrderDetailPage';
+import Invalid from './pages/Invalid';
 
 
 const App = () => {
@@ -32,6 +33,7 @@ const App = () => {
             <Route path='/login' element={<Login />} />
             <Route path='/signup' element={<Signup />} />
             <Route path='/auth-google-result' element={<GoogleAuthLoading />} />
+            <Route path='/invalid' element={<Invalid/>}/>
             <Route path='/' element={<DefaultLayout />}>
               <Route index element={<Home />} />               {/* đường dẫn "/" */}
               <Route path='/my-cart' element={<CartPage />} />
