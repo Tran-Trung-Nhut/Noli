@@ -16,7 +16,7 @@ function useQueryParams() {
 }
 
 const PaymentResult = () => {
-    const [order, setOrder] = useState<OrderDto & {orderItems: OrderItemShow[]} | null>(null)
+    const [order, setOrder] = useState<OrderDto & { orderItems: OrderItemShow[] } | null>(null)
     const qs = useQueryParams();
     const navigate = useNavigate()
 
@@ -137,6 +137,9 @@ const PaymentResult = () => {
                             )}
 
                             {message && <p className="mt-2 text-sm text-gray-500">{message}</p>}
+
+                            {order && !order.userId && <p className="mt-3 text-sm text-gray-600 font-bold italic">Hãy đăng nhập để xem tình trạng đơn hàng này của bạn.</p>}
+
 
                             <div className="mt-6 flex flex-col sm:flex-row items-center justify-center gap-3">
                                 {/* <button onClick={viewOrder} className="inline-flex items-center gap-2 px-4 py-2 bg-white border rounded-md shadow-sm hover:bg-gray-50">

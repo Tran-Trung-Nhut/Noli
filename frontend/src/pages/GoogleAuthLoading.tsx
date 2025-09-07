@@ -7,6 +7,7 @@ import { HttpStatusCode } from "axios";
 import { useAuth } from "../contexts/AuthContext";
 import cartApi from "../apis/cartApi";
 import { getGuestToken } from "../utils";
+import orderApi from "../apis/orderApi";
 
 const GoogleAuthLoading = () => {
     const [loading, setLoading] = useState(true);
@@ -25,6 +26,8 @@ const GoogleAuthLoading = () => {
             login(result.data.userInfo, result.data.accessToken)
 
             await cartApi.mergeCart(getGuestToken(), result.data.userInfo.id)
+
+            await orderApi.mergeOrder(result.data.userInfo.id)
 
             navigate('/')
         };

@@ -39,9 +39,7 @@ export class ProductController {
 
   @Get(':id')
   async findOne(@Param('id') id: number) {
-    return {
-      message: MESSAGES.PRODUCT.SUCCESS.FETCH_ONE, data: await this.productService.findOne(+id)
-    }
+    return await this.productService.findOne(+id)
   }
 
   @Patch(':id')

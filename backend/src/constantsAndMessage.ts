@@ -43,7 +43,7 @@ export const MESSAGES = {
             FETCH_ONE: 'Product fetched successfully',
         },
         ERROR: {
-            NOT_FOUND: 'Không tìm thấy sản phẩm này',
+            NOT_FOUND: 'Không tìm thấy người dùng',
             EXISTED: 'Người dùng đã tồn tại',
             CREATE_FAILED: 'Lỗi khi tạo sản phẩm. Vui lòng thử lại sau',
             UPDATE_FAILED: 'Lỗi khi chỉnh sửa sản phẩm. Vui lòng thử lại sau',

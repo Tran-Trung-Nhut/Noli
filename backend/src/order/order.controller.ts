@@ -12,6 +12,11 @@ export class OrderController {
     return await this.orderService.create(createOrderDto, fromCart === 'true')
   }
 
+  @Post('/merge-order')
+  async mergeOrder(@Body() data: {userId: number}) {
+    return await this.orderService.mergeOrder(+data.userId)
+  }
+
   @Get('/summary/:userId')
   async getOrderSummary (@Param('userId') userId: number){
     return this.orderService.getOrderSummary(userId)
@@ -43,7 +48,7 @@ export class OrderController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.orderService.remove(+id);
+  async remove(@Param('id') id: string) {
+    return await this.orderService.remove(+id);
   }
 }

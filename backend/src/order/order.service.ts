@@ -244,7 +244,21 @@ export class OrderService {
     return await this.orderStatusService.create({ orderId: id, status })
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} order`;
+  async remove(id: number) {
+    return await this.prismaService.order.delete({where: {id}})
+  }
+
+  async mergeOrder(userId: number){
+    const existingUser = await this.prismaService.user.findUnique({where: {id: userId}})
+
+    if (!existingUser) throw new BadRequestException(MESSAGES.USER.ERROR.NOT_FOUND)
+
+    const carts = await this.prismaService.cart.findMany({where: {userId}})
+
+    if (carts.length === 0) return
+
+    const guestTokens = carts.flatMap(cart => cart.guestToken)
+
+    await this.prismaService.order.updateMany({where: {guestToken: {in: guestTokens}}, data: {userId}})
   }
 }

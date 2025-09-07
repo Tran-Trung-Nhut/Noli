@@ -9,6 +9,7 @@ import { Minus, Plus } from "lucide-react";
 import { HttpStatusCode } from "axios";
 import type { ProductVariant } from "../dtos/productVariant.dto";
 import LoadingAuth from "../components/LoadingAuth";
+import NotFoundSVG from "../assets/product-not-found.svg"
 
 const ProductDetailPage = () => {
     const [loading, setLoading] = useState<boolean>(false)
@@ -61,16 +62,22 @@ const ProductDetailPage = () => {
 
     const fetchProductDetail = async () => {
         setLoading(true)
-        const data = (await productApi.getProduct(Number(id))).data.data
-        setProduct(data)
+        const response = (await productApi.getProduct(Number(id)))
 
-        if (data.variants && data.variants.length > 0) {
-            setChosenSize(data.variants[0].size);
-            setChosenColor(data.variants[0].color);
-            setPrice(data.variants[0].price)
+        if (response.data === '') {
+            setLoading(false)
+            return setProduct(null)
+        }
 
-            setListSize(Array.from(new Set(data.variants.map((variant: ProductVariant) => variant.size))))
-            setListColor(Array.from(new Set(data.variants.map((variant: ProductVariant) => variant.color))))
+        setProduct(response.data)
+
+        if (response.data.variants && response.data.variants.length > 0) {
+            setChosenSize(response.data.variants[0].size);
+            setChosenColor(response.data.variants[0].color);
+            setPrice(response.data.variants[0].price)
+
+            setListSize(Array.from(new Set(response.data.variants.map((variant: ProductVariant) => variant.size))))
+            setListColor(Array.from(new Set(response.data.variants.map((variant: ProductVariant) => variant.color))))
         }
 
         setLoading(false)
@@ -247,7 +254,12 @@ const ProductDetailPage = () => {
                     </div>
                 </section>
             ) : (
-                <h1>Không tìm thấy sản phẩm</h1>
+                <>
+                    <div className="flex justify-center items-center">
+                        <img src={NotFoundSVG} className="md:w-[400px] md:h-[400px] w-[250px] h-[250px] mt-10" />
+                    </div>
+                    <h1 className="text-center text-4xl text-sky-500 font-bold">SẢN PHẨM KHÔNG TỒN TẠI</h1>
+                </>
             )
     );
 };

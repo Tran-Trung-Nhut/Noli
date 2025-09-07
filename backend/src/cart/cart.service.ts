@@ -1,7 +1,6 @@
-import { BadRequestException, Injectable, InternalServerErrorException } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateCartDto } from './dto/create-cart.dto';
 import { UpdateCartDto } from './dto/update-cart.dto';
-import { MESSAGES } from 'src/constantsAndMessage';
 import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()

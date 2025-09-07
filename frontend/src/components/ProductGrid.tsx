@@ -2,6 +2,7 @@
 import ProductCard from "./ProductCart";
 import ProductCardSkeleton from "./ProductCartSkeleton";
 import type { Product } from "../dtos/product.dto";
+import NotFoundSVG from "../assets/product-not-found.svg"
 
 type Props = {
     products: Product[];
@@ -22,6 +23,9 @@ export default function ProductGrid({ products, loading }: Props) {
     if (!loading && products.length === 0) {
         return (
             <div className="text-center py-20">
+                <div className="flex justify-center items-center mb-2">
+                    <img src={NotFoundSVG} className="w-[250px]"/>
+                </div>
                 <h3 className="text-2xl font-bold mb-2">Không tìm thấy sản phẩm</h3>
                 <p className="text-gray-500">Thử thay đổi từ khóa tìm kiếm hoặc bộ lọc.</p>
             </div>

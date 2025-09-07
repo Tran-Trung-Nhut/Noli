@@ -125,7 +125,7 @@ model OrderStatus {
   isCurrentStatus  Boolean  @default(true)
   createdAt        DateTime @default(now())
 
-  order          Order        @relation(fields: [orderId], references: [id])
+  order          Order        @relation(fields: [orderId], references: [id], onDelete: Cascade)
   previousStatus OrderStatus? @relation("OrderStatusToPrevious", fields: [previousStatusId], references: [id])
   nextStatus     OrderStatus? @relation("OrderStatusToPrevious")
 }

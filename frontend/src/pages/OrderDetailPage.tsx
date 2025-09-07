@@ -61,6 +61,7 @@ import type { AddressDto } from "../dtos/address.dto";
 import type { OrderItemShow } from "../dtos/orderItem.dto";
 import type { OrderDto } from "../dtos/order.dto";
 import type { OrderStatusDto } from "../dtos/orderStatus.dto";
+import BuyAgainModal from "../components/BuyAgainModal";
 
 // --- Mock order (used if no prop passed) ---
 
@@ -72,6 +73,7 @@ const OrderDetailPage = () => {
 
     const [order, setOrder] = useState<OrderDto & { orderItems: OrderItemShow[], address: AddressDto, orderStatuses: OrderStatusDto[] } | null>(null)
     const [loading, setLoading] = useState<boolean>(false)
+    const [isOpenBuyAgain, setIsOpenBuyAgain] = useState<boolean>(false)
     const navigate = useNavigate()
 
     const fetchOrderFullDetail = async () => {
@@ -109,7 +111,14 @@ const OrderDetailPage = () => {
             <LoadingAuth />
         ) : (
             <>
+                <BuyAgainModal 
+                open={isOpenBuyAgain} 
+                onClose={() => setIsOpenBuyAgain(false)} 
+                orderItems={order.orderItems}
+                />
+                
                 {loading && <LoadingAuth />}
+
                 <div className="py-8 px-4">
                     <div className="max-w-[90%] mx-auto space-y-6">
                         {/* Header: back + title */}
@@ -269,14 +278,14 @@ const OrderDetailPage = () => {
                                             </button>
                                         )}
 
-                                        {getOrderCurrentStatus(order.orderStatuses) === 'DELIVERY' && (
+                                        {/* {getOrderCurrentStatus(order.orderStatuses) === 'DELIVERY' && (
                                             <button
                                                 onClick={() => { }}
                                                 className="w-full px-4 py-2 bg-white border rounded-md hover:shadow transition flex items-center justify-center gap-2"
                                             >
                                                 <FaTruck /> Theo dõi đơn
                                             </button>
-                                        )}
+                                        )} */}
 
                                         <div className="flex gap-2">
                                             {(getOrderCurrentStatus(order.orderStatuses) === 'DRAFT' || getOrderCurrentStatus(order.orderStatuses) === 'PENDING_PAYMENT') && (
@@ -289,7 +298,7 @@ const OrderDetailPage = () => {
                                             )}
 
                                             <button
-                                                onClick={() => { }}
+                                                onClick={() => setIsOpenBuyAgain(true)}
                                                 className="flex-1 px-4 py-2 bg-white border rounded-md hover:shadow transition flex justify-center items-center gap-2"
                                             >
                                                 <FaRedoAlt /> Mua lại

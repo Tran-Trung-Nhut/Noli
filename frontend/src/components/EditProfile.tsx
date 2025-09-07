@@ -5,12 +5,10 @@ import { isValidEmail, notifyWarning } from "../utils";
 
 const EditProfileModal = ({
     userInfo,
-    isOpen,
     onClose,
     onSave
 }: {
     userInfo: any
-    isOpen: boolean
     onClose: () => void,
     onSave: (formData: UpdateUserDto) => void
 }) => {
@@ -40,8 +38,6 @@ const EditProfileModal = ({
         return d.toISOString().split("T")[0];
     }
 
-
-    if (!isOpen) return null;
 
     return (
         <div className="fixed inset-0 flex items-center justify-center bg-black/50 z-50">

@@ -10,6 +10,8 @@ import noImage from "../assets/No_image_user.jpg"
 import LoadingAuth from "../components/LoadingAuth";
 import orderApi from "../apis/orderApi";
 import OrderList from "../components/OrderList";
+import { FaCamera } from "react-icons/fa6";
+import AvatarUploadModal from "../components/AvatarUploadModal";
 
 const Profile = () => {
     const [isEditingProfile, setIsEditingProfile] = useState<boolean>(false);
@@ -21,6 +23,7 @@ const Profile = () => {
     const [totalCancel, setTotalCancel] = useState<number>(0)
     const [chosenSummaryOrder, setChosenSummaryOrder] = useState<string | null>(null)
     const [loading, setLoading] = useState<boolean>(false)
+    const [isOpenChangeImage, setIsOpenChangeImage] = useState<boolean>(false)
     const { userInfo } = useAuth()
 
     const fetchUser = async () => {
@@ -88,14 +91,26 @@ const Profile = () => {
 
     return (
         <>
-            {isEditingProfile && (
+
+            {isEditingProfile &&
                 <EditProfileModal
                     userInfo={userProfile}
-                    isOpen={isEditingProfile}
                     onClose={() => setIsEditingProfile(false)}
                     onSave={handleEditProfile}
                 />
-            )}
+            }
+
+
+            <AvatarUploadModal
+                isOpen={isOpenChangeImage}
+                onClose={() => setIsOpenChangeImage(false)}
+                currentImage={userProfile?.image}
+                onUploadSuccess={() => {
+                    fetchUser()
+                    notifySuccess("Thay đổi ảnh đại diện thành công!")
+                }}
+                userId={userInfo?.id || 0}
+            />
 
             {loading && <LoadingAuth />}
 
@@ -104,13 +119,21 @@ const Profile = () => {
                     {/* Header */}
                     <div className="bg-sky-500 h-32 relative">
                         <div className="absolute left-1/2 transform -translate-x-1/2 bottom-[-48px]">
-                            <img
-                                src={
-                                    userProfile?.image || noImage
-                                }
-                                alt="avatar"
-                                className="w-24 h-24 rounded-full border-4 border-white shadow-md"
-                            />
+                            <div className="relative group w-24 h-24">
+                                <img
+                                    src={userProfile?.image || noImage}
+                                    alt="avatar"
+                                    className="w-24 h-24 rounded-full border-4 border-white shadow-md object-cover"
+                                />
+
+                                <div className="absolute bottom-0 left-0 w-full h-1/2 bg-black bg-opacity-70 flex flex-col items-center justify-center rounded-b-full opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                    {/* Icon máy ảnh */}
+                                    <button className=" flex flex-col items-center justify-center gap-1" onClick={() => setIsOpenChangeImage(true)}>
+                                        <FaCamera color="white" />
+                                        <span className="text-xs text-white italic">{userProfile?.image ? "Đổi ảnh" : "Tải ảnh"}</span>
+                                    </button>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
@@ -196,45 +219,45 @@ const Profile = () => {
                     <div className="px-8 pb-10">
                         <h2 className="text-xl font-bold text-gray-800 mb-4 text-center border-t-2">Đơn hàng của bạn</h2>
                         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
-                            <button className={`${chosenSummaryOrder === "ALL"? "bg-sky-300" : "bg-sky-50 hover:shadow-md"} rounded-xl p-4 shadow transition flex flex-col items-center`}
-                            disabled={chosenSummaryOrder === "ALL"}
-                            onClick={() => setChosenSummaryOrder('ALL')}>
+                            <button className={`${chosenSummaryOrder === "ALL" ? "bg-sky-300" : "bg-sky-50 hover:shadow-md"} rounded-xl p-4 shadow transition flex flex-col items-center`}
+                                disabled={chosenSummaryOrder === "ALL"}
+                                onClick={() => setChosenSummaryOrder('ALL')}>
                                 <Package className="text-sky-500 mb-2" size={28} />
                                 <p className="text-gray-500 text-sm text-center">Tổng đơn</p>
                                 <p className="text-2xl font-bold text-sky-600">{totalOrders}</p>
                             </button>
-                            <button className={`${chosenSummaryOrder === "PENDING_PAYMENT"? "bg-yellow-300" : "bg-yellow-50 hover:shadow-md"} rounded-xl p-4 shadow transition flex flex-col items-center`}
-                            disabled={chosenSummaryOrder === "PENDING_PAYMENT"}
-                            onClick={() => setChosenSummaryOrder('PENDING_PAYMENT')}>
+                            <button className={`${chosenSummaryOrder === "PENDING_PAYMENT" ? "bg-yellow-300" : "bg-yellow-50 hover:shadow-md"} rounded-xl p-4 shadow transition flex flex-col items-center`}
+                                disabled={chosenSummaryOrder === "PENDING_PAYMENT"}
+                                onClick={() => setChosenSummaryOrder('PENDING_PAYMENT')}>
                                 <Clock className="text-yellow-500 mb-2" size={28} />
                                 <p className="text-gray-500 text-sm text-center">Chờ thanh toán</p>
                                 <p className="text-2xl font-bold text-yellow-600">{totalPendingPayment}</p>
                             </button>
-                            <button className={`${chosenSummaryOrder === "DELIVERY"? "bg-blue-300" : "bg-blue-50 hover:shadow-md"} rounded-xl p-4 shadow transition flex flex-col items-center`}
-                            disabled={chosenSummaryOrder === "DELIVERY"}
-                            onClick={() => setChosenSummaryOrder('DELIVERY')}>
+                            <button className={`${chosenSummaryOrder === "DELIVERY" ? "bg-blue-300" : "bg-blue-50 hover:shadow-md"} rounded-xl p-4 shadow transition flex flex-col items-center`}
+                                disabled={chosenSummaryOrder === "DELIVERY"}
+                                onClick={() => setChosenSummaryOrder('DELIVERY')}>
                                 <Truck className="text-blue-500 mb-2" size={28} />
                                 <p className="text-gray-500 text-sm text-center">Đang giao</p>
                                 <p className="text-2xl font-bold text-blue-600">{totalDelivery}</p>
                             </button>
-                            <button className={`${chosenSummaryOrder === "COMPLETED"? "bg-green-300" : "bg-green-50 hover:shadow-md"} rounded-xl p-4 shadow transition flex flex-col items-center`}
-                            disabled={chosenSummaryOrder === "COMPLETED"}
-                            onClick={() => setChosenSummaryOrder('COMPLETED')}>
+                            <button className={`${chosenSummaryOrder === "COMPLETED" ? "bg-green-300" : "bg-green-50 hover:shadow-md"} rounded-xl p-4 shadow transition flex flex-col items-center`}
+                                disabled={chosenSummaryOrder === "COMPLETED"}
+                                onClick={() => setChosenSummaryOrder('COMPLETED')}>
                                 <CheckCircle className="text-green-500 mb-2" size={28} />
                                 <p className="text-gray-500 text-sm text-center">Hoàn thành</p>
                                 <p className="text-2xl font-bold text-green-600">{totalCompleted}</p>
                             </button>
-                            <button 
-                            className={`${chosenSummaryOrder === "cancel"? "bg-red-300" : "bg-red-50 hover:shadow-md"} rounded-xl p-4 shadow transition flex flex-col items-center`}
-                            disabled={chosenSummaryOrder === "CANCEL"}
-                            onClick={() => setChosenSummaryOrder('CANCEL')}>
+                            <button
+                                className={`${chosenSummaryOrder === "cancel" ? "bg-red-300" : "bg-red-50 hover:shadow-md"} rounded-xl p-4 shadow transition flex flex-col items-center`}
+                                disabled={chosenSummaryOrder === "CANCEL"}
+                                onClick={() => setChosenSummaryOrder('CANCEL')}>
                                 <XCircle className="text-red-500 mb-2" size={28} />
                                 <p className="text-gray-500 text-sm text-center">Đã hủy</p>
                                 <p className="text-2xl font-bold text-red-600">{totalCancel}</p>
                             </button>
                         </div>
                     </div>
-                    {userProfile && chosenSummaryOrder && <OrderList userProfile={userProfile} chosen={chosenSummaryOrder}/>}
+                    {userProfile && chosenSummaryOrder && <OrderList userProfile={userProfile} chosen={chosenSummaryOrder} />}
                 </div>
 
             </div>

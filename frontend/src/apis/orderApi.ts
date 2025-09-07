@@ -53,6 +53,22 @@ const orderApi = {
         } catch (error: any) {
             return error.response
         }
+    },
+
+    async deleteOrder(id: number) {
+        try {
+            return await axiosClient.delete(`/order/${id}`)
+        } catch (error: any) {
+            return error.response
+        }
+    },
+
+    async mergeOrder(userId: number) {
+        try {
+            return await axiosClient.post('/order/merge-order', {userId})
+        } catch (error: any) {
+            return error.response   
+        }
     }
 }
 

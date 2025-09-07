@@ -6,10 +6,16 @@ import { SignUpDto } from './dto/signup-body.dto';
 import { MESSAGES } from 'src/constantsAndMessage';
 import { JwtPayload } from './dto/jwt.dto';
 import { CartService } from 'src/cart/cart.service';
+import { OrderService } from 'src/order/order.service';
 
 @Injectable()
 export class AuthService {
-    constructor(private jwtService: JwtService, private prismaService: PrismaService, private cartService: CartService) { }
+    constructor(
+        private readonly jwtService: JwtService, 
+        private readonly prismaService: PrismaService,
+        private readonly cartService: CartService,
+        private readonly orderService: OrderService
+    ) { }
 
     async validateUser(username: string, password: string) {
         const user = await this.prismaService.user.findUnique({ where: { username } });
@@ -56,6 +62,8 @@ export class AuthService {
         await this.prismaService.user.update({ where: { id: user.id }, data: { refreshToken: hashRefreshToken } })
 
         if( guestToken ) await this.cartService.mergeCart(guestToken, user.id);
+
+        await this.orderService.mergeOrder(user.id)
 
         return { accessToken, userInfo: { id: user.id, firstName: user.firstName, lastName: user.lastName } };
     }

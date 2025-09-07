@@ -204,7 +204,11 @@ const Checkout = () => {
 
     const onClosePaymentMethodModal = () => {
         if (!userInfo) {
-            confirm("Hủy chọn phương thức thanh toán", "Bạn sẽ phải thực hiện lại các bước từ đầu!", () => setIsOpenPaymentMethod(false))
+            confirm("Hủy chọn phương thức thanh toán", "Bạn sẽ phải thực hiện lại các bước từ đầu!", async () => {
+                await orderApi.deleteOrder(Number(orderId.current))
+                orderId.current = null
+                setIsOpenPaymentMethod(false)
+            })
         } else {
             confirm("Hủy chọn phương thức thanh toán", "Bạn có chắc muốn đóng lại? Tôi sẽ chuyển hướng bạn vào đơn hàng để thuận tiện cho việc theo dõi và thanh toán đơn hàng sắp tới", () => {
                 setIsOpenPaymentMethod(false)

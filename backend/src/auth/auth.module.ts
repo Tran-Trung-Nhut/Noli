@@ -7,6 +7,7 @@ import { JwtStrategy } from './jwt.strategy';
 import { PrismaModule } from 'src/prisma/prisma.module';
 import { GoogleStrategy } from './google.strategy';
 import { CartModule } from 'src/cart/cart.module';
+import { OrderModule } from 'src/order/order.module';
 
 @Module({
   imports: [
@@ -16,7 +17,8 @@ import { CartModule } from 'src/cart/cart.module';
       signOptions: { expiresIn: '1h' },
     }),
     PrismaModule,
-    CartModule 
+    CartModule,
+    OrderModule
   ],
   providers: [AuthService, JwtStrategy, GoogleStrategy],
   controllers: [AuthController],
