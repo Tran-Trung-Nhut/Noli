@@ -146,7 +146,7 @@ const Shop = () => {
                         hasMore={hasMore}
                         loader={
                             // loader shown at bottom while fetching next pages
-                            <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-6">
+                            <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 gap-6 mt-6">
                                 {Array.from({ length: 4 }).map((_, i) => (<ProductCardSkeleton key={i} />))}
                             </div>
                         }
