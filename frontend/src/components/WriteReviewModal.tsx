@@ -87,7 +87,7 @@ const WriteReviewModal = ({
 
         setLoading(true);
         setProgress(0)
-        setUploading(true)
+        if(images.length > 0) setUploading(true)
 
         try {
             // Build FormData: backend should accept multipart/form-data
