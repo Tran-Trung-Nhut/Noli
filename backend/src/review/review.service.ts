@@ -1,10 +1,11 @@
-import { Inject, Injectable, InternalServerErrorException } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { CreateReviewDto } from './dto/create-review.dto';
 import { UpdateReviewDto } from './dto/update-review.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { UploadService } from 'src/upload/upload.service';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Cache } from 'cache-manager';
+import { extractPublicIdImage } from 'src/utils';
 
 @Injectable()
 export class ReviewService {
@@ -67,7 +68,24 @@ export class ReviewService {
     return `This action updates a #${id} review`;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} review`;
+  async remove(id: number) {
+    try {
+      const result = await this.prismaService.review.delete({ where: { id } })
+
+      if (!result) throw new BadRequestException()
+
+      await Promise.all(result.images.map(async (image) => {
+        const publicId = extractPublicIdImage(image)
+
+        await this.uploadService.deleteImage(publicId)
+      }))
+
+      this.cacheManager.clear()
+
+      return result
+    } catch (error) {
+      console.error(error)
+      throw new InternalServerErrorException(error)
+    }
   }
 }

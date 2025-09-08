@@ -36,6 +36,8 @@ const WriteReviewModal = ({
     const [images, setImages] = useState<UploadPreview[]>([]);
     const [loading, setLoading] = useState(false);
     const inputRef = useRef<HTMLInputElement | null>(null);
+    const [progress, setProgress] = useState<number>(0)
+    const [uploading, setUploading] = useState<boolean>(false)
 
     useEffect(() => {
         if (!open) {
@@ -84,10 +86,15 @@ const WriteReviewModal = ({
         if (err) return notifyError(err);
 
         setLoading(true);
+        setProgress(0)
+        setUploading(true)
 
         try {
             // Build FormData: backend should accept multipart/form-data
-            if (!userInfo) return notifyError("Không thể đánh giá sản phẩm ngay lúc này")
+            if (!userInfo) {
+                setUploading(false)
+                return notifyError("Không thể đánh giá sản phẩm ngay lúc này")
+            }
 
             const fd = new FormData();
             fd.append("productId", String(productId));
@@ -98,12 +105,14 @@ const WriteReviewModal = ({
                 fd.append("files", p.file, p.file.name);
             });
 
-            const res = await reviewApi.createReview(fd);
+            const res = await reviewApi.createReview(fd, setProgress);
 
             if (res.status === HttpStatusCode.Created || res.status === HttpStatusCode.Ok) {
                 notifySuccess("Gửi đánh giá thành công!");
+                setProgress(100)
+                setUploading(false)
+                onClose()
                 onSubmitted?.();
-                onClose();
             } else {
                 notifyError(res.data?.message || "Không thể gửi đánh giá, vui lòng thử lại.");
             }
@@ -112,6 +121,7 @@ const WriteReviewModal = ({
             notifyError("Lỗi khi gửi đánh giá. Vui lòng thử lại.");
         } finally {
             setLoading(false);
+            setUploading(false)
         }
     };
 
@@ -200,6 +210,15 @@ const WriteReviewModal = ({
                         </div>
 
                         <div className="text-xs text-gray-400">PNG, JPG, GIF — mỗi ảnh &lt; 5MB.</div>
+
+                        {uploading && (
+                            <div>
+                                <div className="w-full h-2 bg-gray-100 rounded-full overflow-hidden">
+                                    <div style={{ width: `${progress}%` }} className="h-full rounded-full transition-all bg-sky-500"></div>
+                                </div>
+                                <div className="text-xs text-gray-500 mt-1">Đang tải: {progress}%</div>
+                            </div>
+                        )}
                     </div>
                 </div>
 

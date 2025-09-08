@@ -1,9 +1,13 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { CreateUploadDto } from './dto/create-upload.dto';
 import { UpdateUploadDto } from './dto/update-upload.dto';
 import cloudinary from './cloudinary.provider';
 import { UploadApiResponse } from 'cloudinary';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { resolve } from 'path';
+import { error } from 'console';
+import { extractPublicIdImage } from 'src/utils';
+import { MESSAGES } from 'src/constantsAndMessage';
 
 @Injectable()
 export class UploadService {
@@ -31,7 +35,13 @@ export class UploadService {
 
   async uploadUserImage(file: Express.Multer.File, userId: number) {
     try {
+      const existUser = await this.prismaService.user.findUnique({where: {id: Number(userId)}})
+
+      if(!existUser) throw new BadRequestException(MESSAGES.USER.ERROR.NOT_FOUND)
+
       const result = await this.uploadImage(file)
+
+      if(existUser.image && existUser.image.includes("https://res.cloudinary.com")) await this.deleteImage(extractPublicIdImage(existUser.image))
 
       return await this.prismaService.user.update({ where: { id: Number(userId) }, data: { image: result.secure_url } })
     } catch (error) {
@@ -64,4 +74,17 @@ export class UploadService {
     }
   }
 
+  async deleteImage(publicId: string): Promise<void> {
+    try {
+      return new Promise((resolve, reject) => {
+        cloudinary.uploader.destroy(publicId, (error, result) => {
+          if (error) return reject(error)
+          resolve(result)
+        })
+      })
+    } catch (error) {
+      console.error(error)
+      throw new InternalServerErrorException(error)
+    }
+  }
 }

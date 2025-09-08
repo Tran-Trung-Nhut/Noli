@@ -1,12 +1,14 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UploadedFile, UseInterceptors, UploadedFiles } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UploadedFile, UseInterceptors, UploadedFiles, UseGuards } from '@nestjs/common';
 import { ReviewService } from './review.service';
 import { UpdateReviewDto } from './dto/update-review.dto';
 import { FilesInterceptor } from '@nestjs/platform-express';
+import { JwtAuthGuard } from 'src/auth/jwt.guard';
 
 @Controller('review')
 export class ReviewController {
   constructor(private readonly reviewService: ReviewService) { }
 
+  @UseGuards(JwtAuthGuard)
   @Post()
   @UseInterceptors(FilesInterceptor('files'))
   async create(
@@ -38,8 +40,9 @@ export class ReviewController {
     return this.reviewService.update(+id, updateReviewDto);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.reviewService.remove(+id);
+  async remove(@Param('id') id: string) {
+    return await this.reviewService.remove(+id);
   }
 }

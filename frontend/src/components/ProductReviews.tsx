@@ -2,12 +2,13 @@ import { useEffect, useState } from "react";
 import type { Review } from "../dtos/review.dto";
 import type { UserDto } from "../dtos/user.dto";
 import No_image from "../assets/No_image_user.jpg"
-import { formatDateTime, notifyError } from "../utils";
+import { confirm, formatDateTime, notifyError } from "../utils";
 import { reviewApi } from "../apis/reviewApi";
 import { HttpStatusCode } from "axios";
 import LoadingAuth from "./LoadingAuth";
 import Not_found from "../assets/product-not-found.svg"
 import type { PublicUserInfo } from "../contexts/AuthContext";
+import { FaEllipsisH } from "react-icons/fa";
 // ProductReviews.tsx
 // React + Tailwind component to display user reviews in a clean, site-cohesive style.
 // Default export a component that accepts an optional `reviews` prop. If none provided,
@@ -35,16 +36,19 @@ const ProductReviews = ({
     averageRating,
     productId,
     turnOnOpenWriteReview,
-    userInfo
+    userInfo,
+    fetchProductDetail
 }: {
     averageRating: number | null,
     productId: number
     turnOnOpenWriteReview: () => void,
     userInfo: PublicUserInfo | null
+    fetchProductDetail: () => void
 }) => {
     const [expandedId, setExpandedId] = useState<number | null>(null);
     const [reviews, setReviews] = useState<(Review & { user: UserDto })[]>([])
-    const [loading, setLoading] = useState(false)
+    const [loading, setLoading] = useState<boolean>(false)
+    const [openOptionReview, setOpenOptionReview] = useState<number>(0)
 
 
     const fetchReviews = async (productId: number) => {
@@ -56,11 +60,27 @@ const ProductReviews = ({
             return setLoading(false)
         }
 
-        console.log(result)
 
         setReviews(result.data)
 
         setLoading(false)
+    }
+
+    const handleDeleteReview = async (id: number) => {
+        confirm("Xóa đánh giá", "Bạn có chắc muốn xóa đánh giá này. Đánh giá này sẽ bị xóa khỏi hệ thống hoàn toàn và không thể khôi phục!", async () => {
+            setLoading(true)
+
+            const result = await reviewApi.deleteReview(id)
+
+            if (result.status !== HttpStatusCode.Ok) {
+                setLoading(false)
+                return notifyError("Xóa đánh giá thất bại. Vui lòng thử lại sau!")
+            }
+
+            fetchProductDetail()
+
+            setLoading(false)
+        })
     }
 
     useEffect(() => { fetchReviews(productId) }, [productId])
@@ -115,7 +135,7 @@ const ProductReviews = ({
                                         </div>
 
                                         <div className="flex-1">
-                                            <div className="flex items-center justify-between">
+                                            <div className="flex items-start justify-between">
                                                 <div>
                                                     <div className="text-sm font-medium text-slate-800">{r.user.firstName + " " + r.user.lastName}</div>
                                                     <div className="flex items-center gap-2 mt-1">
@@ -128,6 +148,24 @@ const ProductReviews = ({
                                                     </div>
                                                 </div>
                                                 {/* <div className="text-sm text-gray-500">{r.helpful ?? 0} hữu ích</div> */}
+                                                {userInfo && userInfo.id === r.userId && (
+                                                    <div className="relative">
+                                                        <button className="border-none bg-white focus-none" onClick={() => setOpenOptionReview(openOptionReview === 0 ? r.id : 0)}>
+                                                            <FaEllipsisH color="gray" />
+                                                        </button>
+                                                        {openOptionReview === r.id && (
+                                                            <div className="absolute right-0 w-44 bg-white border border-gray-200 rounded-lg shadow-lg translate-y-0 transform -translate-y-2 transition-all duration-200">
+                                                                <ul className="py-1">
+                                                                    <li>
+                                                                        <button
+                                                                            onClick={() => handleDeleteReview(r.id)}
+                                                                            className="block w-full text-left px-2 py-1 text-gray-700 hover:bg-gray-100">Xóa</button>
+                                                                    </li>
+                                                                </ul>
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                )}
                                             </div>
 
                                             <div className="mt-3 text-gray-700 leading-6">

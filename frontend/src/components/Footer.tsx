@@ -1,8 +1,8 @@
 import { RefreshCcw, ShieldCheck, Truck } from "lucide-react";
-import { FaFacebookSquare } from "react-icons/fa";
+import { FaCcMastercard, FaFacebookSquare } from "react-icons/fa";
 import logo from "../assets/logo.png"
 import { Link } from "react-router-dom";
-import { FaTiktok } from "react-icons/fa6";
+import { FaCcVisa, FaRegMoneyBill1, FaTiktok } from "react-icons/fa6";
 
 const Footer = () => {
     return (
@@ -166,18 +166,9 @@ const Footer = () => {
                             <span>Thanh toán:</span>
                             {/* Payment icons (svg placeholders) */}
                             <div className="flex items-center gap-2">
-                                <svg width="36" height="24" viewBox="0 0 36 24" fill="none">
-                                    <rect width="36" height="24" rx="3" stroke="currentColor" strokeWidth="1" />
-                                    <path d="M6 8h6" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
-                                </svg>
-                                <svg width="36" height="24" viewBox="0 0 36 24" fill="none">
-                                    <rect width="36" height="24" rx="3" stroke="currentColor" strokeWidth="1" />
-                                    <path d="M8 8h4" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
-                                </svg>
-                                <svg width="36" height="24" viewBox="0 0 36 24" fill="none">
-                                    <rect width="36" height="24" rx="3" stroke="currentColor" strokeWidth="1" />
-                                    <path d="M7 9h6" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
-                                </svg>
+                                <FaRegMoneyBill1 size={32}/>
+                                <FaCcVisa size={32}/>
+                                <FaCcMastercard size={32}/>
                             </div>
                         </div>
                     </div>

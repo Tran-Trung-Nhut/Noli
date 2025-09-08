@@ -14,6 +14,7 @@ import { useAuth } from "../contexts/AuthContext";
 import { FaFacebook, FaFacebookMessenger, FaLink } from "react-icons/fa";
 import ProductReviews, { Star } from "../components/ProductReviews";
 import WriteReviewModal from "../components/WriteReviewModal";
+import { SiZalo } from "react-icons/si";
 
 const ProductDetailPage = () => {
     const [loading, setLoading] = useState<boolean>(false)
@@ -82,6 +83,10 @@ const ProductDetailPage = () => {
         const url = `fb-messenger://share?link=${encodeURIComponent(currentUrl)}`;
         window.open(url, "_blank");
     }
+
+    const handleShareZalo = () => {
+        window.open(`https://zalo.me/share?url=${encodeURIComponent(currentUrl)}`, "_blank");
+    };
 
     const getVariant = (color: string, size: string) => {
         for (const variant of product?.variants || []) {
@@ -160,14 +165,14 @@ const ProductDetailPage = () => {
         loading ? <LoadingAuth /> :
             product ? (
                 <>
-                    <WriteReviewModal 
-                    open={openWriteReview} 
-                    productId={product.id}
-                    onClose={() => setOpenWriteReview(false)}
-                    userInfo={userInfo}
-                    onSubmitted={() => {
-                        fetchProductDetail()
-                    }}
+                    <WriteReviewModal
+                        open={openWriteReview}
+                        productId={product.id}
+                        onClose={() => setOpenWriteReview(false)}
+                        userInfo={userInfo}
+                        onSubmitted={() => {
+                            fetchProductDetail()
+                        }}
                     />
                     <section className="p-5 min-h-[500px]">
                         <nav className="text-sm text-gray-500 mb-4">
@@ -214,9 +219,13 @@ const ProductDetailPage = () => {
                                     <button className="border-none bg-white hover:scale-110" onClick={() => handleShareMessager()}>
                                         <FaFacebookMessenger className="text-blue-500 w-[24px] h-[24px]" />
                                     </button>|
+                                    <button className="border-none bg-white hover:scale-110" onClick={() => handleShareZalo()}>
+                                        <SiZalo className="text-gray-900 w-[24px] h-[24px]" color="blue"/>
+                                    </button>|
                                     <button className="border-none bg-white hover:scale-110" onClick={() => handleCopyLink()}>
                                         <FaLink className="text-gray-900 w-[22px] h-[22px]" />
                                     </button>
+                                    
                                 </div>
                             </div>
                             <div className="md:w-1/2 md:pl-10 mt-6 md:mt-0">
@@ -329,7 +338,8 @@ const ProductDetailPage = () => {
                         productId={product.id}
                         turnOnOpenWriteReview={() => setOpenWriteReview(true)}
                         userInfo={userInfo}
-                        />
+                        fetchProductDetail={async () => await fetchProductDetail()}
+                    />
                 </>
             ) : (
                 <>
