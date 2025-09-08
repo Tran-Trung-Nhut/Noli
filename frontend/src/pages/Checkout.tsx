@@ -40,7 +40,7 @@ export type Ward = {
 const Checkout = () => {
     const [cart, setCart] = useState<Cart | null>(null);
     const [isOpenPaymentMethod, setIsOpenPaymentMethod] = useState<boolean>(false)
-    const { userInfo } = useAuth();
+    const { userInfo, getNumberOfCartItemByUserId, getNumberOfCartItemByGuestToken } = useAuth();
     const token = getGuestToken();
     const didRun = useRef(false);
     const [searchParams] = useSearchParams();
@@ -198,6 +198,7 @@ const Checkout = () => {
         setTimeout(() => {
             setLoading(false)
             setIsOpenPaymentMethod(true)
+            if (userInfo) getNumberOfCartItemByUserId(userInfo.id); else getNumberOfCartItemByGuestToken(token)
             setLoadingMessage("")
         }, 1000)
     }
@@ -215,7 +216,7 @@ const Checkout = () => {
                 setLoadingMessage("Đang chuyển hướng trang")
                 setLoading(true)
 
-                setTimeout(() => {navigate('/profile')}, 2000)
+                setTimeout(() => { navigate('/profile') }, 2000)
             })
         }
     }

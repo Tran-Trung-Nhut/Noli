@@ -5,14 +5,14 @@ import type { Product } from "../dtos/product.dto";
 import NotFoundSVG from "../assets/product-not-found.svg"
 
 type Props = {
-    products: Product[];
+    products: (Product & {averageRating: number | null , countReviews: number})[];
     loading: boolean;
 };
 
 export default function ProductGrid({ products, loading }: Props) {
     if (loading) {
         return (
-            <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 gap-6">
                 {Array.from({ length: 12 }).map((_, i) => (
                     <ProductCardSkeleton key={i} />
                 ))}
@@ -33,7 +33,7 @@ export default function ProductGrid({ products, loading }: Props) {
     }
 
     return (
-        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3  gap-6">
             {
                 products.map((product) => (
                     <ProductCard product={product} key={product.id}/>

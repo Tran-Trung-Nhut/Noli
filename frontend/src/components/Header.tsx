@@ -12,7 +12,7 @@ const Header: React.FC = () => {
     const [isOpen, setIsOpen] = useState(false);
     const [isUserMenuOpen, setIsUserMenuOpen] = useState(false); // mobile user dropdown
     const navigate = useNavigate();
-    const { userInfo, logout } = useAuth();
+    const { userInfo, logout, numberOfProductInCart } = useAuth();
 
     // close mobile menus on route change (optional)
     useEffect(() => {
@@ -57,10 +57,11 @@ const Header: React.FC = () => {
 
                     <div className="flex items-center space-x-3">
                         <button
-                            className="p-1 rounded hover:scale-110 transition-transform"
+                            className="p-1 rounded hover:scale-110 transition-transform relative"
                             onClick={() => navigate("/my-cart")}
                             aria-label="Giỏ hàng"
                         >
+                            <div className="absolute bg-red-700 font-bold rounded-full text-[8px] w-[13px] h-[13px] text-white top-0 right-[-2px]">{numberOfProductInCart}</div>
                             <FaCartShopping size={24} />
                         </button>
 

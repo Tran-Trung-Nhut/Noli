@@ -1,28 +1,43 @@
 import { useNavigate } from "react-router-dom";
 import type { Product } from "../dtos/product.dto";
 import { formatPrice } from "../utils";
+import { Star } from "./ProductReviews";
 
-const ProductCard = ({ 
+const ProductCard = ({
     product,
 }: {
-    product: Product,
+    product: Product & { averageRating: number | null, countReviews: number },
 }) => {
     const navigate = useNavigate()
 
     return (
         <div className={`bg-white shadow-md rounded-md overflow-hidden hover:scale-105 duration-500`}>
-            <img 
-            src={product.image[0]} 
-            alt={product.name} 
-            className="w-full h-64 object-cover" 
-            onClick={() => navigate(`/product/${product.id}`)}/>
-            <div className="p-4">
-                <h3 className="text-lg font-semibold text-gray-800" onClick={() => navigate(`/product/${product.id}`)}>{product.name}</h3>
-                <p 
-                className="text-gray-600" 
-                onClick={() => navigate(`/product/${product.id}`)}>
-                    {formatPrice(product.defaultPrice)}
-                </p>
+            <img
+                src={product.image[0]}
+                alt={product.name}
+                className="w-full h-64 object-cover"
+                onClick={() => navigate(`/product/${product.id}`)} />
+            <div className="p-4 flex">
+                <div>
+                    <h3 className="text-lg font-semibold text-gray-800" onClick={() => navigate(`/product/${product.id}`)}>{product.name}</h3>
+                    <p
+                        className="text-gray-600"
+                        onClick={() => navigate(`/product/${product.id}`)}>
+                        {formatPrice(product.defaultPrice)}
+                    </p>
+                </div>
+                <div className="flex justify-end items-end w-full">
+                    {!product.averageRating ? (
+                        Array.from({ length: 5 }).map((_, i) => (
+                            <Star filled={false} key={i}/>
+                        ))
+                    ) : (
+                        Array.from({ length: 5 }).map((_, i) => (
+                            <Star filled={i < (product.averageRating || 0)} key={i} />
+                        ))
+                    )}
+                    <span className="text-[13px] flex justify-end items-end ml-1">({product.countReviews})</span>
+                </div>
             </div>
 
             {/* <div className="flex justify-center align-center gap-3 pb-3 px-2">

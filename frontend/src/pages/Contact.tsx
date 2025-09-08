@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import { FaTiktok } from "react-icons/fa";
+import { FaFacebook } from "react-icons/fa6";
 
 const Contact = () => {
     const [form, setForm] = useState({ name: "", email: "", phone: "", subject: "", message: "" });
@@ -80,12 +82,12 @@ const Contact = () => {
                         </div>
 
                         <div className="mt-6 flex items-center gap-3">
-                            <a aria-label="facebook" href="#" className="p-2 rounded-full hover:bg-gray-100">
+                            <a aria-label="facebook" href="https://www.facebook.com/profile.php?id=100071433255220" className="p-2 rounded-full hover:bg-gray-100">
                                 {/* svg */}
-                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M18 2h-3a4 4 0 0 0-4 4v3H8v4h3v8h4v-8h3l1-4h-4V6a1 1 0 0 1 1-1h3V2z" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                                <FaFacebook/>
                             </a>
-                            <a aria-label="instagram" href="#" className="p-2 rounded-full hover:bg-gray-100">
-                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="18" height="18" rx="5" stroke="currentColor" strokeWidth="1.2" /><path d="M16 11.37A4 4 0 1 1 12.63 8" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" /><path d="M17.5 6.5h.01" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                            <a aria-label="tiktok" href="https://www.tiktok.com/@hongoc00" className="p-2 rounded-full hover:bg-gray-100">
+                                <FaTiktok/>
                             </a>
                         </div>
                     </div>

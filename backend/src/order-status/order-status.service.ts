@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { CreateOrderStatusDto } from './dto/create-order-status.dto';
 import { UpdateOrderStatusDto } from './dto/update-order-status.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
@@ -8,27 +8,32 @@ export class OrderStatusService {
   constructor(private readonly prismaService: PrismaService) { }
 
   async create(createOrderStatusDto: CreateOrderStatusDto) {
-    const existOrder = await this.prismaService.order.findUnique({ where: { id: createOrderStatusDto.orderId } })
+    try {
+      const existOrder = await this.prismaService.order.findUnique({ where: { id: createOrderStatusDto.orderId } })
 
-    if (!existOrder) throw new BadRequestException("Đơn hàng không tồn tại")
+      if (!existOrder) throw new BadRequestException("Đơn hàng không tồn tại")
 
-    const currentStatus = await this.prismaService.orderStatus.findFirst({ where: { orderId: existOrder.id, isCurrentStatus: true } })
+      const currentStatus = await this.prismaService.orderStatus.findFirst({ where: { orderId: existOrder.id, isCurrentStatus: true } })
 
-    if (!currentStatus) {
-      return await this.prismaService.orderStatus.create({ data: createOrderStatusDto })
-    } else {
-      return await this.prismaService.$transaction(async (prisma) => {
-        await prisma.orderStatus.updateMany({ where: { orderId: existOrder.id, isCurrentStatus: true }, data: { isCurrentStatus: false } })
+      if (!currentStatus) {
+        return await this.prismaService.orderStatus.create({ data: createOrderStatusDto })
+      } else {
+        return await this.prismaService.$transaction(async (prisma) => {
+          await prisma.orderStatus.updateMany({ where: { orderId: existOrder.id, isCurrentStatus: true }, data: { isCurrentStatus: false } })
 
-        const orderStatus = await prisma.orderStatus.create({
-          data: {
-            orderId: createOrderStatusDto.orderId,
-            status: createOrderStatusDto.status,
-            previousStatusId: currentStatus.id
-          }
+          const orderStatus = await prisma.orderStatus.create({
+            data: {
+              orderId: createOrderStatusDto.orderId,
+              status: createOrderStatusDto.status,
+              previousStatusId: currentStatus.id
+            }
+          })
+          return orderStatus
         })
-        return orderStatus
-      })
+      }
+    } catch (error) {
+      console.error(error)
+      throw new InternalServerErrorException(error)
     }
   }
 

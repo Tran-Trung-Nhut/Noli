@@ -1,0 +1,73 @@
+import { Inject, Injectable, InternalServerErrorException } from '@nestjs/common';
+import { CreateReviewDto } from './dto/create-review.dto';
+import { UpdateReviewDto } from './dto/update-review.dto';
+import { PrismaService } from 'src/prisma/prisma.service';
+import { UploadService } from 'src/upload/upload.service';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { Cache } from 'cache-manager';
+
+@Injectable()
+export class ReviewService {
+  constructor(
+    private readonly prismaService: PrismaService,
+    private readonly uploadService: UploadService,
+    @Inject(CACHE_MANAGER) private cacheManager: Cache
+  ) { }
+
+  async create(files: Express.Multer.File[], createReviewDto: CreateReviewDto) {
+    try {
+      const uploadedImages = await Promise.all(
+        (files ?? []).map((file) => this.uploadService.uploadImage(file))
+      );
+
+      const reuslt = await this.prismaService.review.create({
+        data: {
+          ...createReviewDto,
+          images: uploadedImages.map((img) => img.secure_url),
+        },
+      });
+
+      this.cacheManager.clear()
+
+      return reuslt
+    } catch (error) {
+      console.error(error)
+      throw new InternalServerErrorException(error)
+    }
+  }
+
+  async getAllByProductId(productId: number) {
+    try {
+      return await this.prismaService.review.findMany({ where: { productId }, include: { user: true } })
+    } catch (error) {
+      console.error(error)
+      throw new InternalServerErrorException(error)
+    }
+  }
+
+
+  async getCountAndAverageRatingByProductId(productId: number) {
+    try {
+      return await this.prismaService.review.aggregate({
+        _avg: { rating: true },
+        _count: { _all: true },
+        where: { productId },
+      });
+    } catch (error) {
+      console.error(error)
+      throw new InternalServerErrorException(error)
+    }
+  }
+
+  findOne(id: number) {
+    return `This action returns a #${id} review`;
+  }
+
+  update(id: number, updateReviewDto: UpdateReviewDto) {
+    return `This action updates a #${id} review`;
+  }
+
+  remove(id: number) {
+    return `This action removes a #${id} review`;
+  }
+}

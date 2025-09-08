@@ -1,4 +1,4 @@
-import { BadRequestException, Inject, Injectable } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
@@ -217,19 +217,24 @@ export class OrderService {
   }
 
   async findOne(id: number) {
-    return await this.prismaService.order.findUnique({
-      where: { id },
-      include: {
-        orderItems: {
-          include: {
-            product: true,
-            productVariant: true
-          }
-        },
-        address: true,
-        orderStatuses: true
-      }
-    });
+    try {
+      return await this.prismaService.order.findUnique({
+        where: { id },
+        include: {
+          orderItems: {
+            include: {
+              product: true,
+              productVariant: true
+            }
+          },
+          address: true,
+          orderStatuses: true
+        }
+      });
+    } catch (error) {
+      console.error(error)
+      throw new InternalServerErrorException(error)
+    }
   }
 
   update(id: number, updateOrderDto: UpdateOrderDto) {
@@ -237,28 +242,43 @@ export class OrderService {
   }
 
   async updateOrderStatus(id: number, status: string) {
-    const existOrder = await this.prismaService.order.findUnique({ where: { id } })
+    try {
+      const existOrder = await this.prismaService.order.findUnique({ where: { id } })
 
-    if (!existOrder) throw new BadRequestException("Đơn hàng không tồn tại")
+      if (!existOrder) throw new BadRequestException("Đơn hàng không tồn tại")
 
-    return await this.orderStatusService.create({ orderId: id, status })
+      return await this.orderStatusService.create({ orderId: id, status })
+    } catch (error) {
+      console.error(error)
+      throw new InternalServerErrorException(error)
+    }
   }
 
   async remove(id: number) {
-    return await this.prismaService.order.delete({where: {id}})
+    try {
+      return await this.prismaService.order.delete({ where: { id } })
+    } catch (error) {
+      console.error(error)
+      throw new InternalServerErrorException(error)
+    }
   }
 
-  async mergeOrder(userId: number){
-    const existingUser = await this.prismaService.user.findUnique({where: {id: userId}})
+  async mergeOrder(userId: number) {
+    try {
+      const existingUser = await this.prismaService.user.findUnique({ where: { id: userId } })
 
-    if (!existingUser) throw new BadRequestException(MESSAGES.USER.ERROR.NOT_FOUND)
+      if (!existingUser) throw new BadRequestException(MESSAGES.USER.ERROR.NOT_FOUND)
 
-    const carts = await this.prismaService.cart.findMany({where: {userId}})
+      const carts = await this.prismaService.cart.findMany({ where: { userId } })
 
-    if (carts.length === 0) return
+      if (carts.length === 0) return
 
-    const guestTokens = carts.flatMap(cart => cart.guestToken)
+      const guestTokens = carts.flatMap(cart => cart.guestToken)
 
-    await this.prismaService.order.updateMany({where: {guestToken: {in: guestTokens}}, data: {userId}})
+      await this.prismaService.order.updateMany({ where: { guestToken: { in: guestTokens } }, data: { userId } })
+    } catch (error) {
+      console.error(error)
+      throw new InternalServerErrorException(error)
+    }
   }
 }

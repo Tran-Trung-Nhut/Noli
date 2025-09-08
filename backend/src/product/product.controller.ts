@@ -23,7 +23,7 @@ export class ProductController {
 
   @Get('/paging')
   async findPaging(@Query() params: GetProductPagingDto) {
-    return await this.productService.findPaging(params)
+    return (await this.productService.findPaging(params))
   }
 
   @Get('/low-availible-paging')

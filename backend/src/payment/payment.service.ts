@@ -11,7 +11,7 @@ export class PaymentService {
   constructor(
     private readonly prismaService: PrismaService,
     private readonly orderStatusService: OrderStatusService
-  ){}
+  ) { }
 
 
   async createMomoPayment(amount: number, orderId: string) {
@@ -46,19 +46,24 @@ export class PaymentService {
       signature,
       lang: "vi",
     };
-    const result = (await axios.post(endpoint, payload))
+    try {
+      const result = (await axios.post(endpoint, payload))
 
-    if (result.data.resultCode !== 0) {
-      throw new InternalServerErrorException("Thanh toán thất bại, vui lòng thử lại");
+      if (result.data.resultCode !== 0) {
+        throw new InternalServerErrorException("Thanh toán thất bại, vui lòng thử lại");
+      }
+
+      const numberPart = orderId.replace("MOMOPAYMENT", "")
+
+      await this.prismaService.order.update({ where: { id: Number(numberPart) }, data: { paymentMethod: 'MOMO' } })
+
+      await this.orderStatusService.create({ orderId: Number(numberPart), status: "PENDING_PAYMENT" })
+
+      return result.data;
+    } catch (error) {
+      console.error(error)
+      throw new InternalServerErrorException(error)
     }
-
-    const numberPart = orderId.replace("MOMOPAYMENT", "")
-
-    await this.prismaService.order.update({where:{id: Number(numberPart)}, data: {paymentMethod: 'MOMO'}})
-
-    await this.orderStatusService.create({orderId: Number(numberPart), status: "PENDING_PAYMENT"})
-
-    return result.data;
   }
 
   create(createPaymentDto: CreatePaymentDto) {

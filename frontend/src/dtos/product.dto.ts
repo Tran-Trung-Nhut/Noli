@@ -11,7 +11,7 @@ export type Product = {
     updatedAt?: Date,
 }
 
-export type ProductDetail = Product & {variants: ProductVariant[]}
+export type ProductDetail = Product & {variants: ProductVariant[], averageRating: number | null, countReviews: number}
 
 export type CreateProduct = Omit<Product, 'id'> & {productVariants: CreateProductVariant[]}
 

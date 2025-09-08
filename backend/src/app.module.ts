@@ -14,6 +14,7 @@ import { OrderItemModule } from './order-item/order-item.module';
 import { redisStore } from 'cache-manager-redis-yet';
 import { OrderStatusModule } from './order-status/order-status.module';
 import { UploadModule } from './upload/upload.module';
+import { ReviewModule } from './review/review.module';
 
 @Module({
   imports: [
@@ -42,7 +43,8 @@ import { UploadModule } from './upload/upload.module';
       })
     }),
     OrderStatusModule,
-    UploadModule
+    UploadModule,
+    ReviewModule
   ],
   controllers: [],
   providers: [],

@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
@@ -17,22 +17,32 @@ export class UserService {
   }
 
   async findOne(id: number) {
-    return await this.prismaService.user.findUnique({ where: { id } });
+    try {
+      return await this.prismaService.user.findUnique({ where: { id } });
+    } catch (error) {
+      console.error(error)
+      throw new InternalServerErrorException(error)
+    }
   }
 
   async update(id: number, updateUserDto: UpdateUserDto) {
-    const existingUser = await this.prismaService.user.findUnique({ where: { id } });
-    if (!existingUser) throw new BadRequestException(MESSAGES.USER.ERROR.NOT_FOUND);
-    return await this.prismaService.user.update({
-      where: { id }, data: {
-        firstName: updateUserDto.firstName,
-        lastName: updateUserDto.lastName,
-        phoneNumber: updateUserDto.phoneNumber,
-        email: updateUserDto.email,
-        dateOfBirth: updateUserDto.dateOfBirth ? new Date(updateUserDto.dateOfBirth) : null,
-        gender: updateUserDto.gender
-      }
-    });
+    try {
+      const existingUser = await this.prismaService.user.findUnique({ where: { id } });
+      if (!existingUser) throw new BadRequestException(MESSAGES.USER.ERROR.NOT_FOUND);
+      return await this.prismaService.user.update({
+        where: { id }, data: {
+          firstName: updateUserDto.firstName,
+          lastName: updateUserDto.lastName,
+          phoneNumber: updateUserDto.phoneNumber,
+          email: updateUserDto.email,
+          dateOfBirth: updateUserDto.dateOfBirth ? new Date(updateUserDto.dateOfBirth) : null,
+          gender: updateUserDto.gender
+        }
+      });
+    } catch (error) {
+      console.error(error)
+      throw new InternalServerErrorException(error)
+    }
   }
 
   remove(id: number) {

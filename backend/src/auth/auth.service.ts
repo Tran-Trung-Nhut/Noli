@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, Req, Res, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException, Req, Res, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { PrismaService } from 'src/prisma/prisma.service';
@@ -11,19 +11,24 @@ import { OrderService } from 'src/order/order.service';
 @Injectable()
 export class AuthService {
     constructor(
-        private readonly jwtService: JwtService, 
+        private readonly jwtService: JwtService,
         private readonly prismaService: PrismaService,
         private readonly cartService: CartService,
         private readonly orderService: OrderService
     ) { }
 
     async validateUser(username: string, password: string) {
-        const user = await this.prismaService.user.findUnique({ where: { username } });
-        if (!user) throw new UnauthorizedException('Tên người dùng không tồn tại');
+        try {
+            const user = await this.prismaService.user.findUnique({ where: { username } });
+            if (!user) throw new UnauthorizedException('Tên người dùng không tồn tại');
 
-        if (!await bcrypt.compare(password, user.password)) throw new UnauthorizedException('Mật khẩu không chính xác');
+            if (!await bcrypt.compare(password, user.password)) throw new UnauthorizedException('Mật khẩu không chính xác');
 
-        return user;
+            return user;
+        } catch (error) {
+            console.error(error)
+            throw new InternalServerErrorException(error)
+        }
     }
 
     setRefreshTokenToCookie(refreshToken: string, @Res() res) {
@@ -31,7 +36,7 @@ export class AuthService {
             httpOnly: true,
             secure: true,
             sameSite: 'none',
-            maxAge: 7 * 24 * 60 * 60 * 1000, 
+            maxAge: 7 * 24 * 60 * 60 * 1000,
         });
     }
 
@@ -49,93 +54,113 @@ export class AuthService {
         })
     }
 
-    async login(username: string, password: string, guestToken: string | null, @Res({passthrough: true}) res) {
-        const user = await this.validateUser(username, password);
-        await this.prismaService.user.update({ where: { id: user.id }, data: { lastLogin: new Date() } })
+    async login(username: string, password: string, guestToken: string | null, @Res({ passthrough: true }) res) {
+        try {
+            const user = await this.validateUser(username, password);
+            await this.prismaService.user.update({ where: { id: user.id }, data: { lastLogin: new Date() } })
 
-        const accessToken = this.signAccessToken({ sub: user.id, username: user.username });
-        const refreshToken = this.signRefreshToken({ sub: user.id, username: user.username });
-
-        this.setRefreshTokenToCookie(refreshToken, res)
-
-        const hashRefreshToken = await bcrypt.hash(refreshToken, Number(process.env.SALT));
-        await this.prismaService.user.update({ where: { id: user.id }, data: { refreshToken: hashRefreshToken } })
-
-        if( guestToken ) await this.cartService.mergeCart(guestToken, user.id);
-
-        await this.orderService.mergeOrder(user.id)
-
-        return { accessToken, userInfo: { id: user.id, firstName: user.firstName, lastName: user.lastName } };
-    }
-
-    async loginWithGoogle(email: string, firstName: string, lastName: string, picture: string) {
-        const user = await this.prismaService.user.findUnique({ where: { username: email } });
-
-        const password = process.env.GOOGLE_AUTH_PASSWORD_DEFAULT;
-
-        if (!password) throw new BadRequestException("Lỗi hệ thống, vui lòng thử lại sau");
-
-        if (!user) {
-            const newUser = await this.prismaService.user.create({
-                data: {
-                    username: email,
-                    email,
-                    firstName,
-                    lastName,
-                    image: picture,
-                    password: bcrypt.hashSync(password, Number(process.env.SALT)),
-                }
-            });
-
-            const refreshToken = this.signRefreshToken({ sub: newUser.id, username: newUser.username });
-
-            const hashRefreshToken = await bcrypt.hash(refreshToken, Number(process.env.SALT));
-            await this.prismaService.user.update({ where: { id: newUser.id }, data: { refreshToken: hashRefreshToken } })
-
-            return { refreshToken };
-        } else {
+            const accessToken = this.signAccessToken({ sub: user.id, username: user.username });
             const refreshToken = this.signRefreshToken({ sub: user.id, username: user.username });
+
+            this.setRefreshTokenToCookie(refreshToken, res)
 
             const hashRefreshToken = await bcrypt.hash(refreshToken, Number(process.env.SALT));
             await this.prismaService.user.update({ where: { id: user.id }, data: { refreshToken: hashRefreshToken } })
 
-            return { refreshToken };
+            if (guestToken) await this.cartService.mergeCart(guestToken, user.id);
+
+            await this.orderService.mergeOrder(user.id)
+
+            return { accessToken, userInfo: { id: user.id, firstName: user.firstName, lastName: user.lastName } };
+        } catch (error) {
+            console.error(error)
+            throw new InternalServerErrorException(error)
+        }
+    }
+
+    async loginWithGoogle(email: string, firstName: string, lastName: string, picture: string) {
+        try {
+            const user = await this.prismaService.user.findUnique({ where: { username: email } });
+
+            const password = process.env.GOOGLE_AUTH_PASSWORD_DEFAULT;
+
+            if (!password) throw new BadRequestException("Lỗi hệ thống, vui lòng thử lại sau");
+
+            if (!user) {
+                const newUser = await this.prismaService.user.create({
+                    data: {
+                        username: email,
+                        email,
+                        firstName,
+                        lastName,
+                        image: picture,
+                        password: bcrypt.hashSync(password, Number(process.env.SALT)),
+                    }
+                });
+
+                const refreshToken = this.signRefreshToken({ sub: newUser.id, username: newUser.username });
+
+                const hashRefreshToken = await bcrypt.hash(refreshToken, Number(process.env.SALT));
+                await this.prismaService.user.update({ where: { id: newUser.id }, data: { refreshToken: hashRefreshToken } })
+
+                return { refreshToken };
+            } else {
+                const refreshToken = this.signRefreshToken({ sub: user.id, username: user.username });
+
+                const hashRefreshToken = await bcrypt.hash(refreshToken, Number(process.env.SALT));
+                await this.prismaService.user.update({ where: { id: user.id }, data: { refreshToken: hashRefreshToken } })
+
+                return { refreshToken };
+            }
+        } catch (error) {
+            console.error(error)
+            throw new InternalServerErrorException(error)
         }
     }
 
 
 
-    async signup(body: SignUpDto, @Res({passthrough: true}) res) {
-        const existingUser = await this.prismaService.user.findUnique({ where: { username: body.username } });
-        if (existingUser) throw new BadRequestException(MESSAGES.USER.ERROR.EXISTED);
+    async signup(body: SignUpDto, @Res({ passthrough: true }) res) {
+        try {
+            const existingUser = await this.prismaService.user.findUnique({ where: { username: body.username } });
+            if (existingUser) throw new BadRequestException(MESSAGES.USER.ERROR.EXISTED);
 
-        const hashedPassword = await bcrypt.hash(body.password, Number(process.env.SALT));
+            const hashedPassword = await bcrypt.hash(body.password, Number(process.env.SALT));
 
-        const newUser = await this.prismaService.user.create({
-            data: {
-                username: body.username,
-                password: hashedPassword,
-                firstName: body.firstName,
-                lastName: body.lastName,
-            }
-        });
+            const newUser = await this.prismaService.user.create({
+                data: {
+                    username: body.username,
+                    password: hashedPassword,
+                    firstName: body.firstName,
+                    lastName: body.lastName,
+                }
+            });
 
-        return this.login(newUser.username, body.password, body.guestToken,res);
+            return this.login(newUser.username, body.password, body.guestToken, res);
+        } catch (error) {
+            console.error(error)
+            throw new InternalServerErrorException(error)
+        }
     }
 
-    async signOut(userId: number, @Res({passthrough: true}) res) {
-        const user = await this.prismaService.user.findUnique({ where: { id: userId } });
-        if (!user) throw new BadRequestException(MESSAGES.USER.ERROR.NOT_FOUND);
-        await this.prismaService.user.update({ where: { id: userId }, data: { refreshToken: null } });
+    async signOut(userId: number, @Res({ passthrough: true }) res) {
+        try {
+            const user = await this.prismaService.user.findUnique({ where: { id: userId } });
+            if (!user) throw new BadRequestException(MESSAGES.USER.ERROR.NOT_FOUND);
+            await this.prismaService.user.update({ where: { id: userId }, data: { refreshToken: null } });
 
-        res.clearCookie('refreshToken', {
-            httpOnly: true,
-            secure: true,
-            sameSite: 'none',
-        });
+            res.clearCookie('refreshToken', {
+                httpOnly: true,
+                secure: true,
+                sameSite: 'none',
+            });
+        } catch (error) {
+            console.error(error)
+            throw new InternalServerErrorException(error)
+        }
     }
 
-    async refreshTokens(refreshToken: string, @Res({passthrough: true}) res) {
+    async refreshTokens(refreshToken: string, @Res({ passthrough: true }) res) {
         let payload: any;
         try {
             payload = await this.jwtService.verify(refreshToken, { secret: process.env.REFRESH_JWT_SECRET });
@@ -143,27 +168,25 @@ export class AuthService {
             throw new UnauthorizedException('Token không hợp lệ');
         }
 
-        const user = await this.prismaService.user.findUnique({ where: { id: payload.sub } });
+        try {
+            const user = await this.prismaService.user.findUnique({ where: { id: payload.sub } });
 
-        if (!user || !user.refreshToken) throw new UnauthorizedException('Token không hợp lệ');
+            if (!user || !user.refreshToken) throw new UnauthorizedException('Token không hợp lệ');
 
-        const isRefreshTokenMatched = await bcrypt.compare(refreshToken, user.refreshToken);
-        if (!isRefreshTokenMatched) throw new UnauthorizedException('Token không hợp lệ');
+            const isRefreshTokenMatched = await bcrypt.compare(refreshToken, user.refreshToken);
+            if (!isRefreshTokenMatched) throw new UnauthorizedException('Token không hợp lệ');
 
-        const accessToken = this.signAccessToken({ sub: user.id, username: user.username });
-        const newRefreshToken = this.signRefreshToken({ sub: user.id, username: user.username });
-        const hashRefreshToken = await bcrypt.hash(newRefreshToken, Number(process.env.SALT));
-        await this.prismaService.user.update({ where: { id: user.id }, data: { refreshToken: hashRefreshToken } })
+            const accessToken = this.signAccessToken({ sub: user.id, username: user.username });
+            const newRefreshToken = this.signRefreshToken({ sub: user.id, username: user.username });
+            const hashRefreshToken = await bcrypt.hash(newRefreshToken, Number(process.env.SALT));
+            await this.prismaService.user.update({ where: { id: user.id }, data: { refreshToken: hashRefreshToken } })
 
-        this.setRefreshTokenToCookie(newRefreshToken, res)
+            this.setRefreshTokenToCookie(newRefreshToken, res)
 
-        return { accessToken, userInfo: { id: user.id, firstName: user.firstName, lastName: user.lastName, image: user.image } };
-    }
-
-    async guestToken() {
-        const payload = { role: 'guest', sub: 'guest_' + Date.now() };
-        return {
-            access_token: this.jwtService.sign(payload, { expiresIn: '7d' }),
-        };
+            return { accessToken, userInfo: { id: user.id, firstName: user.firstName, lastName: user.lastName, image: user.image } };
+        } catch (error) {
+            console.error(error)
+            throw new InternalServerErrorException(error)
+        }
     }
 }

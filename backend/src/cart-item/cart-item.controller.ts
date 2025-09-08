@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Res, HttpStatus } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
 import { CartItemService } from './cart-item.service';
 import { CreateCartItemDto } from './dto/create-cart-item.dto';
 import { UpdateCartItemDto } from './dto/update-cart-item.dto';
@@ -16,6 +16,16 @@ export class CartItemController {
   @Get()
   findAll() {
     return this.cartItemService.findAll();
+  }
+
+  @Get('/count/userId/:userId')
+  async getCountByUserId(@Param('userId') userId: number) {
+    return await this.cartItemService.getCountByUserid(userId)
+  }
+
+  @Get('/count/guestToken/:guestToken')
+  async getCountByGuestToken (@Param('guestToken') guestToken: string){
+    return await this.cartItemService.getCountByGuestToken(guestToken)
   }
 
   @Get(':id')

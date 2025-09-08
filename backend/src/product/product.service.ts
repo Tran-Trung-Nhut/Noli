@@ -1,35 +1,44 @@
-import { BadRequestException, HttpStatus, Injectable, InternalServerErrorException } from '@nestjs/common';
+import { BadRequestException, HttpStatus, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { GetProductPagingDto } from './dto/get-product-paging.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { APP_CONSTANTS, MESSAGES } from 'src/constantsAndMessage';
 import { LowAvailibleProduct } from './entities/product.entity';
+import { ReviewService } from 'src/review/review.service';
 
 @Injectable()
 export class ProductService {
-  constructor(private prismaService: PrismaService) { }
+  constructor(
+    private readonly prismaService: PrismaService,
+    private readonly reviewService: ReviewService
+  ) { }
 
   async create(createProduct: CreateProductDto) {
-    const existingProduct = await this.prismaService.product.findUnique({
-      where: { name: createProduct.name }
-    });
-    if (existingProduct) {
-      throw new BadRequestException(MESSAGES.PRODUCT.ERROR.EXISTED);
-    }
+    try {
+      const existingProduct = await this.prismaService.product.findUnique({
+        where: { name: createProduct.name }
+      });
+      if (existingProduct) {
+        throw new BadRequestException(MESSAGES.PRODUCT.ERROR.EXISTED);
+      }
 
-    await this.prismaService.product.create({
-      data: {
-        name: createProduct.name,
-        description: createProduct.description,
-        defaultPrice: createProduct.defaultPrice,
-        image: createProduct.image,
-        category: createProduct.category,
-        variants: {
-          create: createProduct.productVariants,
+      await this.prismaService.product.create({
+        data: {
+          name: createProduct.name,
+          description: createProduct.description,
+          defaultPrice: createProduct.defaultPrice,
+          image: createProduct.image,
+          category: createProduct.category,
+          variants: {
+            create: createProduct.productVariants,
+          },
         },
-      },
-    });
+      });
+    } catch (error) {
+      console.error(error)
+      throw new InternalServerErrorException()
+    }
 
   }
 
@@ -40,19 +49,34 @@ export class ProductService {
   async findPaging(params: GetProductPagingDto) {
     const orderBy = { [params.sortBy]: params.sortOrder };
 
-    return await this.prismaService.product.findMany({
-      skip: Number((params.page - 1) * params.limit),
-      take: Number(params.limit),
-      orderBy,
-      where: { 
-        name: { contains: params.search },
-        defaultPrice: {
-          ...(params.minPrice ? { gte: Number(params.minPrice) } : {}),
-          ...(params.maxPrice ? { lte: Number(params.maxPrice) } : {}),
+    try {
+      const products = await this.prismaService.product.findMany({
+        skip: Number((params.page - 1) * params.limit),
+        take: Number(params.limit),
+        orderBy,
+        where: {
+          name: { contains: params.search },
+          defaultPrice: {
+            ...(params.minPrice ? { gte: Number(params.minPrice) } : {}),
+            ...(params.maxPrice ? { lte: Number(params.maxPrice) } : {}),
+          },
+          ...(params.category ? { category: { has: params.category } } : {})
         },
-        ...(params.category ? { category: { has: params.category } } : {})
-      }
-    })
+      })
+
+      return await Promise.all(products.map(async (product) => {
+        const reviews = await this.reviewService.getCountAndAverageRatingByProductId(+product.id)
+
+        return {
+          ...product,
+          averageRating: reviews._avg.rating,
+          countReviews: reviews._count._all
+        }
+      }))
+    } catch (error) {
+      console.error(error)
+      throw new InternalServerErrorException(error)
+    }
   }
 
   async findLowAvailiblePaging(params: GetProductPagingDto) {
@@ -110,31 +134,55 @@ export class ProductService {
   }
 
   async findOne(id: number) {
-    return await this.prismaService.product.findUnique({ where: { id }, include: { variants: true } });
+    try {
+      const product = await this.prismaService.product.findUnique({ where: { id }, include: { variants: true } });
+      if(!product) throw new NotFoundException(MESSAGES.PRODUCT.ERROR.NOT_FOUND)
+
+      const reviews = await this.reviewService.getCountAndAverageRatingByProductId(+product.id)
+
+      return {
+        ...product,
+        averageRating: reviews._avg.rating,
+        countReviews: reviews._count._all
+      }
+    } catch (error) {
+      console.error(error)
+      throw new InternalServerErrorException(error)
+    }
   }
 
   async update(id: number, updateProductDto: UpdateProductDto) {
-    const existingProduct = await this.prismaService.product.findUnique({
-      where: { id: id }
-    });
-    if (!existingProduct) {
-      throw new BadRequestException(MESSAGES.PRODUCT.ERROR.NOT_FOUND);
-    }
+    try {
+      const existingProduct = await this.prismaService.product.findUnique({
+        where: { id: id }
+      });
+      if (!existingProduct) {
+        throw new BadRequestException(MESSAGES.PRODUCT.ERROR.NOT_FOUND);
+      }
 
-    await this.prismaService.product.update({
-      where: { id: id },
-      data: updateProductDto
-    })
+      return await this.prismaService.product.update({
+        where: { id: id },
+        data: updateProductDto
+      })
+    } catch (error) {
+      console.log(error)
+      throw new InternalServerErrorException(error)
+    }
   }
 
   async remove(id: number) {
-    const existingProduct = await this.prismaService.product.findUnique({
-      where: { id: id }
-    });
-    if (!existingProduct) {
-      throw new BadRequestException(MESSAGES.PRODUCT.ERROR.NOT_FOUND);
-    }
+    try {
+      const existingProduct = await this.prismaService.product.findUnique({
+        where: { id: id }
+      });
+      if (!existingProduct) {
+        throw new BadRequestException(MESSAGES.PRODUCT.ERROR.NOT_FOUND);
+      }
 
-    return await this.prismaService.product.delete({ where: { id: id }, })
+      return await this.prismaService.product.delete({ where: { id: id }, })
+    } catch (error) {
+      console.error(error)
+      throw new InternalServerErrorException(error)
+    }
   }
 }

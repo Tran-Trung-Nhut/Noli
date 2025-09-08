@@ -12,7 +12,7 @@ import LoadingAuth from "../components/LoadingAuth"
 const CartPage = () => {
   const [cart, setCart] = useState<Cart | null>(null)
   const [loading, setLoading] = useState<boolean>(false)
-  const { userInfo } = useAuth()
+  const { userInfo, getNumberOfCartItemByGuestToken, getNumberOfCartItemByUserId } = useAuth()
   const didRun = useRef(false);
   const token = getGuestToken()
 
@@ -44,6 +44,8 @@ const CartPage = () => {
 
       return updatedCart;
     });
+
+    if(userInfo) getNumberOfCartItemByUserId(userInfo.id); else getNumberOfCartItemByGuestToken(token)
     setLoading(false)
     notifySuccess('Đã xóa sản phẩm khỏi giỏ hàng')
   }
