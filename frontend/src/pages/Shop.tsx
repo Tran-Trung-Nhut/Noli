@@ -12,7 +12,14 @@ import ProductCardSkeleton from "../components/ProductCartSkeleton";
 import { debounce } from "lodash"
 
 const Shop = () => {
-    const [products, setProducts] = useState<(Product & {averageRating: number | null, countReviews: number, outOfStock: boolean})[]>([]);
+    const [products, setProducts] = useState<(
+        Product & {
+            averageRating: number | null,
+            countReviews: number,
+            soldQuantity: number | null,
+            outOfStock: boolean
+        })[]
+    >([]);
     const [loading, setLoading] = useState(false);
 
     // query state
@@ -34,7 +41,7 @@ const Shop = () => {
         () =>
             debounce((q: string) => {
                 setDebouncedSearch(q);
-            }, 500), 
+            }, 500),
         []
     );
 
@@ -147,7 +154,7 @@ const Shop = () => {
                         loader={
                             // loader shown at bottom while fetching next pages
                             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mt-6">
-                                {Array.from({ length: 4 }).map((_, i) => (<ProductCardSkeleton key={i} />))}
+                                {Array.from({ length: 12 }).map((_, i) => (<ProductCardSkeleton key={i} />))}
                             </div>
                         }
                         // optional threshold to prefetch earlier

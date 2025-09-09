@@ -131,9 +131,9 @@ const ProductDetailPage = () => {
     }
 
 
-    const getStockeByColorAndSize = (color: string, size: string) : number => {
-        for(const productVariant of product?.variants || []){
-            if(productVariant.color === color && productVariant.size === size) return productVariant.stock
+    const getStockeByColorAndSize = (color: string, size: string): number => {
+        for (const productVariant of product?.variants || []) {
+            if (productVariant.color === color && productVariant.size === size) return productVariant.stock
         }
 
         return 0;
@@ -150,6 +150,8 @@ const ProductDetailPage = () => {
     }
 
     const handleChangeQuantity = (quantity: number) => {
+        if (quantity > getStockeByColorAndSize(chosenColor, chosenSize) || quantity === 0) return
+
         setQuantity(quantity)
         updatePriceByChosenColorAndSize('quantity', String(quantity))
     }
@@ -238,7 +240,15 @@ const ProductDetailPage = () => {
                                 </div>
                             </div>
                             <div className="md:w-1/2 md:pl-10 mt-6 md:mt-0">
-                                <h1 className="text-3xl font-bold uppercase text-black">{product.name}</h1>
+                                <h1 className="text-3xl font-bold uppercase text-black">
+                                    {product.outOfStock && (
+                                        <>
+                                            <span className="text-red-500 bg-red-200">Hết hàng</span>
+                                            <span> </span>
+                                        </>
+                                    )}
+                                    {product.name}
+                                </h1>
                                 <p className="flex justify-start gap-5">
                                     <span className="flex gap-1">
                                         <span className="underline">
@@ -256,6 +266,14 @@ const ProductDetailPage = () => {
                                         </span>
                                         <span className="flex justify-center items-center">
                                             Đánh giá
+                                        </span>
+                                    </span> |
+                                    <span className="flex gap-1">
+                                        <span className="underline">
+                                            {product.soldQuantity || 0}
+                                        </span>
+                                        <span className="flex justify-center items-center">
+                                            Đã bán
                                         </span>
                                     </span>
                                 </p>
@@ -305,12 +323,12 @@ const ProductDetailPage = () => {
                                     <div className="flex space-x-3">
                                         <button
                                             type="button"
-                                            onClick={() => quantity > 0 && handleChangeQuantity(quantity - 1)}>
+                                            onClick={() => handleChangeQuantity(quantity - 1)}>
                                             <Minus size={16} />
                                         </button>
                                         <input
                                             type="number"
-                                            className={`px-4 py-2 w-12 border rounded-lg text-center text-xl [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none`}
+                                            className={`px-4 py-2 w-16 border rounded-lg text-center text-xl [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none`}
                                             value={quantity}
                                             onChange={(e) => setQuantity(Number(e.target.value))}
                                         />
@@ -328,7 +346,7 @@ const ProductDetailPage = () => {
                                         className={`${getStockeByColorAndSize(chosenColor, chosenSize) === 0 ? "bg-gray-500" : "bg-sky-500 hover:opacity-80"} text-white px-6 py-2 rounded-lg`}
                                         onClick={() => navigate(`/checkout`, { state: { product, productVariant: getVariant(chosenColor, chosenSize), quantity } })}
                                         disabled={getStockeByColorAndSize(chosenColor, chosenSize) === 0}
-                                        >
+                                    >
                                         MUA NGAY
                                     </button>
                                     <button

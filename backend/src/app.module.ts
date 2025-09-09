@@ -42,9 +42,14 @@ import { ReviewModule } from './review/review.module';
         })
       })
     }),
-    OrderStatusModule,
-    UploadModule,
-    ReviewModule
+    // CacheModule.register({
+    //   isGlobal: true,
+    //   ttl: 60 * 1000,
+    //   max: 1000
+    // }),
+    // OrderStatusModule,
+    // UploadModule,
+    // ReviewModule
   ],
   controllers: [],
   providers: [],

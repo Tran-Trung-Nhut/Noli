@@ -64,7 +64,21 @@ export class PaymentService {
       return result.data;
     } catch (error) {
       console.error(error)
-      throw new InternalServerErrorException(error)
+      throw error
+    }
+  }
+
+  async codPayment(orderId: number, orderStatus: string) {
+    try {
+      return await this.prismaService.$transaction(async () => {
+        await this.prismaService.order.update({ where: { id: Number(orderId) }, data: { paymentMethod: 'COD' } })
+
+
+        return await this.orderService.updateOrderStatus(Number(orderId), orderStatus)
+      })
+
+    } catch (error) {
+      throw error
     }
   }
 

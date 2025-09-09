@@ -8,6 +8,7 @@ import { LowAvailibleProduct } from './entities/product.entity';
 import { ReviewService } from 'src/review/review.service';
 import { ProductVariantService } from 'src/product-variant/product-variant.service';
 
+
 @Injectable()
 export class ProductService {
   constructor(
@@ -69,12 +70,14 @@ export class ProductService {
       return await Promise.all(products.map(async (product) => {
         const reviews = await this.reviewService.getCountAndAverageRatingByProductId(+product.id)
         const outOfStock = await this.productVariantService.isOutOfStock(product.id)
+        const soldQuantity = (await this.totalSold(product.id))._sum.quantity
 
         return {
           ...product,
           averageRating: reviews._avg.rating,
           countReviews: reviews._count._all,
           outOfStock: outOfStock,
+          soldQuantity: soldQuantity
         }
       }))
     } catch (error) {
@@ -146,11 +149,14 @@ export class ProductService {
 
       const outOfStock = await this.productVariantService.isOutOfStock(product.id)
 
+      const soldQuantity = (await this.totalSold(id))._sum.quantity
+
       return {
         ...product,
         averageRating: reviews._avg.rating,
         countReviews: reviews._count._all,
-        outOfStock: outOfStock
+        outOfStock: outOfStock,
+        soldQuantity: soldQuantity
       }
     } catch (error) {
       console.error(error)
@@ -187,6 +193,40 @@ export class ProductService {
       }
 
       return await this.prismaService.product.delete({ where: { id: id }, })
+    } catch (error) {
+      console.error(error)
+      throw new InternalServerErrorException(error)
+    }
+  }
+
+  async totalSold(id: number){
+    try {
+      const orders = await this.prismaService.order.findMany({
+        where: {
+          orderStatuses: {
+            some: {
+              status: {
+                in: ["PENDING_PAYMENT", "DELIVERY", "COMPLETED"]
+              }
+            }
+          } 
+        }
+      })
+
+      const orderIds = orders.flatMap(order => order.id)
+
+      return await this.prismaService.orderItem.aggregate({
+        where: {
+          orderId: {
+            in: orderIds
+          },
+          productId: id
+        },
+        _sum: {
+          quantity: true
+        }
+      })
+
     } catch (error) {
       console.error(error)
       throw new InternalServerErrorException(error)

@@ -134,9 +134,9 @@ const Checkout = () => {
                 notifyError("Có lỗi xảy ra. Hãy vào đơn hàng của bạn để thanh toán sau")
                 return setLoading(false)
             }
-            const result = await orderApi.updateOrderStatus((orderId.current || 0), "DELIVERY")
+            const result = await paymentApi.cod((orderId.current || 0), "DELIVERY")
 
-            if (result.status !== HttpStatusCode.Ok) {
+            if (result.status !== HttpStatusCode.Created) {
                 notifyError("Có lỗi xảy ra. Hãy vào đơn hàng của bạn để thanh toán sau")
                 return setLoading(false)
             }
@@ -190,6 +190,11 @@ const Checkout = () => {
         if (result.status !== HttpStatusCode.Created) {
             setLoading(false)
             setLoadingMessage("")
+
+            if (result.data.response.code === 'outOfStock') {
+                return notifyWarning(`Sản phẩm có mã ${result.data.response.productVariantId} chỉ còn lại ${result.data.response.stock} sản phẩm. Hãy điều chỉnh số lượng muốn mua của bạn và đăng ký theo dõi để nhận được thông báo khi có hàng!`)
+            }
+
             return notifyError("Có lỗi xảy ra. Vui lòng thử lại")
         }
 
@@ -385,7 +390,7 @@ const Checkout = () => {
                                                 <div className="text-xs text-gray-500">{ci.product.name ?? ""}</div>
                                             </div>
                                             <div className="text-sm font-semibold text-gray-900">{formatPrice(ci.priceAtAdding * ci.quantity)}</div>
-                                            <button className="ml-2 text-xs text-red-500" onClick={() => removeFromCheckout(ci.id)}>Xóa</button>
+                                            {cart?.cartItems.length > 1 && <button className="ml-2 text-xs text-red-500" onClick={() => removeFromCheckout(ci.id)}>Xóa</button>}
                                         </div>
                                     ))
                                 ) : (

@@ -42,7 +42,8 @@ export const getOrderCurrentStatus = (orderStatuses: OrderStatusDto[]) : string 
 export const getPaymentMethod = (paymentMethod: string | undefined) => {
     switch (paymentMethod) {
         case "MOMO": return "Thanh toán qua Momo"
-        default: return "Thanh toán khi nhận hàng"
+        case "COD": return "Thanh toán khi nhận hàng"
+        default: return "--"
     }
 } 
 

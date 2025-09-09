@@ -100,7 +100,7 @@ model Order {
   id             Int      @id @default(autoincrement())
   userId         Int?
   guestToken     String?  @db.Uuid
-  paymentMethod  String   @default("COD")
+  paymentMethod  String?
   transactionId  String?
   paymentStatus  String   @default("PENDING")
   subTotal       Float

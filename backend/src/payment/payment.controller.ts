@@ -15,7 +15,7 @@ export class PaymentController {
   }
 
   @Post('momo/callback')
-  async momoCallback(@Body() body) {
+  async momoCallback(@Body() body: any) {
     if (body.resultCode === 0) {
       console.log("Payment successful:", body);
     } else {
@@ -24,6 +24,14 @@ export class PaymentController {
 
     return { message: "Callback received" };
   }
+
+  @Post('cod')
+  async codPayment(@Body() body: any) {
+    const { orderId, orderStatus } = body;
+
+    return await this.paymentService.codPayment(orderId, orderStatus)
+  }
+
 
 
   @Post()

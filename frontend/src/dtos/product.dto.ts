@@ -11,13 +11,19 @@ export type Product = {
     updatedAt?: Date,
 }
 
-export type ProductDetail = Product & {variants: ProductVariant[], averageRating: number | null, countReviews: number}
+export type ProductDetail = Product & {
+    variants: ProductVariant[],
+    averageRating: number | null,
+    countReviews: number,
+    soldQuantity: number | null,
+    outOfStock: boolean
+}
 
-export type CreateProduct = Omit<Product, 'id'> & {productVariants: CreateProductVariant[]}
+export type CreateProduct = Omit<Product, 'id'> & { productVariants: CreateProductVariant[] }
 
-export type LowAvailibleProduct = Omit<Product, 'defaultPrice' | 'description' | 'image'> & {status: string, totalProduct: number}
+export type LowAvailibleProduct = Omit<Product, 'defaultPrice' | 'description' | 'image'> & { status: string, totalProduct: number }
 
-export const defaultProduct : Product = {
+export const defaultProduct: Product = {
     id: 0,
     defaultPrice: 0,
     description: "Đây là mô tả sản phẩm mặc định",

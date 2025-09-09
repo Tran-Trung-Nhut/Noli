@@ -9,7 +9,7 @@ import {
     FaRedoAlt,
     FaPhoneAlt,
 } from "react-icons/fa";
-import { confirm, formatDateTime, formatPrice, getOrderCurrentStatus, getPaymentMethod, notifyError, notifySuccess } from "../utils"; // giữ như bạn đang dùng
+import { confirm, formatDateTime, formatPrice, getOrderCurrentStatus, getPaymentMethod, notifyError, notifySuccess, notifyWarning } from "../utils"; // giữ như bạn đang dùng
 
 // --- Types (tùy chỉnh nếu cần) ---
 
@@ -62,6 +62,8 @@ import type { OrderItemShow } from "../dtos/orderItem.dto";
 import type { OrderDto } from "../dtos/order.dto";
 import type { OrderStatusDto } from "../dtos/orderStatus.dto";
 import BuyAgainModal from "../components/BuyAgainModal";
+import PaymentMethodModal from "../components/PaymentMethodModal";
+import paymentApi from "../apis/paymentApi";
 
 // --- Mock order (used if no prop passed) ---
 
@@ -73,7 +75,9 @@ const OrderDetailPage = () => {
 
     const [order, setOrder] = useState<OrderDto & { orderItems: OrderItemShow[], address: AddressDto, orderStatuses: OrderStatusDto[] } | null>(null)
     const [loading, setLoading] = useState<boolean>(false)
+    const [loadingMessage, setLoadingMessage] = useState<string>("")
     const [isOpenBuyAgain, setIsOpenBuyAgain] = useState<boolean>(false)
+    const [isOpenChoosePaymentMethod, setIsOpenChoosePaymetMethod] = useState<boolean>(false)
     const navigate = useNavigate()
 
     const fetchOrderFullDetail = async () => {
@@ -104,6 +108,52 @@ const OrderDetailPage = () => {
         })
     }
 
+    const handleChoosePaymentMethod = async (paymentMethod: string) => {
+        setLoading(true)
+        if (!order) {
+            setLoading(false)
+
+            return notifyError("Có lỗi xảy ra. Vui lòng thử lại sau")
+        }
+        setIsOpenChoosePaymetMethod(false)
+        if (paymentMethod === 'momo') {
+            const result = await paymentApi.momo({ amount: order?.totalAmount, orderId: `MOMOPAYMENT${order.id}` })
+            if (result.status !== HttpStatusCode.Created) {
+                if (result.data.response.code === 'outOfStock') {
+                    setLoading(false)
+
+                    notifyWarning(`Đơn hàng này của bạn bị HỦY do sản phẩm có mã ${result.data.response.productVariantId} chỉ còn lại ${result.data.response.stock} sản phẩm. Hãy điều chỉnh số lượng muốn mua của bạn hoặc đăng ký theo dõi để nhận được thông báo khi có hàng!.`)
+                    return fetchOrderFullDetail()
+                }
+
+                setTimeout(() => {
+                    setLoading(false)
+                    notifyError("Hệ thống thanh toán đang gặp vấn đề. Vui lòng thử lại sau")
+                }, 1000)
+                return
+            }
+
+            window.location.href = result.data.payUrl
+
+        } else {
+
+            setLoadingMessage("Đang xác nhận đơn hàng. Vui lòng đợi trong giây lát!")
+            const result = await paymentApi.cod(order.id, "DELIVERY")
+            if (result.status !== HttpStatusCode.Created) {
+                if (result.data.response.code === 'outOfStock') {
+                    setLoading(false)
+
+                    notifyWarning(`Đơn hàng này của bạn bị HỦY do sản phẩm có mã ${result.data.response.productVariantId} chỉ còn lại ${result.data.response.stock} sản phẩm. Hãy điều chỉnh số lượng muốn mua của bạn hoặc đăng ký theo dõi để nhận được thông báo khi có hàng!.`)
+                    return fetchOrderFullDetail()
+                }
+                notifyError("Có lỗi xảy ra. Hãy vào đơn hàng của bạn để thanh toán sau")
+                return setLoading(false)
+            }
+
+            setTimeout(() => { navigate(`/payment-result?orderId=${result.data.orderId}`) }, 3000)
+        }
+    }
+
     useEffect(() => { fetchOrderFullDetail() }, [])
 
     return (
@@ -111,13 +161,22 @@ const OrderDetailPage = () => {
             <LoadingAuth />
         ) : (
             <>
-                <BuyAgainModal 
-                open={isOpenBuyAgain} 
-                onClose={() => setIsOpenBuyAgain(false)} 
-                orderItems={order.orderItems}
+                <PaymentMethodModal
+                    onClose={() => setIsOpenChoosePaymetMethod(false)}
+                    isOpen={isOpenChoosePaymentMethod}
+                    subtotal={order.subTotal}
+                    shippingFee={order.shippingFee}
+                    discountAmount={order.discountAmount}
+                    onConfirm={handleChoosePaymentMethod}
                 />
-                
-                {loading && <LoadingAuth />}
+
+                <BuyAgainModal
+                    open={isOpenBuyAgain}
+                    onClose={() => setIsOpenBuyAgain(false)}
+                    orderItems={order.orderItems}
+                />
+
+                {loading && <LoadingAuth message={loadingMessage} />}
 
                 <div className="py-8 px-4">
                     <div className="max-w-[90%] mx-auto space-y-6">
@@ -236,7 +295,17 @@ const OrderDetailPage = () => {
 
                                     {/* Payment */}
                                     <div className="p-4 rounded-lg border bg-white">
-                                        <h4 className="text-sm text-gray-500 mb-2">Thanh toán</h4>
+                                        <div className="flex justify-between">
+                                            <h4 className="text-sm text-gray-500 mb-2">Thanh toán</h4>
+                                            {getOrderCurrentStatus(order.orderStatuses) === 'DRAFT' &&
+                                                <button
+                                                    className="mb-2 text-xs bg-white text-sky-500 border-none focus-none hover:text-sky-600 hover:underline"
+                                                    onClick={() => setIsOpenChoosePaymetMethod(true)}
+                                                >
+                                                    Chọn phương thức thanh toán
+                                                </button>
+                                            }
+                                        </div>
                                         <div className="text-sm text-gray-700">{getPaymentMethod(order.paymentMethod)}</div>
                                         <div className="text-xs text-gray-400 mt-1">Tạo lúc: {formatDateTime(order.createdAt.toString())}</div>
                                     </div>
