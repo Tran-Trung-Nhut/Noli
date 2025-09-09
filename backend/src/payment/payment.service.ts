@@ -4,13 +4,13 @@ import { UpdatePaymentDto } from './dto/update-payment.dto';
 import * as crypto from 'crypto';
 import axios from 'axios';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { OrderStatusService } from 'src/order-status/order-status.service';
+import { OrderService } from 'src/order/order.service';
 
 @Injectable()
 export class PaymentService {
   constructor(
     private readonly prismaService: PrismaService,
-    private readonly orderStatusService: OrderStatusService
+    private readonly orderService: OrderService
   ) { }
 
 
@@ -55,9 +55,11 @@ export class PaymentService {
 
       const numberPart = orderId.replace("MOMOPAYMENT", "")
 
-      await this.prismaService.order.update({ where: { id: Number(numberPart) }, data: { paymentMethod: 'MOMO' } })
+      await this.prismaService.$transaction(async () => {
+        await this.prismaService.order.update({ where: { id: Number(numberPart) }, data: { paymentMethod: 'MOMO' } })
 
-      await this.orderStatusService.create({ orderId: Number(numberPart), status: "PENDING_PAYMENT" })
+        return await this.orderService.updateOrderStatus(Number(numberPart), "PENDING_PAYMENT")
+      })
 
       return result.data;
     } catch (error) {

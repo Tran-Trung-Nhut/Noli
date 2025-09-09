@@ -12,7 +12,7 @@ import ProductCardSkeleton from "../components/ProductCartSkeleton";
 import { debounce } from "lodash"
 
 const Shop = () => {
-    const [products, setProducts] = useState<(Product & {averageRating: number | null, countReviews: number})[]>([]);
+    const [products, setProducts] = useState<(Product & {averageRating: number | null, countReviews: number, outOfStock: boolean})[]>([]);
     const [loading, setLoading] = useState(false);
 
     // query state

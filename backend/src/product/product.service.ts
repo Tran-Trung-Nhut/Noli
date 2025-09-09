@@ -6,12 +6,14 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { APP_CONSTANTS, MESSAGES } from 'src/constantsAndMessage';
 import { LowAvailibleProduct } from './entities/product.entity';
 import { ReviewService } from 'src/review/review.service';
+import { ProductVariantService } from 'src/product-variant/product-variant.service';
 
 @Injectable()
 export class ProductService {
   constructor(
     private readonly prismaService: PrismaService,
-    private readonly reviewService: ReviewService
+    private readonly reviewService: ReviewService,
+    private readonly productVariantService: ProductVariantService
   ) { }
 
   async create(createProduct: CreateProductDto) {
@@ -66,11 +68,13 @@ export class ProductService {
 
       return await Promise.all(products.map(async (product) => {
         const reviews = await this.reviewService.getCountAndAverageRatingByProductId(+product.id)
+        const outOfStock = await this.productVariantService.isOutOfStock(product.id)
 
         return {
           ...product,
           averageRating: reviews._avg.rating,
-          countReviews: reviews._count._all
+          countReviews: reviews._count._all,
+          outOfStock: outOfStock,
         }
       }))
     } catch (error) {
@@ -136,14 +140,17 @@ export class ProductService {
   async findOne(id: number) {
     try {
       const product = await this.prismaService.product.findUnique({ where: { id }, include: { variants: true } });
-      if(!product) throw new NotFoundException(MESSAGES.PRODUCT.ERROR.NOT_FOUND)
+      if (!product) throw new NotFoundException(MESSAGES.PRODUCT.ERROR.NOT_FOUND)
 
       const reviews = await this.reviewService.getCountAndAverageRatingByProductId(+product.id)
+
+      const outOfStock = await this.productVariantService.isOutOfStock(product.id)
 
       return {
         ...product,
         averageRating: reviews._avg.rating,
-        countReviews: reviews._count._all
+        countReviews: reviews._count._all,
+        outOfStock: outOfStock
       }
     } catch (error) {
       console.error(error)

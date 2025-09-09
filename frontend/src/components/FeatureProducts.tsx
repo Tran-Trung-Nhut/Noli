@@ -7,7 +7,7 @@ import productApi from "../apis/productApi";
 
 
 const FeaturedProducts = () => {
-    const [products, setProducts] = useState<(Product & {averageRating: number | null, countReviews: number})[]>([])
+    const [products, setProducts] = useState<(Product & {averageRating: number | null, countReviews: number, outOfStock: boolean})[]>([])
     const [loading, setLoading] = useState<boolean>(false)
 
     const fetchFeaturedProducts = async () => {

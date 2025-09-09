@@ -5,7 +5,7 @@ import type { Product } from "../dtos/product.dto";
 import NotFoundSVG from "../assets/product-not-found.svg"
 
 type Props = {
-    products: (Product & {averageRating: number | null , countReviews: number})[];
+    products: (Product & {averageRating: number | null , countReviews: number, outOfStock: boolean})[];
     loading: boolean;
 };
 

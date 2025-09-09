@@ -130,6 +130,15 @@ const ProductDetailPage = () => {
         }
     }
 
+
+    const getStockeByColorAndSize = (color: string, size: string) : number => {
+        for(const productVariant of product?.variants || []){
+            if(productVariant.color === color && productVariant.size === size) return productVariant.stock
+        }
+
+        return 0;
+    }
+
     const handleChooseSize = (size: string) => {
         setChosenSize(size)
         updatePriceByChosenColorAndSize('size', size)
@@ -220,12 +229,12 @@ const ProductDetailPage = () => {
                                         <FaFacebookMessenger className="text-blue-500 w-[24px] h-[24px]" />
                                     </button>|
                                     <button className="border-none bg-white hover:scale-110" onClick={() => handleShareZalo()}>
-                                        <SiZalo className="text-gray-900 w-[24px] h-[24px]" color="blue"/>
+                                        <SiZalo className="text-gray-900 w-[24px] h-[24px]" color="blue" />
                                     </button>|
                                     <button className="border-none bg-white hover:scale-110" onClick={() => handleCopyLink()}>
                                         <FaLink className="text-gray-900 w-[22px] h-[22px]" />
                                     </button>
-                                    
+
                                 </div>
                             </div>
                             <div className="md:w-1/2 md:pl-10 mt-6 md:mt-0">
@@ -286,6 +295,11 @@ const ProductDetailPage = () => {
                                     </div>
                                 </div>
 
+                                <div className="mt-6 flex justify-start items-center gap-2">
+                                    <h3 className="text-sm font-semibold text-gray-600">Kho: </h3>
+                                    <span>{getStockeByColorAndSize(chosenColor, chosenSize)}</span>
+                                </div>
+
                                 <div className="mt-6">
                                     <h3 className="text-sm font-semibold text-gray-600 mb-2">Số lượng</h3>
                                     <div className="flex space-x-3">
@@ -311,13 +325,16 @@ const ProductDetailPage = () => {
                                 {/* Nút hành động */}
                                 <div className="mt-6 flex space-x-4">
                                     <button
-                                        className="bg-sky-500 text-white px-6 py-2 rounded-lg hover:opacity-80"
-                                        onClick={() => navigate(`/checkout`, { state: { product, productVariant: getVariant(chosenColor, chosenSize), quantity } })}>
+                                        className={`${getStockeByColorAndSize(chosenColor, chosenSize) === 0 ? "bg-gray-500" : "bg-sky-500 hover:opacity-80"} text-white px-6 py-2 rounded-lg`}
+                                        onClick={() => navigate(`/checkout`, { state: { product, productVariant: getVariant(chosenColor, chosenSize), quantity } })}
+                                        disabled={getStockeByColorAndSize(chosenColor, chosenSize) === 0}
+                                        >
                                         MUA NGAY
                                     </button>
                                     <button
-                                        className="bg-white text-sky-500 border-2 border-sky-500 px-6 py-2 rounded-lg hover:bg-gray-200"
+                                        className={`${getStockeByColorAndSize(chosenColor, chosenSize) === 0 ? "text-gray-500 border-gray-500" : "text-sky-500 border-sky-500 hover:bg-gray-200"} bg-white border-2 px-6 py-2 rounded-lg`}
                                         onClick={() => addToCart()}
+                                        disabled={getStockeByColorAndSize(chosenColor, chosenSize) === 0}
                                     >
                                         THÊM VÀO GIỎ HÀNG
                                     </button>

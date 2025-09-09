@@ -6,12 +6,14 @@ import { MESSAGES } from 'src/constantsAndMessage';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Cache } from 'cache-manager';
 import { OrderStatusService } from 'src/order-status/order-status.service';
+import { ProductVariantService } from 'src/product-variant/product-variant.service';
 
 @Injectable()
 export class OrderService {
   constructor(
     private readonly prismaService: PrismaService,
     private readonly orderStatusService: OrderStatusService,
+    private readonly productVariantService: ProductVariantService,
     @Inject(CACHE_MANAGER) private cacheManager: Cache
   ) { }
 
@@ -243,11 +245,27 @@ export class OrderService {
 
   async updateOrderStatus(id: number, status: string) {
     try {
-      const existOrder = await this.prismaService.order.findUnique({ where: { id } })
+      const existOrder = await this.prismaService.order.findUnique({ where: { id }, include: { orderItems: true } },)
 
       if (!existOrder) throw new BadRequestException("Đơn hàng không tồn tại")
 
-      return await this.orderStatusService.create({ orderId: id, status })
+      return this.prismaService.$transaction(async (prisma) => {
+        const newOrderStatus = await this.orderStatusService.create({ orderId: id, status })
+
+        const previousOrderStatus = await prisma.orderStatus.findUnique({ where: { id: newOrderStatus.previousStatusId || 0 } })
+        if (status === 'CANCEL') {
+          if (previousOrderStatus?.status === 'DRAFT') return newOrderStatus;
+
+          await Promise.all(existOrder.orderItems.map(async (orderItem) => await this.productVariantService.increaseStock(+orderItem.productVariantId, +orderItem.quantity)))
+        } else {
+          if (previousOrderStatus?.status !== 'DRAFT') return newOrderStatus;
+          console.log('here')
+
+          await Promise.all(existOrder.orderItems.map(async (orderItem) => await this.productVariantService.descreaseStock(+orderItem.productVariantId, +orderItem.quantity)))
+        }
+
+        return newOrderStatus
+      })
     } catch (error) {
       console.error(error)
       throw new InternalServerErrorException(error)
