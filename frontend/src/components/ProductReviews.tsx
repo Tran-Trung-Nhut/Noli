@@ -95,7 +95,7 @@ const ProductReviews = ({
                         <h1 className="text-center font-bold text-2xl">ĐÁNH GIÁ SẢN PHẨM</h1>
                         <div className="text-sm text-gray-500">Đánh giá trung bình</div>
                         <div className="mt-3 flex items-center gap-3">
-                            <div className="text-3xl font-semibold text-slate-800">{averageRating || "0.0"}</div>
+                            <div className="text-3xl font-semibold text-slate-800">{(averageRating || 0).toFixed(1)}</div>
                             <div className="flex items-center">
                                 {Array.from({ length: 5 }).map((_, i) => (
                                     <Star key={i} filled={i < (averageRating || 0)} />

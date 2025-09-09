@@ -233,7 +233,7 @@ const ProductDetailPage = () => {
                                 <p className="flex justify-start gap-5">
                                     <span className="flex gap-1">
                                         <span className="underline">
-                                            {(product.averageRating || 0)}
+                                            {(product.averageRating || 0).toFixed(1)}
                                         </span>
                                         <span className="flex justify-center items-center">
                                             {Array.from({ length: 5 }).map((_, i) => (
