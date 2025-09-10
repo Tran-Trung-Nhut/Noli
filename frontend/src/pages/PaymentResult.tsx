@@ -47,7 +47,7 @@ const PaymentResult = () => {
         }
     }, [copied]);
 
-    async function copyTxn() {
+    const copyTxn = async () => {
         try {
             await navigator.clipboard.writeText(txn);
             setCopied(true);
@@ -63,7 +63,7 @@ const PaymentResult = () => {
         }
     }
 
-    function handlePrint() {
+    const handlePrint = () => {
         // Simple printable area approach
         const printContent = document.getElementById("invoice-print-area");
         if (!printContent) return window.print();
@@ -75,7 +75,7 @@ const PaymentResult = () => {
         setTimeout(() => { newWin.print(); newWin.close(); }, 500);
     }
 
-    function continueShopping() {
+    const continueShopping = () => {
         navigate('/shop')
     }
 
@@ -138,7 +138,7 @@ const PaymentResult = () => {
 
                             {message && <p className="mt-2 text-sm text-gray-500">{message}</p>}
 
-                            {order && !order.userId && <p className="mt-3 text-sm text-gray-600 font-bold italic">Hãy đăng nhập để xem tình trạng đơn hàng này của bạn.</p>}
+                            {order && !order.userId && <p className="mt-3 text-sm text-gray-600 font-bold italic">Dùng mã đơn hàng để kiểm tra tình trạng đơn hàng hoặc đăng nhập để thao tác với đơn hàng này của bạn.</p>}
 
 
                             <div className="mt-6 flex flex-col sm:flex-row items-center justify-center gap-3">
@@ -170,7 +170,7 @@ const PaymentResult = () => {
                                     <h3 className="text-sm font-semibold text-gray-700">Thông tin đơn hàng</h3>
                                     <div className="mt-3 rounded-lg bg-gray-50 p-4">
                                         <div className="flex items-center justify-between text-sm text-gray-600">
-                                            <div>Order ID</div>
+                                            <div>Mã đơn hàng</div>
                                             <div className="font-medium text-gray-800">{orderId}</div>
                                         </div>
 

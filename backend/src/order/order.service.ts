@@ -1,4 +1,4 @@
-import { BadRequestException, Inject, Injectable, InternalServerErrorException } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
@@ -236,7 +236,7 @@ export class OrderService {
 
   async findOne(id: number) {
     try {
-      return await this.prismaService.order.findUnique({
+      const order = await this.prismaService.order.findUnique({
         where: { id },
         include: {
           orderItems: {
@@ -249,9 +249,13 @@ export class OrderService {
           orderStatuses: true
         }
       });
+
+      if(!order) throw new NotFoundException()
+
+      return order
     } catch (error) {
       console.error(error)
-      throw new InternalServerErrorException(error)
+      throw error
     }
   }
 

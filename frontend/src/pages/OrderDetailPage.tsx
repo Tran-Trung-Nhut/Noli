@@ -15,7 +15,7 @@ import { confirm, formatDateTime, formatPrice, getOrderCurrentStatus, getPayment
 
 
 // --- Status meta (tailwind classes + icon + label) ---
-const STATUS_META: Record<
+export const STATUS_META: Record<
     string,
     { label: string; icon: JSX.Element; text: string; bg: string }
 > = {

@@ -20,6 +20,13 @@ import Contact from './pages/Contact';
 import PaymentResult from './pages/PaymentResult';
 import OrderDetailPage from './pages/OrderDetailPage';
 import Invalid from './pages/Invalid';
+import PolicyPage from './pages/Policy';
+import TermsPage from './pages/Term';
+import PrivacyPage from './pages/PrivacyPolicy';
+import SitemapPage from './pages/SiteMap';
+import RecruitmentPage from './pages/Career';
+import FAQPage from './pages/FAQ';
+import { TrackOrderPage } from './pages/TrackOrderPage';
 
 
 const App = () => {
@@ -33,7 +40,7 @@ const App = () => {
             <Route path='/login' element={<Login />} />
             <Route path='/signup' element={<Signup />} />
             <Route path='/auth-google-result' element={<GoogleAuthLoading />} />
-            <Route path='/invalid' element={<Invalid/>}/>
+            <Route path='/invalid' element={<Invalid />} />
             <Route path='/' element={<DefaultLayout />}>
               <Route index element={<Home />} />               {/* đường dẫn "/" */}
               <Route path='/my-cart' element={<CartPage />} />
@@ -47,12 +54,19 @@ const App = () => {
               <Route path='/checkout' element={<Checkout />} />
               <Route path='/about' element={<About />} />
               <Route path='/contact' element={<Contact />} />
-              <Route path='/payment-result' element={<PaymentResult/>}/>
+              <Route path='/payment-result' element={<PaymentResult />} />
+              <Route path='/policy' element={<PolicyPage />} />
+              <Route path='/terms' element={<TermsPage/>}/>
+              <Route path='/privacy-policy' element={<PrivacyPage/>}/>
+              <Route path='/sitemap' element={<SitemapPage/>} />
+              <Route path='/careers' element={<RecruitmentPage/>}/>
+              <Route path='/faq' element={<FAQPage/>}/>
+              <Route path='/track-order' element={<TrackOrderPage/>}/>
               <Route path='/order' element={
                 <ProtectedRoute>
-                  <OrderDetailPage/>
+                  <OrderDetailPage />
                 </ProtectedRoute>
-              }/>
+              } />
             </Route>
             {/* <Route path='/login' element={<MaintenancePage/>}></Route> */}
           </Routes>

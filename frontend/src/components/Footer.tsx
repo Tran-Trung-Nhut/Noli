@@ -43,7 +43,7 @@ const Footer = () => {
                         <div className="flex items-start gap-3">
                             <div className="flex-shrink-0 mt-1">
                                 {/* Truck icon */}
-                                <Truck size={32}/>
+                                <Truck size={32} />
                             </div>
                             <div>
                                 <h4 className="text-sm font-semibold text-white">Giao hàng nhanh</h4>
@@ -53,7 +53,7 @@ const Footer = () => {
 
                         <div className="flex items-start gap-3">
                             <div className="flex-shrink-0 mt-1">
-                                <RefreshCcw size={32}/>
+                                <RefreshCcw size={32} />
                             </div>
                             <div>
                                 <h4 className="text-sm font-semibold text-white">Đổi trả dễ dàng</h4>
@@ -64,7 +64,7 @@ const Footer = () => {
                         <div className="flex items-start gap-3">
                             <div className="flex-shrink-0 mt-1">
                                 {/* Shield/lock icon */}
-                               <ShieldCheck size={32}/>
+                                <ShieldCheck size={32} />
                             </div>
                             <div>
                                 <h4 className="text-sm font-semibold text-white">Thanh toán an toàn</h4>
@@ -83,13 +83,7 @@ const Footer = () => {
                                 <Link to={"/shop"} className="hover:text-white">Tất cả sản phẩm</Link>
                             </li>
                             <li>
-                                <a href="#" className="hover:text-white">Sản phẩm mới</a>
-                            </li>
-                            <li>
-                                <a href="#" className="hover:text-white">Bộ sưu tập</a>
-                            </li>
-                            <li>
-                                <a href="#" className="hover:text-white">Khuyến mãi</a>
+                                <Link to={"/"} className="hover:text-white">Sản phẩm mới</Link>
                             </li>
                         </ul>
                     </div>
@@ -98,16 +92,16 @@ const Footer = () => {
                         <h5 className="font-semibold text-white">Hỗ trợ khách hàng</h5>
                         <ul className="mt-4 space-y-2 text-sm text-gray-300">
                             <li>
-                                <a href="#" className="hover:text-white">Trung tâm trợ giúp</a>
+                                <Link to={"/faq"} className="hover:text-white">Trung tâm trợ giúp</Link>
                             </li>
                             <li>
-                                <a href="#" className="hover:text-white">Vận chuyển & giao nhận</a>
+                                <Link to={"/policy"} className="hover:text-white">Vận chuyển & giao nhận</Link>
                             </li>
                             <li>
-                                <a href="#" className="hover:text-white">Đổi trả & hoàn tiền</a>
+                                <Link to={"/policy"} className="hover:text-white">Đổi trả & hoàn tiền</Link>
                             </li>
                             <li>
-                                <a href="#" className="hover:text-white">Theo dõi đơn hàng</a>
+                                <Link to={"/track-order"} className="hover:text-white">Theo dõi đơn hàng</Link>
                             </li>
                         </ul>
                     </div>
@@ -119,10 +113,7 @@ const Footer = () => {
                                 <Link to={"/about"} className="hover:text-white">Giới thiệu</Link>
                             </li>
                             <li>
-                                <a href="#" className="hover:text-white">Tuyển dụng</a>
-                            </li>
-                            <li>
-                                <a href="#" className="hover:text-white">Blog</a>
+                                <Link to={"/careers"} className="hover:text-white">Tuyển dụng</Link>
                             </li>
                             <li>
                                 <Link to={"/contact"} className="hover:text-white">Liên hệ</Link>
@@ -139,10 +130,10 @@ const Footer = () => {
                             <div className="flex items-center gap-3 mt-3">
                                 {/* Social icons */}
                                 <a aria-label="facebook" href="https://www.facebook.com/profile.php?id=100071433255220" className="p-1 rounded-full hover:bg-gray-100 hover:text-black">
-                                    <FaFacebookSquare size={24}/>
+                                    <FaFacebookSquare size={24} />
                                 </a>
                                 <a aria-label="instagram" href="https://www.tiktok.com/@hongoc00" className="p-1 rounded-full hover:bg-gray-100 hover:text-black">
-                                    <FaTiktok size={24}/>
+                                    <FaTiktok size={24} />
                                 </a>
                             </div>
                         </address>
@@ -155,7 +146,7 @@ const Footer = () => {
                         {/* Company logo placeholder */}
                         <div className="flex items-center gap-2">
                             <div className="w-10 h-10 rounded bg-white flex items-center justify-center text-white font-bold">
-                                <img src={logo}/>
+                                <img src={logo} />
                             </div>
                             <div>
                                 <div className="text-sm font-semibold">NoliShop</div>
@@ -166,18 +157,19 @@ const Footer = () => {
                             <span>Thanh toán:</span>
                             {/* Payment icons (svg placeholders) */}
                             <div className="flex items-center gap-2">
-                                <FaRegMoneyBill1 size={32}/>
-                                <FaCcVisa size={32}/>
-                                <FaCcMastercard size={32}/>
+                                <FaRegMoneyBill1 size={32} />
+                                <FaCcVisa size={32} />
+                                <FaCcMastercard size={32} />
                             </div>
                         </div>
                     </div>
 
                     <div className="flex flex-col sm:flex-row items-center gap-4 text-sm text-gray-300">
                         <nav className="flex gap-4">
-                            <a href="#" className="hover:text-white">Điều khoản</a>
-                            <a href="#" className="hover:text-white">Chính sách bảo mật</a>
-                            <a href="#" className="hover:text-white">Sơ đồ trang</a>
+                            <Link to={"/policy"} className="hover:text-white">Chính sách chung</Link>
+                            <Link to={"/terms"} className="hover:text-white">Điều khoản</Link>
+                            <Link to={"/privacy-policy"} className="hover:text-white">Chính sách bảo mật</Link>
+                            <Link to={"/sitemap"} className="hover:text-white">Sơ đồ trang</Link>
                         </nav>
 
                         <div className="flex items-center gap-3">

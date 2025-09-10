@@ -10,7 +10,10 @@ import { confirm, removeGuestToken } from "../utils";
 
 const Header: React.FC = () => {
     const [isOpen, setIsOpen] = useState(false);
-    const [isUserMenuOpen, setIsUserMenuOpen] = useState(false); // mobile user dropdown
+    const [isUserMenuOpen, setIsUserMenuOpen] = useState<boolean>(false); // mobile user dropdown
+    const [isShopMenuOpen, setIsShopMenuOpen] = useState<boolean>(false)
+    const [isIntroductionMenuOpen, setIsIntroductionMenuOpen] = useState<boolean>(false)
+    const [isContactMenuOpen, setIsContactMenuOpen] = useState<boolean>(false)
     const navigate = useNavigate();
     const { userInfo, logout, numberOfProductInCart } = useAuth();
 
@@ -50,9 +53,54 @@ const Header: React.FC = () => {
                     {/* desktop links */}
                     <div className="hidden md:flex space-x-4">
                         <Link to="/" className="text-gray-700 hover:text-sky-500 font-bold">Trang Chủ</Link>
-                        <Link to="/shop" className="text-gray-700 hover:text-sky-500 font-bold">Cửa Hàng</Link>
-                        <Link to="/about" className="text-gray-700 hover:text-sky-500 font-bold">Giới Thiệu</Link>
-                        <Link to="/contact" className="text-gray-700 hover:text-sky-500 font-bold">Liên Hệ</Link>
+                        <div className="relative group">
+                            <div className="text-gray-700 font-bold">Cửa hàng</div>
+                            <div className="absolute right-0 mt-2 w-44 bg-white border border-gray-200 rounded-lg shadow-lg opacity-0 group-hover:opacity-100 group-hover:translate-y-0 transform -translate-y-2 transition-all duration-200 invisible group-hover:visible">
+                                <ul className="py-2">
+                                    <li>
+                                        <button onClick={() => navigate("/shop")} className="block w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100">Tất cả sản phẩm</button>
+                                    </li>
+                                    <li>
+                                        <button onClick={() => navigate("/track-order")} className="block w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100">Kiểm tra đơn hàng</button>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div className="relative group">
+                            <div className="text-gray-700 font-bold">Giới Thiệu</div>
+                            <div className="absolute right-0 mt-2 w-44 bg-white border border-gray-200 rounded-lg shadow-lg opacity-0 group-hover:opacity-100 group-hover:translate-y-0 transform -translate-y-2 transition-all duration-200 invisible group-hover:visible">
+                                <ul className="py-2">
+                                    <li>
+                                        <button onClick={() => navigate("/about")} className="block w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100">Về chúng tôi</button>
+                                    </li>
+                                    <li>
+                                        <button onClick={() => navigate("/policy")} className="block w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100">Chính sách chung</button>
+                                    </li>
+                                    <li>
+                                        <button onClick={() => navigate("/terms")} className="block w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100">Điều khoản sử dụng</button>
+                                    </li>
+                                    <li>
+                                        <button onClick={() => navigate("/privacy-policy")} className="block w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100">Chính sách bảo mật</button>
+                                    </li>
+                                    <li>
+                                        <button onClick={() => navigate("/careers")} className="block w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100">Tuyển dụng</button>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div className="relative group">
+                            <div className="text-gray-700 font-bold">Liên hệ</div>
+                            <div className="absolute right-0 mt-2 w-44 bg-white border border-gray-200 rounded-lg shadow-lg opacity-0 group-hover:opacity-100 group-hover:translate-y-0 transform -translate-y-2 transition-all duration-200 invisible group-hover:visible">
+                                <ul className="py-2">
+                                    <li>
+                                        <button onClick={() => navigate("/contact")} className="block w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100">Liên hệ</button>
+                                    </li>
+                                    <li>
+                                        <button onClick={() => navigate("/faq")} className="block w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100">Hỏi đáp</button>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
                     </div>
 
                     <div className="flex items-center space-x-3">
@@ -68,7 +116,14 @@ const Header: React.FC = () => {
                         {/* mobile hamburger */}
                         <button
                             className="md:hidden p-2 rounded hover:bg-gray-100"
-                            onClick={() => setIsOpen((s) => !s)}
+                            onClick={() => {
+                                setIsOpen((s) => !s)
+                                if(isOpen){
+                                    setIsShopMenuOpen(false)
+                                    setIsContactMenuOpen(false)
+                                    setIsIntroductionMenuOpen(false)
+                                }
+                            }}
                             aria-label="Mở menu"
                             aria-expanded={isOpen}
                         >
@@ -115,9 +170,135 @@ const Header: React.FC = () => {
                 <div className="bg-white shadow-md border-t border-gray-100">
                     <div className="flex flex-col px-4 py-3 space-y-2 mt-2">
                         <button onClick={() => handleNav("/")} className="text-left text-gray-700 hover:text-sky-500 font-bold">Trang Chủ</button>
-                        <button onClick={() => handleNav("/shop")} className="text-left text-gray-700 hover:text-sky-500 font-bold">Cửa Hàng</button>
-                        <button onClick={() => handleNav("/about")} className="text-left text-gray-700 hover:text-sky-500 font-bold">Giới Thiệu</button>
-                        <button onClick={() => handleNav("/contact")} className="text-left text-gray-700 hover:text-sky-500 font-bold">Liên Hệ</button>
+                        <div className="flex flex-col">
+                            <button
+                                onClick={() => setIsShopMenuOpen((s) => !s)}
+                                className="text-left text-gray-700 font-bold"
+                                aria-expanded={isShopMenuOpen}
+                                aria-controls="mobile-user-menu"
+                            >
+                                Cửa hàng
+                            </button>
+
+                            <div
+                                id="mobile-user-menu"
+                                className={`mt-1 overflow-hidden transition-all duration-200 ${isShopMenuOpen ? "max-h-40 opacity-100" : "max-h-0 opacity-0"
+                                    }`}
+                            >
+                                <ul className="flex flex-col">
+                                    <li>
+                                        <button
+                                            onClick={() => { setIsShopMenuOpen(false); navigate("/shop");setIsOpen(false) }}
+                                            className="w-full text-left px-0 py-2 text-gray-700 hover:bg-gray-50"
+                                        >
+                                            &emsp; Tất cả sản phẩm
+                                        </button>
+                                    </li>
+                                    <li>
+                                        <button
+                                            onClick={() => { navigate("/track-order"); setIsShopMenuOpen(false);setIsOpen(false) }}
+                                            className="w-full text-left px-0 py-2 text-gray-700 hover:bg-gray-50"
+                                        >
+                                            &emsp; Kiểm tra đơn hàng
+                                        </button>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div className="flex flex-col">
+                            <button
+                                onClick={() => setIsIntroductionMenuOpen((s) => !s)}
+                                className="text-left text-gray-700 font-bold"
+                                aria-expanded={isIntroductionMenuOpen}
+                                aria-controls="mobile-user-menu"
+                            >
+                                Giới thiệu
+                            </button>
+
+                            <div
+                                id="mobile-user-menu"
+                                className={`mt-1 overflow-hidden transition-all duration-200 ${isIntroductionMenuOpen ? "max-h-96 opacity-100" : "max-h-0 opacity-0"}`}
+                            >
+                                <ul className="flex flex-col">
+                                    <li>
+                                        <button
+                                            onClick={() => { setIsIntroductionMenuOpen(false); navigate("/about");setIsOpen(false) }}
+                                            className="w-full text-left px-0 py-2 text-gray-700 hover:bg-gray-50"
+                                        >
+                                            &emsp; Về chúng tôi
+                                        </button>
+                                    </li>
+                                    <li>
+                                        <button
+                                            onClick={() => { navigate("/policy"); setIsIntroductionMenuOpen(false);setIsOpen(false) }}
+                                            className="w-full text-left px-0 py-2 text-gray-700 hover:bg-gray-50"
+                                        >
+                                            &emsp; Chính sách
+                                        </button>
+                                    </li>
+                                    <li>
+                                        <button
+                                            onClick={() => { setIsIntroductionMenuOpen(false); navigate("/terms");setIsOpen(false) }}
+                                            className="w-full text-left px-0 py-2 text-gray-700 hover:bg-gray-50"
+                                        >
+                                            &emsp; Điều khoản sử dụng
+                                        </button>
+                                    </li>
+                                    <li>
+                                        <button
+                                            onClick={() => { navigate("/privacy-policy"); setIsIntroductionMenuOpen(false);setIsOpen(false) }}
+                                            className="w-full text-left px-0 py-2 text-gray-700 hover:bg-gray-50"
+                                        >
+                                            &emsp; Chính sách bảo mật
+                                        </button>
+                                    </li>
+                                    <li>
+                                        <button
+                                            onClick={() => { navigate("/careers"); setIsIntroductionMenuOpen(false);setIsOpen(false) }}
+                                            className="w-full text-left px-0 py-2 text-gray-700 hover:bg-gray-50"
+                                        >
+                                            &emsp; Tuyển dụng
+                                        </button>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div className="flex flex-col">
+                            <button
+                                onClick={() => setIsContactMenuOpen((s) => !s)}
+                                className="text-left text-gray-700 font-bold"
+                                aria-expanded={isContactMenuOpen}
+                                aria-controls="mobile-user-menu"
+                            >
+                                Liên hệ
+                            </button>
+
+                            <div
+                                id="mobile-user-menu"
+                                className={`mt-1 overflow-hidden transition-all duration-200 ${isContactMenuOpen ? "max-h-40 opacity-100" : "max-h-0 opacity-0"
+                                    }`}
+                            >
+                                <ul className="flex flex-col">
+                                    <li>
+                                        <button
+                                            onClick={() => { setIsContactMenuOpen(false); navigate("/contact");setIsOpen(false) }}
+                                            className="w-full text-left px-0 py-2 text-gray-700 hover:bg-gray-50"
+                                        >
+                                            &emsp; Liên hệ
+                                        </button>
+                                    </li>
+                                    <li>
+                                        <button
+                                            onClick={() => { navigate("/faq"); setIsContactMenuOpen(false);setIsOpen(false) }}
+                                            className="w-full text-left px-0 py-2 text-gray-700 hover:bg-gray-50"
+                                        >
+                                            &emsp; Hỏi đáp
+                                        </button>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
 
                         <div className="border-t border-gray-100 pt-2">
                             {/* Mobile user section with dropdown */}
@@ -165,7 +346,11 @@ const Header: React.FC = () => {
                                     </div>
                                 </div>
                             ) : (
-                                <button onClick={() => { setIsOpen(false); navigate("/login"); }} className="w-full text-left px-0 py-2 text-gray-700 hover:bg-gray-50">Đăng nhập</button>
+                                <button 
+                                onClick={() => { setIsOpen(false); navigate("/login"); }} 
+                                className="w-full text-left px-0 py-2 text-gray-700 hover:bg-gray-50">
+                                    Đăng nhập
+                                </button>
                             )}
                         </div>
                     </div>

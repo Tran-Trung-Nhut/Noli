@@ -96,7 +96,7 @@ const Login = () => {
                                 <button
                                     type="button"
                                     onClick={() => setShowPass((s) => !s)}
-                                    className="absolute right-2 top-[38px] text-sm text-gray-500"
+                                    className="absolute right-2 top-[30px] text-sm text-gray-500"
                                     aria-label={showPass ? "Ẩn mật khẩu" : "Hiện mật khẩu"}
                                 >
                                     {showPass ? "Ẩn" : "Hiện"}

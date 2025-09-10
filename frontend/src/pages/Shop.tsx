@@ -154,7 +154,7 @@ const Shop = () => {
                         loader={
                             // loader shown at bottom while fetching next pages
                             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mt-6">
-                                {Array.from({ length: 12 }).map((_, i) => (<ProductCardSkeleton key={i} />))}
+                                {Array.from({ length: window.innerWidth >= 728 ? 3 : 2  }).map((_, i) => (<ProductCardSkeleton key={i} />))}
                             </div>
                         }
                         // optional threshold to prefetch earlier

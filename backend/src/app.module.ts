@@ -47,9 +47,9 @@ import { ReviewModule } from './review/review.module';
     //   ttl: 60 * 1000,
     //   max: 1000
     // }),
-    // OrderStatusModule,
-    // UploadModule,
-    // ReviewModule
+    OrderStatusModule,
+    UploadModule,
+    ReviewModule
   ],
   controllers: [],
   providers: [],
