@@ -99,7 +99,7 @@ export function TrackOrderPage() {
                                         <div className="text-sm font-semibold">Mã đơn</div>
                                         <div className="mt-1 text-xs text-gray-500">
                                             {order ? (
-                                                <span className="text-sky-500 font-bold">{order.id}</span>
+                                                <span className="text-sky-500 font-bold">#{order.id}</span>
                                             ) : "Nhập mã để bắt đầu"}
                                         </div>
                                     </div>
