@@ -1,7 +1,7 @@
-import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import main_image from "../assets/main_image_v2.jpg";
-import { getGuestToken, notifyError } from "../utils";
+import { getGuestToken, notifyError, notifyWarning } from "../utils";
 import { ToastContainer } from "react-toastify";
 import { HttpStatusCode } from "axios";
 import LoadingAuth from "../components/LoadingAuth";
@@ -10,12 +10,17 @@ import authApi from "../apis/authApi";
 import { ArrowLeft } from "lucide-react";
 
 const Login = () => {
+
+    const [searchParams] = useSearchParams();
+
+    const warning = searchParams.get("warning");
+
     const navigate = useNavigate();
     const [username, setusername] = useState<string>("");
     const [password, setPassword] = useState<string>("");
     const [showPass, setShowPass] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(false);
-    const { userInfo ,login } = useAuth()
+    const { userInfo, login } = useAuth()
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -27,7 +32,7 @@ const Login = () => {
             notifyError(result.data.message)
             return
         }
-        
+
         setLoading(false);
         login(result.data.userInfo, result.data.accessToken)
         navigate("/");
@@ -37,12 +42,19 @@ const Login = () => {
         window.location.href = `${import.meta.env.VITE_BACKEND_DOMAIN}/auth/google`
     }
 
-    if( userInfo ) navigate("/")
+    if (userInfo) navigate("/")
+
+
+    useEffect(() => {
+        if (warning === "expired-refresh-token") {
+            notifyWarning("Phiên đăng nhập của bạn đã hết hạn. Vui lòng đăng nhập lại");
+        }
+    }, [warning]);
 
     return (
         <>
-            <ToastContainer/>
-            {loading && <LoadingAuth/>}
+            <ToastContainer />
+            {loading && <LoadingAuth />}
             <div className="min-h-screen flex">
                 {/* Left hero (hidden on small screens) */}
                 <div className="hidden lg:block lg:w-1/2 relative">
@@ -62,7 +74,7 @@ const Login = () => {
                 {/* Right form */}
                 <div className="flex-1 flex items-center justify-center p-6 lg:p-20 bg-gray-50">
                     <div className="max-w-md w-full bg-white rounded-2xl shadow-xl p-8">
-                        <button className="flex mb-2 justify-center items-center hover:scale-110" onClick={() => navigate("/")}><ArrowLeft color="gray"/> <span className="text-gray-500">Quay lại</span></button>
+                        <button className="flex mb-2 justify-center items-center hover:scale-110" onClick={() => navigate("/")}><ArrowLeft color="gray" /> <span className="text-gray-500">Quay lại</span></button>
                         <h1 className="text-2xl font-bold text-gray-800 mb-2">Đăng nhập</h1>
                         <p className="text-sm text-gray-500 mb-6">Đăng nhập bằng tài khoản của bạn để tiếp tục.</p>
 
@@ -127,9 +139,9 @@ const Login = () => {
                         </div>
 
                         <div className="mt-4 flex">
-                            <button 
-                            className="flex items-center justify-center gap-2 py-2 rounded-md border border-gray-200 hover:shadow-sm w-full"
-                            onClick={() => handleLoginByGoogle()}>
+                            <button
+                                className="flex items-center justify-center gap-2 py-2 rounded-md border border-gray-200 hover:shadow-sm w-full"
+                                onClick={() => handleLoginByGoogle()}>
                                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                     <path d="M21 12.24c0-.72-.06-1.26-.18-1.8H12v3.42h4.92c-.06.54-.36 1.26-.9 1.92l1.44 1.08C18.6 17.34 19.86 15.9 21 12.24z" fill="#4285F4" />
                                     <path d="M12 22c2.7 0 4.98-.9 6.64-2.46l-1.44-1.08c-1.02.72-2.28 1.2-5.2 1.2-3.96 0-7.3-2.64-8.5-6.18L1.78 14.5C3.44 18.9 7.4 22 12 22z" fill="#34A853" />

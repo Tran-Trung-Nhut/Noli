@@ -1,7 +1,8 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Res, HttpStatus, Query } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Res, HttpStatus, Query, UseGuards } from '@nestjs/common';
 import { OrderService } from './order.service';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
+import { JwtAuthGuard } from 'src/auth/jwt.guard';
 
 @Controller('order')
 export class OrderController {
@@ -17,6 +18,7 @@ export class OrderController {
     return await this.orderService.mergeOrder(+data.userId)
   }
 
+  @UseGuards(JwtAuthGuard)
   @Get('/summary/:userId')
   async getOrderSummary (@Param('userId') userId: number){
     return this.orderService.getOrderSummary(userId)

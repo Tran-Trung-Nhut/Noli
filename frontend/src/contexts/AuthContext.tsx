@@ -1,6 +1,6 @@
 import { createContext, useState, type ReactNode, useContext, useEffect } from "react";
 import authApi from "../apis/authApi";
-import { setAccessTokenGetter } from "../apis/axiosClient";
+import { setAccessTokenGetter, setAccessTokenSetter } from "../apis/axiosClient";
 import cartItemApi from "../apis/cartItemApi";
 import { HttpStatusCode } from "axios";
 import { getGuestToken } from "../utils";
@@ -20,6 +20,7 @@ type AuthContextType = {
     numberOfProductInCart: number
     getNumberOfCartItemByUserId: (userId: number) => void
     getNumberOfCartItemByGuestToken: (guestToken: string | null) => void
+    setAccessToken: (accessToken: string) => void  
 };
 
 
@@ -74,10 +75,20 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
     useEffect(() => {
         setAccessTokenGetter(() => accessToken)
+        setAccessTokenSetter((accessToken: string) => setAccessToken(accessToken))
     }, [accessToken])
 
     return (
-        <AuthContext.Provider value={{ login, logout, userInfo, accessToken, numberOfProductInCart, getNumberOfCartItemByUserId, getNumberOfCartItemByGuestToken }}>
+        <AuthContext.Provider value={{
+            login,
+            logout,
+            userInfo,
+            accessToken,
+            numberOfProductInCart,
+            getNumberOfCartItemByUserId,
+            getNumberOfCartItemByGuestToken,
+            setAccessToken
+        }}>
             {children}
         </AuthContext.Provider>
     );

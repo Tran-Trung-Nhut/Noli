@@ -71,7 +71,7 @@ export class AuthService {
 
             await this.orderService.mergeOrder(user.id)
 
-            return { accessToken, userInfo: { id: user.id, firstName: user.firstName, lastName: user.lastName } };
+            return { accessToken, userInfo: { id: user.id, firstName: user.firstName, lastName: user.lastName, image: user.image } };
         } catch (error) {
             console.error(error)
             throw new InternalServerErrorException(error)

@@ -2,10 +2,18 @@ import axios, { AxiosError, type AxiosRequestConfig } from "axios";
 import authApi from "./authApi";
 
 let getAccessToken: (() => string | null) | null = null
+let setAccessToken: ((accessToken: string) => void) | null = null
 
 export const setAccessTokenGetter = (getter: () => string | null) => {
   getAccessToken = getter
 }
+
+
+export const setAccessTokenSetter = (setter: (accessToken: string) => void | null) => {
+  setAccessToken = setter
+}
+
+
 
 const axiosClient = axios.create({
   baseURL: import.meta.env.VITE_BACKEND_DOMAIN,
@@ -16,6 +24,11 @@ const axiosClient = axios.create({
 });
 
 axiosClient.interceptors.request.use((config) => {
+
+  if (config.headers?.Authorization) {
+    return config;
+  }
+
   const accessToken = getAccessToken ? getAccessToken() : null;
 
   if (accessToken && config.headers) {
@@ -29,18 +42,25 @@ axiosClient.interceptors.response.use(
   (response) => response,
   async (error: AxiosError & { config?: AxiosRequestConfig & { _retry?: boolean } }) => {
     const originalRequest = error.config;
-
     // If no response or not 401 -> reject
-    if (!error.response || 
-      error.response.status !== 401 || 
-      (error.response.status === 401 && 
-        error.response.data && 
+    if (!error.response ||
+      error.response.status !== 401 ||
+      (error.response.status === 401 &&
+        error.response.data &&
         typeof error.response.data === "object" &&
         "message" in error.response.data &&
         (error.response.data as { message?: string }).message === 'Refresh token không tồn tại, vui lòng đăng nhập lại')) {
       return Promise.reject(error);
     }
 
+    if (error.response.status === 401 &&
+      error.response.data &&
+      typeof error.response.data === "object" &&
+      "message" in error.response.data &&
+      (error.response.data as { message?: string }).message === 'Token không hợp lệ') {
+      if (window.location.pathname === "/profile") window.location.href = "/login?warning=expired-refresh-token"
+      return Promise.reject(error)
+    }
 
     // Avoid infinite loop: if already retried, reject
     if (originalRequest && originalRequest._retry) {
@@ -56,10 +76,11 @@ axiosClient.interceptors.response.use(
     try {
       const response = await authApi.refresh()
 
-      const newToken = response.data.accessToken ?? null;
+      if (response.data.message === 'Token không hợp lệ') window.location.href = "/login"
 
+      const newToken = response.data.accessToken ?? null;
       if (!newToken) {
-        window.location.href = "/login";
+        if (window.location.pathname !== '/login') window.location.href = "/login?warning=expired-refresh-token";
         return Promise.reject(new Error("Không nhận được access token khi refresh"));
       }
 
@@ -69,18 +90,17 @@ axiosClient.interceptors.response.use(
         originalRequest.headers["Authorization"] = `Bearer ${newToken}`;
       } else {
         originalRequest.headers = { Authorization: `Bearer ${newToken}` } as any;
+
       }
 
-      // Optionally: nếu bạn lưu token vào ở đây
-
+      if (setAccessToken) {
+        setAccessToken(newToken)
+      }
       return axiosClient(originalRequest);
     } catch (err) {
-      // refresh failed -> redirect to login (hoặc xử lý logout)
-      try {
-        // nếu bạn muốn clear storage trước khi redirect:
-      } catch (e) {
-        window.location.href = "/login";
-      }
+
+      if (window.location.pathname !== '/login') window.location.href = "/login?warning=expired-refresh-token";
+
       return Promise.reject(err);
     }
   }
