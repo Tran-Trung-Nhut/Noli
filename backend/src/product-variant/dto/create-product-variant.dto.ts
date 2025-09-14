@@ -1,13 +1,22 @@
-export class CreateProductVariantDto {
-    color: string;
-    size: string;
-    price: number;
-    stock: number;
+import { Type } from "class-transformer";
+import { IsInt, IsNotEmpty, IsNumber, IsString } from "class-validator";
 
-    constructor(color: string, size: string, price: number, stock: number) {
-        this.color = color;
-        this.size = size;
-        this.price = price;
-        this.stock = stock;
-    }
+export class CreateProductVariantDto {
+    @IsNotEmpty()
+    @IsString()
+    color: string;
+
+    @IsNotEmpty()
+    @IsString()
+    size: string;
+
+    @IsNotEmpty()
+    @IsNumber()
+    @Type(() => Number)
+    price: number;
+
+    @IsNotEmpty()
+    @IsInt()
+    @Type(() => Number)
+    stock: number;
 }

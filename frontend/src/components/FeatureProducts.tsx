@@ -4,6 +4,8 @@ import type { Product } from "../dtos/product.dto";
 import ProductCard from "./ProductCart";
 import ProductCardSkeleton from "./ProductCartSkeleton";
 import productApi from "../apis/productApi";
+import { HttpStatusCode } from "axios";
+import { notifyError } from "../utils";
 
 
 const FeaturedProducts = () => {
@@ -28,6 +30,8 @@ const FeaturedProducts = () => {
                 category: null
             }
         ))
+
+        if(result.status !== HttpStatusCode.Ok) return notifyError("Không thể tải sản phẩm")
         setProducts(result.data)
         setLoading(false)
     }

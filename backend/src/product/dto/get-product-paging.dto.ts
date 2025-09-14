@@ -1,54 +1,42 @@
 import { Optional } from "@nestjs/common";
 import { Type } from "class-transformer";
-import { IsIn, IsInt, IsString, Min } from "class-validator";
+import { IsIn, IsInt, IsNotEmpty, IsNumber, IsOptional, IsString, Min } from "class-validator";
 
 export class GetProductPagingDto {
-    @Type(() => Number)
+
+    @IsNotEmpty()
     @IsInt()
     @Min(1)
+    @Type(() => Number)
     page: number;
 
-    @Type(() => Number)
+    @IsNotEmpty()
     @IsInt()
-    @Min(5)
+    @Type(() => Number)
     limit: number;
 
+    @IsNotEmpty()
+    @IsString()
     sortBy: string;
 
+    @IsNotEmpty()
     @IsIn(['asc', 'desc'])
     sortOrder: 'asc' | 'desc';
 
+    @IsOptional()
     @IsString()
-    search: string;
+    search?: string;
 
-    @IsString()
     @Optional()
     category?: string | null;
 
+    @IsOptional()
+    @IsNumber()
     @Type(() => Number)
     maxPrice?: number | null;
 
+    @IsOptional()
+    @IsNumber()
     @Type(() => Number)
     minPrice?: number | null;
-
-    constructor(
-        page: number, 
-        limit: number, 
-        sortBy: string, 
-        sortOrder: 'asc' | 'desc', 
-        search: string, 
-        category?: string | null,
-        maxPrice?: number | null,
-        minPrice?: number | null
-    ) {
-        this.page = page;
-        this.limit = limit;
-        this.sortBy = sortBy;
-        this.sortOrder = sortOrder;
-        this.search = search;
-        this.category = category || null;
-        this.maxPrice = maxPrice || null;
-        this.minPrice = minPrice || null;
-    }
-
 }

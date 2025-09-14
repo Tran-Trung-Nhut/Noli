@@ -140,9 +140,9 @@ const DeliveryDetail = ({
 
         const result = await addressApi.createAddress({
             ...(userInfo ? { userId: userInfo.id } : {}),
+            ...(email !== '' ? { email } : {}),
             fullName,
             phone,
-            email,
             provinceId: province,
             provinceName: getProvinceNameByProvinceId(province, listProvinces),
             districtId: district,
@@ -154,7 +154,11 @@ const DeliveryDetail = ({
             label
         })
 
-        if (result.status !== HttpStatusCode.Created) return notifyError("Lỗi khi lưu thông tin giao hàng. Vui lòng thử lại sau!")
+        console.log(result)
+        if (result.status !== HttpStatusCode.Created) {
+            setLoading(false)
+            return notifyError("Lỗi khi lưu thông tin giao hàng. Vui lòng thử lại sau!")
+        }
         setIsAddingAddress(false)
 
         if (userInfo) fetchAddressList(); else {
@@ -356,13 +360,13 @@ const DeliveryDetail = ({
                                         </div>
 
                                         <div className="mt-3 flex items-center gap-2">
-                                            <button
+                                            {/* <button
                                                 type="button"
-                                                onClick={() => { /* mở modal sửa nếu cần */ }}
+                                                onClick={() => {}}
                                                 className="text-xs px-3 py-1 border rounded hover:bg-gray-50"
                                             >
                                                 Sửa
-                                            </button>
+                                            </button> */}
 
                                             <button
                                                 type="button"

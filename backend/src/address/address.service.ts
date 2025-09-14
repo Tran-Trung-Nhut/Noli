@@ -24,13 +24,13 @@ export class AddressService {
   async create(createAddressDto: CreateAddressDto) {
     try {
       if (createAddressDto.isDefault === true && (await this.prismaService.address.count({ where: { isDefault: true } })) > 0) {
-        return await this.prismaService.$transaction([
-          this.prismaService.address.updateMany({ where: { isDefault: true }, data: { isDefault: false } }),
+        return await this.prismaService.$transaction(async (prisma) => {
+          await prisma.address.updateMany({ where: { isDefault: true }, data: { isDefault: false } })
 
-          this.prismaService.address.create({
+          return prisma.address.create({
             data: createAddressDto
           })
-        ])
+        })
       }
 
       return await this.prismaService.address.create({

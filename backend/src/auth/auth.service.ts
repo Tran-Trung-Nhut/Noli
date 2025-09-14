@@ -2,11 +2,11 @@ import { BadRequestException, Injectable, InternalServerErrorException, Req, Res
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { SignUpDto } from './dto/signup-body.dto';
 import { MESSAGES } from 'src/constantsAndMessage';
 import { JwtPayload } from './dto/jwt.dto';
 import { CartService } from 'src/cart/cart.service';
 import { OrderService } from 'src/order/order.service';
+import { SignUpDto } from './dto/auth.dto';
 
 @Injectable()
 export class AuthService {

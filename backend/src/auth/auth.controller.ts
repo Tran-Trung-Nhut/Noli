@@ -1,9 +1,9 @@
 import { Controller, Post, Body, Res, HttpStatus, Get, UseGuards, Req, BadRequestException, UnauthorizedException } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { SignUpDto } from './dto/signup-body.dto';
 import { MESSAGES } from 'src/constantsAndMessage';
 import { AuthGuard } from '@nestjs/passport';
 import { Request } from 'express';
+import { SignUpDto } from './dto/auth.dto';
 
 @Controller('auth')
 export class AuthController {

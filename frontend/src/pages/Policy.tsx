@@ -9,8 +9,8 @@ const PolicyPage = ({ accentClass = "bg-sky-500" }: { accentClass?: string; }) =
                     <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight">Chính sách & Điều Khoản — NoliShop</h1>
                     <p className="mt-4 text-lg md:text-xl opacity-90">An toàn - Minh bạch - Tiện lợi. Mọi thông tin dưới đây nhằm bảo vệ quyền lợi của bạn khi mua sắm tại NoliShop.</p>
                     <div className="mt-6 flex justify-center gap-3">
-                        <a href="#vanchuyen" className="inline-block rounded-full bg-white text-gray-900 px-5 py-2 font-semibold shadow">Xem chính sách</a>
-                        <a href="#lienhe" className="inline-block rounded-full border border-white/40 px-5 py-2 font-medium">Liên hệ hỗ trợ</a>
+                        <a href="#lienhe" className="inline-block rounded-full bg-white text-gray-900 px-5 py-2 font-semibold shadow">Liên hệ hỗ trợ</a>
+                        {/* <a href="#lienhe" className="inline-block rounded-full border border-white/40 px-5 py-2 font-medium">Liên hệ hỗ trợ</a> */}
                     </div>
                 </div>
             </header>

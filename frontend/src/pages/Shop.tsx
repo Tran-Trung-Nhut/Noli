@@ -52,7 +52,7 @@ const Shop = () => {
         try {
             const result = await productApi.getPaging({
                 page: pageToFetch,
-                limit,
+                limit: products.length >= limit ? 6 : limit,
                 sortBy,
                 sortOrder,
                 search: debouncedSearch,
