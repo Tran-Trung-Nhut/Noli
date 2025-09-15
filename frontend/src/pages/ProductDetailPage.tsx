@@ -15,6 +15,7 @@ import { FaFacebook, FaFacebookMessenger, FaLink } from "react-icons/fa";
 import ProductReviews, { Star } from "../components/ProductReviews";
 import WriteReviewModal from "../components/WriteReviewModal";
 import { SiZalo } from "react-icons/si";
+import ImageViewer from "../components/ImageViewer";
 
 const ProductDetailPage = () => {
     const [loading, setLoading] = useState<boolean>(false)
@@ -26,6 +27,9 @@ const ProductDetailPage = () => {
     const [price, setPrice] = useState<number>(0)
     const [quantity, setQuantity] = useState<number>(1)
     const [openWriteReview, setOpenWriteReview] = useState<boolean>(false)
+    const [listImageViewing, setListImageViewing] = useState<string[]>([])
+    const [imageActiveIndex, setImageActiveIndex] = useState<number>(0)
+
     const { id } = useParams();
     const { userInfo, getNumberOfCartItemByGuestToken, getNumberOfCartItemByUserId } = useAuth()
     const currentUrl = window.location.href
@@ -176,6 +180,7 @@ const ProductDetailPage = () => {
         loading ? <LoadingAuth /> :
             product ? (
                 <>
+                    <ImageViewer activeIndex={imageActiveIndex} images={listImageViewing} onClose={() => setListImageViewing([])} />
                     <WriteReviewModal
                         open={openWriteReview}
                         productId={product.id}
@@ -200,7 +205,11 @@ const ProductDetailPage = () => {
                                                 src={product.image[0]}
                                                 alt="Product image"
                                                 className="w-auto h-auto object-contain"
-                                            />
+                                                onClick={() => {
+                                                    setImageActiveIndex(0),
+                                                    setListImageViewing(product.image)
+                                                }} 
+                                                />
                                         ) : (
                                             <Slider {...settings} className="w-[320px]">
                                                 {product.image.map((img, index) => (
@@ -209,6 +218,10 @@ const ProductDetailPage = () => {
                                                             src={img}
                                                             alt={`Product image ${index + 1}`}
                                                             className="w-full h-auto object-contain"
+                                                            onClick={() => {
+                                                                setImageActiveIndex(index)
+                                                                setListImageViewing(product.image)
+                                                            }}
                                                         />
                                                     </div>
                                                 ))}
@@ -374,6 +387,8 @@ const ProductDetailPage = () => {
                         turnOnOpenWriteReview={() => setOpenWriteReview(true)}
                         userInfo={userInfo}
                         fetchProductDetail={async () => await fetchProductDetail()}
+                        setListImageViewing={setListImageViewing}
+                        setImageActiveIndex={setImageActiveIndex}
                     />
                 </>
             ) : (

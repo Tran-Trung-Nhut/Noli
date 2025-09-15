@@ -274,7 +274,9 @@ const Checkout = () => {
     useEffect(() => {
         const fetchDistrict = async () => {
             if (province === "") return
+            setLoading(true)
             setDistrictList((await addressApi.getListDistricts(province)).data.results)
+            setLoading(false)
         }
 
         fetchDistrict()
@@ -283,8 +285,9 @@ const Checkout = () => {
     useEffect(() => {
         const fetchDistrict = async () => {
             if (district === "") return
-
+            setLoading(true)
             setWardList((await addressApi.getListWards(district)).data.results)
+            setLoading(false)
         }
 
         fetchDistrict()

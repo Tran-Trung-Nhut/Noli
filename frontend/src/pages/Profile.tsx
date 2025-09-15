@@ -56,11 +56,19 @@ const Profile = () => {
             return notifySuccess("Cập nhật thông tin người dùng thành công.")
         }
 
-        const result = await userApi.updateUser(userProfile?.id || 0, editingUser)
+        const result = await userApi.updateUser(userProfile?.id || 0, {
+            email: editingUser.email === '' ? null : editingUser.email,
+            dateOfBirth: editingUser.dateOfBirth,
+            firstName: editingUser.firstName,
+            lastName: editingUser.lastName,
+            phoneNumber: editingUser.phoneNumber,
+            gender: editingUser.gender
+        })
 
         if (result.status !== HttpStatusCode.Ok) {
             setLoading(false)
-            return notifyError("Có lỗi xảy ra, vui lòng thử lại")
+
+            return notifyError("Không thể cập nhật thông tin. Vui lòng thử lại sau")
         }
         await fetchUser()
         setLoading(false)

@@ -1,4 +1,3 @@
-// src/pages/Shop.tsx
 import { useEffect, useMemo, useState } from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
 import productApi from "../apis/productApi";
@@ -52,7 +51,7 @@ const Shop = () => {
         try {
             const result = await productApi.getPaging({
                 page: pageToFetch,
-                limit: products.length >= limit ? 6 : limit,
+                limit,
                 sortBy,
                 sortOrder,
                 search: debouncedSearch,

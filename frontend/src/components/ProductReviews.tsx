@@ -9,13 +9,13 @@ import LoadingAuth from "./LoadingAuth";
 import Not_found from "../assets/product-not-found.svg"
 import type { PublicUserInfo } from "../contexts/AuthContext";
 import { FaEllipsisH } from "react-icons/fa";
-// ProductReviews.tsx
-// React + Tailwind component to display user reviews in a clean, site-cohesive style.
-// Default export a component that accepts an optional `reviews` prop. If none provided,
-// sample data is used.
 
 
-export const Star = ({ filled }: { filled: boolean }) => {
+export const Star = ({
+    filled
+}: {
+    filled: boolean
+}) => {
     return (
         <svg
             className={`w-4 h-4 ${filled ? "text-yellow-400" : "text-gray-300"}`}
@@ -37,13 +37,17 @@ const ProductReviews = ({
     productId,
     turnOnOpenWriteReview,
     userInfo,
-    fetchProductDetail
+    fetchProductDetail,
+    setListImageViewing,
+    setImageActiveIndex
 }: {
     averageRating: number | null,
     productId: number
     turnOnOpenWriteReview: () => void,
     userInfo: PublicUserInfo | null
     fetchProductDetail: () => void
+    setListImageViewing: (list: string[]) => void
+    setImageActiveIndex: (index: number) => void
 }) => {
     const [expandedId, setExpandedId] = useState<number | null>(null);
     const [reviews, setReviews] = useState<(Review & { user: UserDto })[]>([])
@@ -179,6 +183,10 @@ const ProductReviews = ({
                                                                     src={p}
                                                                     alt={`photo-${idx}`}
                                                                     className="w-20 h-20 object-cover rounded-lg border"
+                                                                    onClick={() => {
+                                                                        setListImageViewing(r.images)
+                                                                        setImageActiveIndex(idx)
+                                                                    }}
                                                                 />
                                                             ))}
                                                         </div>
@@ -201,6 +209,10 @@ const ProductReviews = ({
                                                                             src={p}
                                                                             alt={`thumb-${idx}`}
                                                                             className="w-12 h-12 object-cover rounded-md border"
+                                                                            onClick={() => {
+                                                                                setListImageViewing(r.images)
+                                                                                setImageActiveIndex(idx)
+                                                                            }}
                                                                         />
                                                                     ))}
                                                                     {r.images.length > 3 && (
@@ -211,12 +223,14 @@ const ProductReviews = ({
                                                                 </div>
                                                             )}
 
-                                                            <button
-                                                                className="text-sm text-sky-600 font-medium"
-                                                                onClick={() => setExpandedId(r.id)}
-                                                            >
-                                                                Xem thêm
-                                                            </button>
+                                                            {r.images.length > 3 &&
+                                                                <button
+                                                                    className="text-sm text-sky-600 font-medium"
+                                                                    onClick={() => setExpandedId(r.id)}
+                                                                >
+                                                                    Xem thêm
+                                                                </button>
+                                                            }
                                                         </div>
                                                     </>
                                                 )}
