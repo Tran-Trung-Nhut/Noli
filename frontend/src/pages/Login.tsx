@@ -13,7 +13,8 @@ const Login = () => {
 
     const [searchParams] = useSearchParams();
 
-    const warning = searchParams.get("warning");
+    const warning = searchParams.get("warning")
+    const error = searchParams.get("error")
 
     const navigate = useNavigate();
     const [username, setusername] = useState<string>("");
@@ -48,6 +49,10 @@ const Login = () => {
     useEffect(() => {
         if (warning === "expired-refresh-token") {
             notifyWarning("Phiên đăng nhập của bạn đã hết hạn. Vui lòng đăng nhập lại");
+        }
+
+        if(error) {
+            notifyError(error)
         }
     }, [warning]);
 

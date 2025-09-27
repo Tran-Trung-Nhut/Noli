@@ -91,8 +91,8 @@ export class AuthService {
                     data: {
                         username: email,
                         email,
-                        firstName,
-                        lastName,
+                        firstName: firstName ? firstName : "",
+                        lastName: lastName ? lastName : "",
                         image: picture,
                         password: bcrypt.hashSync(password, Number(process.env.SALT)),
                     }
