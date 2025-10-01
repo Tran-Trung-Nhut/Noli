@@ -82,7 +82,7 @@ const Contact = () => {
                         </div>
 
                         <div className="mt-6 flex items-center gap-3">
-                            <a aria-label="facebook" href="https://www.facebook.com/profile.php?id=100071433255220" className="p-2 rounded-full hover:bg-gray-100">
+                            <a aria-label="facebook" href="https://www.facebook.com/groups/672049353246308" className="p-2 rounded-full hover:bg-gray-100">
                                 {/* svg */}
                                 <FaFacebook/>
                             </a>

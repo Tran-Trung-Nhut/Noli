@@ -100,7 +100,7 @@ const About = () => {
         <div className="mt-8 grid grid-cols-1 sm:grid-cols-3 gap-6">
           <div className="bg-white rounded-lg shadow-xl p-6 text-center">
             <img 
-            src="https://scontent.fvca5-1.fna.fbcdn.net/v/t39.30808-6/473595948_1728233431290094_4688151358933410849_n.jpg?_nc_cat=109&ccb=1-7&_nc_sid=a5f93a&_nc_eui2=AeEb1pE9oKBDoBv7ND7R2jg6fin43kWxA1J-KfjeRbEDUlAsjRUZD2guQ7KxkGO3itrKtu12mejf1PVrRbPi0hxs&_nc_ohc=ekxP_Xdj0JAQ7kNvwF38dfn&_nc_oc=AdmHGsBHN9vjC94N-tr8kNseQGKxfFFlOkG61MTM8I9HQzcksS5NuSDJ3PWNoqnqv78&_nc_zt=23&_nc_ht=scontent.fvca5-1.fna&_nc_gid=EC3buSPRNrvWRYuPMyAr0A&oh=00_AfWnZlgzAjwDODautzmUP1HhR_ikZJ4Ayhy8xHf1MsPTZw&oe=68BBB867" 
+            src="https://res.cloudinary.com/ddl6mayqi/image/upload/v1759306653/473595948_1728233431290094_4688151358933410849_n_krrf23.jpg" 
             alt="Director of Technology" 
             className="w-28 h-28 rounded-full mx-auto object-cover" />
             <h4 className="mt-4 font-semibold">Trần Trung Nhựt</h4>
@@ -110,7 +110,7 @@ const About = () => {
 
           <div className="bg-white rounded-lg shadow-xl p-6 text-center">
             <img 
-            src="https://scontent.fvca5-1.fna.fbcdn.net/v/t39.30808-6/452162550_1600338570815217_3955025656319509657_n.jpg?_nc_cat=101&ccb=1-7&_nc_sid=a5f93a&_nc_eui2=AeGVLAwOqu8pk6OnDEhASyzAwk3w8rhqUHPCTfDyuGpQcwJyFJY8EOz1OhGRFClxaJsWf7RitpFMRB5cUE6p6v-F&_nc_ohc=wAIUbQfQ7XAQ7kNvwG6LciD&_nc_oc=AdmQLggo2bFErzRgHDW2SY-qSTQYQWyHzJkNUfzaEuZRkXmOPG5zbWqV3LAvf3nlHl4&_nc_zt=23&_nc_ht=scontent.fvca5-1.fna&_nc_gid=bVhlgKWOrGOk6xzt05t9iQ&oh=00_AfWO5fgvN75Lo7aKgX6c3Ju1LobSAs-QORoz2T1eWoiRJg&oe=68BB87C7" 
+            src="https://res.cloudinary.com/ddl6mayqi/image/upload/v1759306652/490704363_1792670114915394_2780481578076659845_n_md3vxe.jpg" 
             alt="Founder" 
             className="w-28 h-28 rounded-full mx-auto object-cover" />
             <h4 className="mt-4 font-semibold">Hồ Thị Như Ngọc</h4>
@@ -120,7 +120,7 @@ const About = () => {
 
           <div className="bg-white rounded-lg shadow-xl p-6 text-center">
             <img 
-            src="https://scontent.fvca5-1.fna.fbcdn.net/v/t39.30808-6/485772497_2093046834467881_2777743316205554833_n.jpg?_nc_cat=107&ccb=1-7&_nc_sid=a5f93a&_nc_eui2=AeGlCIL_Y2eAcyDKtKfeCwjIaTmjfTmLaC1pOaN9OYtoLSxeFROYwaR8zFqn_U6PIonlldktP-o71cZaQir-U9eU&_nc_ohc=lveBU4p9vCgQ7kNvwE5Hb6J&_nc_oc=Adk8ajTzLizSiSR56s2h6IQstO4LFjtKfuYEIMtF-Le-9J_kzzn5OfYz_PNH7_pySM4&_nc_zt=23&_nc_ht=scontent.fvca5-1.fna&_nc_gid=RmIRGfC0jrhQLY4VTUrE7Q&oh=00_AfVrGs6ptgEltxh1EOr3JMsBkeycT6CptNEyVEP_Tx7hrg&oe=68BBAAC6" 
+            src="https://res.cloudinary.com/ddl6mayqi/image/upload/v1759306653/485643558_2093047171134514_5280836220145442639_n_pvraxm.jpg" 
             alt="Marketing" 
             className="w-28 h-28 rounded-full mx-auto object-cover" />
             <h4 className="mt-4 font-semibold">Trần Thị Thúy An</h4>

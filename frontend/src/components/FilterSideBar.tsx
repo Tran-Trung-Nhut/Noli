@@ -15,7 +15,9 @@ export default function FiltersSidebar({ selectedCategory, onCategoryChange, min
     const [categories] = useState<{label: string, value: string}[]>([
         {label: "Túi xách", value: "hand_bag"},
         {label: "Túi đeo vai", value: "shoulder_bag"},
-        {label: "Balo mini", value: "mini_balo"}
+        {label: "Balo mini", value: "mini_balo"},
+        {label: "Balo", value: "balo"},
+        {label: "Ví", value: "wallet"}
     ]);
 
 

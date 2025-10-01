@@ -129,7 +129,7 @@ const Footer = () => {
                             <div>Địa chỉ: Nhơn Trạch, Đồng Nai</div>
                             <div className="flex items-center gap-3 mt-3">
                                 {/* Social icons */}
-                                <a aria-label="facebook" href="https://www.facebook.com/profile.php?id=100071433255220" className="p-1 rounded-full hover:bg-gray-100 hover:text-black">
+                                <a aria-label="facebook" href="https://www.facebook.com/groups/672049353246308" className="p-1 rounded-full hover:bg-gray-100 hover:text-black">
                                     <FaFacebookSquare size={24} />
                                 </a>
                                 <a aria-label="instagram" href="https://www.tiktok.com/@hongoc00" className="p-1 rounded-full hover:bg-gray-100 hover:text-black">
