@@ -31,7 +31,7 @@ export function TrackOrderPage() {
 
         setLoading(true)
         setOrder(null)
-        const result = await orderApi.getOrder(Number(orderCode))
+        const result = await orderApi.getOrder(Number(orderCode),'track-order')
 
         if (result.status !== HttpStatusCode.Ok) {
             setLoading(false)
@@ -94,7 +94,7 @@ export function TrackOrderPage() {
                                 </p>
 
 
-                                <div className="mt-6 flex flex-col md:flex-row gap-2">
+                                <div className="mt-6 flex flex-col md:flex-row md:justify-evenly gap-2">
                                     <div className={`${order ? "": "flex-1"} p-4 bg-gray-100 rounded-lg text-center`}>
                                         <div className="text-sm font-semibold">Mã đơn</div>
                                         <div className="mt-1 text-xs text-gray-500">

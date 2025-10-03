@@ -29,24 +29,24 @@ import { ReviewModule } from './review/review.module';
     PaymentModule, 
     OrderModule, 
     OrderItemModule,
-    // CacheModule.registerAsync({
-    //   isGlobal: true,
-    //   useFactory: async () => ({
-    //     store: await redisStore({
-    //       socket: {
-    //         host: process.env.REDIS_HOST,
-    //         port: Number(process.env.REDIS_PORT)
-    //       },
-    //       password: process.env.REDIS_PASSWORD,
-    //       ttl: 60 * 1000
-    //     })
-    //   })
-    // }),
-    CacheModule.register({
+    CacheModule.registerAsync({
       isGlobal: true,
-      ttl: 60 * 1000,
-      max: 1000
+      useFactory: async () => ({
+        store: await redisStore({
+          socket: {
+            host: process.env.REDIS_HOST,
+            port: Number(process.env.REDIS_PORT)
+          },
+          password: process.env.REDIS_PASSWORD,
+          ttl: 60 * 1000
+        })
+      })
     }),
+    // CacheModule.register({
+    //   isGlobal: true,
+    //   ttl: 60 * 1000,
+    //   max: 1000
+    // }),
     OrderStatusModule,
     UploadModule,
     ReviewModule

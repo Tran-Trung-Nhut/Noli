@@ -31,9 +31,9 @@ const orderApi = {
         }
     },
 
-    async getOrder (id: number) {
+    async getOrder (id: number, src: string) {
         try {
-            return await axiosClient.get(`/order/${id}`)
+            return await axiosClient.get(`/order/${id}?src=${src}`)
         } catch (error: any) {
             return error.response
         }

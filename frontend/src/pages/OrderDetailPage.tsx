@@ -81,7 +81,7 @@ const OrderDetailPage = () => {
     const navigate = useNavigate()
 
     const fetchOrderFullDetail = async () => {
-        const result = await orderApi.getOrder(state.orderId)
+        const result = await orderApi.getOrder(state.orderId, 'order-detail')
 
         if (result.status !== HttpStatusCode.Ok) {
             notifyError("Có lỗi xảy ra. Vui lòng thử lại")

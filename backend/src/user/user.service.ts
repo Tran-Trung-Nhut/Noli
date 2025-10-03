@@ -8,17 +8,15 @@ import { MESSAGES } from 'src/constantsAndMessage';
 export class UserService {
   constructor(private prismaService: PrismaService) { }
 
-  create(createUserDto: CreateUserDto) {
-    return 'This action adds a new user';
-  }
-
-  findAll() {
-    return `This action returns all user`;
-  }
-
   async findOne(id: number) {
     try {
-      return await this.prismaService.user.findUnique({ where: { id } });
+      return await this.prismaService.user.findUnique({ 
+        where: { id },
+        omit: {
+          password: true,
+          refreshToken: true,
+        }
+      });
     } catch (error) {
       console.error(error)
       throw new InternalServerErrorException(error)

@@ -50,7 +50,7 @@ const ProductReviews = ({
     setImageActiveIndex: (index: number) => void
 }) => {
     const [expandedId, setExpandedId] = useState<number | null>(null);
-    const [reviews, setReviews] = useState<(Review & { user: UserDto })[]>([])
+    const [reviews, setReviews] = useState<(Review & {user: Pick<UserDto, 'firstName' | 'lastName' | 'image'>})[]>([])
     const [loading, setLoading] = useState<boolean>(false)
     const [openOptionReview, setOpenOptionReview] = useState<number>(0)
 

@@ -39,7 +39,20 @@ export class ReviewService {
 
   async getAllByProductId(productId: number) {
     try {
-      return await this.prismaService.review.findMany({ where: { productId }, include: { user: true } })
+      return await this.prismaService.review.findMany({
+        where: {
+          productId
+        },
+        include: {
+          user: {
+            select:{
+              firstName: true,
+              lastName: true,
+              image: true
+            }
+          }
+        }
+      })
     } catch (error) {
       console.error(error)
       throw new InternalServerErrorException(error)
@@ -58,14 +71,6 @@ export class ReviewService {
       console.error(error)
       throw new InternalServerErrorException(error)
     }
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} review`;
-  }
-
-  update(id: number, updateReviewDto: UpdateReviewDto) {
-    return `This action updates a #${id} review`;
   }
 
   async remove(id: number) {

@@ -234,23 +234,32 @@ export class OrderService {
     }));
   }
 
-  async findOne(id: number) {
+  async findOne(id: number, src: string) {
     try {
-      const order = await this.prismaService.order.findUnique({
-        where: { id },
-        include: {
-          orderItems: {
-            include: {
-              product: true,
-              productVariant: true
-            }
-          },
-          address: true,
-          orderStatuses: true
-        }
-      });
+      const order = src === 'order-detail' ?
+        await this.prismaService.order.findUnique({
+          where: { id },
+          include: {
+            orderItems: {
+              include: {
+                product: true,
+                productVariant: true
+              }
+            },
+            address: true,
+            orderStatuses: true
+          }
+        })
+        :
+        await this.prismaService.order.findUnique({
+          where: { id },
+          select: {
+            id: true,
+            orderStatuses: true
+          }
+        })
 
-      if(!order) throw new NotFoundException()
+      if (!order) throw new NotFoundException()
 
       return order
     } catch (error) {

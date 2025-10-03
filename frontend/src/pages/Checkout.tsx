@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
-import { confirm, formatPrice, getGuestToken, notifyError, notifySuccess, notifyWarning, setGuestToken } from "../utils";
+import { confirm, formatPrice, getGuestToken, notifyError, notifyWarning, setGuestToken } from "../utils";
 import { useAuth } from "../contexts/AuthContext";
 import cartApi from "../apis/cartApi";
 import type { Cart } from "../dtos/cart.dto";
@@ -68,7 +68,7 @@ const Checkout = () => {
     // UI state
     const [shippingFee, setShippingFee] = useState<number | null>(null);
     const [coupon, setCoupon] = useState<string>("");
-    const [discountAmount, setDiscountAmount] = useState<number>(0);
+    const [discountAmount] = useState<number>(0);
 
     // dependent lists
     const [listProvinces, setListProvinces] = useState<Province[]>([])
@@ -306,19 +306,11 @@ const Checkout = () => {
     }, [subtotal]);
 
     const handleApplyCoupon = () => {
-        if (!coupon) return notifyError("Vui lòng nhập mã giảm giá");
-        if (coupon.toUpperCase() === "GIAM10") {
-            const disc = Math.round(subtotal * 0.1);
-            setDiscountAmount(disc);
-            notifySuccess("Áp dụng mã GIAM10 - giảm 10%");
-        } else if (coupon.toUpperCase() === "GIAM33") {
-            const disc = Math.round(subtotal * 0.33);
-            setDiscountAmount(disc);
-            notifySuccess("Áp dụng mã GIAM33 - giảm 33%");
-        } else {
-            notifyError("Mã không hợp lệ");
-        }
+        if(['GIAM20', 'GIAM10', 'GIAM5'].includes(coupon)) return notifyWarning("Mã giảm giá không còn hỗ trợ")
+        notifyWarning("Mã giảm giá không hợp lệ.")
     };
+
+    const handleChooseDefaultCoupon = (coupon: string) => setCoupon(coupon)
 
 
     const total = subtotal - discountAmount + (shippingFee ?? 0);
@@ -374,16 +366,14 @@ const Checkout = () => {
                         onConfirm={handlePayment}
                     />
 
-                    {/* Right: order summary (45%) - made wider + image slightly larger */}
                     <div className="w-full lg:w-[45%] border-2 border-gray-500 rounded-xl">
                         <div className="bg-white p-6 rounded-lg shadow-sm">
                             <h3 className="text-lg font-bold mb-4">Đơn hàng ({src === 'cart' ? cart?.cartItems.length ?? 0 : 1})</h3>
 
-                            <div className="space-y-3 max-h-80 overflow-auto pb-2"> {/* tăng max-h để nhiều không gian */}
+                            <div className="space-y-3 max-h-80 overflow-auto pb-2">
                                 {src === 'cart' ? (cart?.cartItems.length ? (
                                     cart?.cartItems.map(ci => (
                                         <div key={ci.id} className="flex items-center gap-3 border-b pb-3">
-                                            {/* tăng kích thước ảnh để phù hợp với cột rộng hơn */}
                                             <img
                                                 src={ci.product.image?.[0] ?? "data:image/png;base64,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"}
                                                 alt={ci.product.name}
@@ -421,12 +411,27 @@ const Checkout = () => {
                                         placeholder="Nhập mã giảm giá"
                                         className="flex-1 px-3 py-2 border rounded-md focus:outline-none"
                                     />
-                                    <button onClick={handleApplyCoupon} className="px-3 py-2 bg-gray-100 rounded-md border hover:bg-gray-200">Áp dụng</button>
+                                    <button onClick={() => handleApplyCoupon()} className="px-3 py-2 bg-gray-100 rounded-md border hover:bg-gray-200">Áp dụng</button>
                                 </div>
                                 <div className="mt-2 flex gap-2">
-                                    <button onClick={() => { setCoupon("GIAM33"); handleApplyCoupon(); }} className="text-xs border rounded px-2 py-1">Giảm 33%</button>
-                                    <button onClick={() => { setCoupon("GIAM10"); handleApplyCoupon(); }} className="text-xs border rounded px-2 py-1">Giảm 10%</button>
-                                    <button onClick={() => { setCoupon("GIAM5"); handleApplyCoupon(); }} className="text-xs border rounded px-2 py-1">Giảm 5%</button>
+                                    {coupon !== 'GIAM5' && <button
+                                        className="text-xs border rounded px-2 py-1"
+                                        onClick={() => handleChooseDefaultCoupon('GIAM5')}
+                                    >
+                                        Giảm 5%
+                                    </button>}
+                                    {coupon !== 'GIAM10' &&<button
+                                        className="text-xs border rounded px-2 py-1"
+                                        onClick={() => handleChooseDefaultCoupon('GIAM10')}
+                                    >
+                                        Giảm 10%
+                                    </button>}
+                                    {coupon !== 'GIAM20' && <button
+                                        className="text-xs border rounded px-2 py-1"
+                                        onClick={() => handleChooseDefaultCoupon('GIAM20')}
+                                    >
+                                        Giảm 20%
+                                    </button>}
                                 </div>
                             </div>
 

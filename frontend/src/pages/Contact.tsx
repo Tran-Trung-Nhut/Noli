@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { FaTiktok } from "react-icons/fa";
 import { FaFacebook } from "react-icons/fa6";
+import { notifyWarning } from "../utils";
 
 const Contact = () => {
     const [form, setForm] = useState({ name: "", email: "", phone: "", subject: "", message: "" });
@@ -28,19 +29,8 @@ const Contact = () => {
         }
         setStatus({ type: "sending" });
 
-        try {
-            const res = await fetch("/api/contact", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(form),
-            });
-
-            if (!res.ok) throw new Error("Không thể gửi liên hệ, thử lại sau.");
-            setStatus({ type: "success", message: "Cảm ơn! Chúng tôi đã nhận được yêu cầu và sẽ liên hệ sớm." });
-            setForm({ name: "", email: "", phone: "", subject: "", message: "" });
-        } catch (error: any) {
-            setStatus({ type: "error", message: error?.message || "Có lỗi xảy ra." });
-        }
+        setStatus({ type: "idle"})
+        notifyWarning("Hệ thống gửi đang được bảo trì, vui lòng liên hệ thông qua số điện thoại")
     }
 
     return (

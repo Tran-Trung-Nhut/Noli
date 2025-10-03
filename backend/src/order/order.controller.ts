@@ -35,8 +35,8 @@ export class OrderController {
   }
 
   @Get(':id')
-  async findOne(@Param('id') id: string) {
-    return await this.orderService.findOne(+id)
+  async findOne(@Param('id') id: string, @Query('src') src: string) {
+    return await this.orderService.findOne(+id, src)
   }
 
   @Patch(':id')
