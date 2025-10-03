@@ -96,7 +96,7 @@ const PaymentResult = () => {
 
         const numberPart = orderId.replace("MOMOPAYMENT", "")
 
-        const result = await orderApi.getOrder(Number(numberPart))
+        const result = await orderApi.getOrder(Number(numberPart), 'order-detail')
 
         if (result.status !== HttpStatusCode.Ok) {
             notifyError("Có lỗi xảy ra. Trở về trang chủ")
