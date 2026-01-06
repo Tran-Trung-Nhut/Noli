@@ -1,11 +1,8 @@
 import { useEffect, useState } from "react";
 import {
-  ArrowDownIcon,
-  ArrowUpIcon,
   BoxIconLine,
   GroupIcon,
 } from "../../icons";
-import Badge from "../ui/badge/Badge";
 import { userApi } from "../../apis/user.api";
 import { orderApi } from "../../apis/order.api";
 

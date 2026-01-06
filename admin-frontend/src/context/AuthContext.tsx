@@ -1,6 +1,5 @@
 import { createContext, useState, type ReactNode, useContext, useEffect } from "react";
 import { setAccessTokenGetter, setAccessTokenSetter } from "../apis/axios.client";
-import authApi from "../apis/auth.api";
 
 export type PublicUserInfo = {
     id: number,

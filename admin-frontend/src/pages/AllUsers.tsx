@@ -8,7 +8,6 @@ import { PlusIcon } from "../icons";
 import { useEffect, useState } from "react";
 import { Option } from "../dtos/options.dto";
 import AllUsersTable from "../components/tables/BasicTables/AllUsersTable";
-import { users } from "../mock-datas/user.mock";
 // import { defaultUser, User } from "../dtos/user.dto";
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa6";
 import { UserInList } from "../dtos/user.dto";

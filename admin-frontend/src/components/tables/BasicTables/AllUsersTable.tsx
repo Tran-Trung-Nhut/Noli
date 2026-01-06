@@ -8,7 +8,7 @@ import {
 import { PencilIcon, TrashBinIcon } from "../../../icons";
 import { confirm, formatDate, notifyError, notifySuccess } from "../../../utils";
 import productApi from "../../../apis/product.api";
-import { User, UserInList } from "../../../dtos/user.dto";
+import { UserInList } from "../../../dtos/user.dto";
 
 
 
