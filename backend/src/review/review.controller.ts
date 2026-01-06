@@ -1,9 +1,10 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, UploadedFile, UseInterceptors, UploadedFiles, UseGuards } from '@nestjs/common';
 import { ReviewService } from './review.service';
-import { UpdateReviewDto } from './dto/update-review.dto';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { JwtAuthGuard } from 'src/auth/jwt.guard';
+import { CacheInterceptor } from '@nestjs/cache-manager';
 
+@UseInterceptors(CacheInterceptor)
 @Controller('review')
 export class ReviewController {
   constructor(private readonly reviewService: ReviewService) { }
