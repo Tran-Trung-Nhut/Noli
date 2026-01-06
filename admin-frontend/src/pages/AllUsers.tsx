@@ -9,12 +9,12 @@ import { useEffect, useState } from "react";
 import { Option } from "../dtos/options.dto";
 import AllUsersTable from "../components/tables/BasicTables/AllUsersTable";
 import { users } from "../mock-datas/user.mock";
-import { defaultUser, User } from "../dtos/user.dto";
+// import { defaultUser, User } from "../dtos/user.dto";
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa6";
 
 export default function AllUsers() {
   const [isCreatingOrUpdatingUser,setIsCreatingOrUpdatingUser] = useState<string>('')
-  const [updateUser, setUpdateUser] = useState<User>(defaultUser);
+  // const [updateUser, setUpdateUser] = useState<User>(defaultUser);
   const [page, setPage] = useState<number>(1);
   const [limit, setLimit] = useState<number>(5);
   const [sortBy, setSortBy] = useState<string>("name");
@@ -39,10 +39,10 @@ export default function AllUsers() {
     {value: "asc", label: "Tăng dần"},
   ]
 
-  const editUser = (user: User) => {
-    setIsCreatingOrUpdatingUser('update');
-    setUpdateUser(user);
-  }
+  // const editUser = (user: User) => {
+  //   setIsCreatingOrUpdatingUser('update');
+  //   setUpdateUser(user);
+  // }
 
   useEffect(() => {
   }, [page, limit, sortBy, sortOrder, search]);

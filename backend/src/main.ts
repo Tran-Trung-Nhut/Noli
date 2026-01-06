@@ -11,7 +11,11 @@ async function bootstrap() {
   app.useGlobalPipes(new ValidationPipe())
 
   app.enableCors({
-    origin: [process.env.FRONTEND_DOMAIN_1, process.env.FRONTEND_DOMAIN_2],
+    origin: [
+      process.env.MAIN_FRONTEND_DOMAIN, 
+      process.env.ADMIN_FRONTEND_DOMAIN,
+      process.env.LOCAL_FRONTEND_DOMAIN,
+    ],
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
   });

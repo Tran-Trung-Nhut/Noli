@@ -41,16 +41,18 @@ export default function AllProducts() {
     {value: "asc", label: "Tăng dần"},
   ]
 
-  const fetchProducts = () => {
-    productApi.getPaging({
+  const fetchProducts = async () => {
+    const response = await productApi.getPaging({
       page,
       limit,
       sortBy,
       sortOrder,
-      search,
-    }).then((response) => {
-      if (response.status === 200) setProducts(response.data.data);
-    })
+      search
+    });
+    console.log(response);
+    if (response.status === 200) {
+      setProducts(response.data.items);
+    }
   }
 
   const editProduct = (product: Product) => {
