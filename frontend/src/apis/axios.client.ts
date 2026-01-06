@@ -1,5 +1,5 @@
 import axios, { AxiosError, type AxiosRequestConfig } from "axios";
-import authApi from "./authApi";
+import authApi from "./auth.api";
 
 let getAccessToken: (() => string | null) | null = null
 let setAccessToken: ((accessToken: string) => void) | null = null

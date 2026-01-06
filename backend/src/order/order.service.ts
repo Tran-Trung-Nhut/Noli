@@ -7,6 +7,7 @@ import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Cache } from 'cache-manager';
 import { OrderStatusService } from 'src/order-status/order-status.service';
 import { ProductVariantService } from 'src/product-variant/product-variant.service';
+import { OrderStat } from 'src/shares/enums/order-status.enum';
 
 @Injectable()
 export class OrderService {
@@ -136,9 +137,43 @@ export class OrderService {
       }
     } catch (error) {
       console.error(error)
+      
+      if (!(error instanceof InternalServerErrorException)) {
+        throw error
+      }
       throw new InternalServerErrorException(error)
     }
 
+  }
+
+  async getTotal(status: string) {
+    try {
+      if (status === 'ALL') {
+        return await this.prismaService.order.count();
+      }
+
+      const result = await this.prismaService.order.count({
+        where: {
+          orderStatuses: {
+            some: {
+              isCurrentStatus: true,
+              status
+            }
+          }
+        } 
+      });
+
+      console.log("Total orders:", result);
+
+      return result;
+    } catch (error) {
+      console.error(error)
+      
+      if (!(error instanceof InternalServerErrorException)) {
+        throw error
+      }
+      throw new InternalServerErrorException(error)
+    }
   }
 
   async getOrderSummary(userId: number) {
@@ -154,7 +189,7 @@ export class OrderService {
           orderStatuses: {
             some: {
               isCurrentStatus: true,
-              status: "PENDING_PAYMENT"
+              status: OrderStat.PENDING
             }
           }
         }
@@ -165,7 +200,7 @@ export class OrderService {
           orderStatuses: {
             some: {
               isCurrentStatus: true,
-              status: "DELIVERY"
+              status: OrderStat.DELIVERED
             }
           }
         }
@@ -176,7 +211,7 @@ export class OrderService {
           orderStatuses: {
             some: {
               isCurrentStatus: true,
-              status: "COMPLETED"
+              status: OrderStat.COMPLETED
             }
           }
         }
@@ -187,7 +222,7 @@ export class OrderService {
           orderStatuses: {
             some: {
               isCurrentStatus: true,
-              status: "CANCEL"
+              status: OrderStat.CANCELLED
             }
           }
         }
@@ -326,6 +361,10 @@ export class OrderService {
       })
     } catch (error) {
       console.error(error)
+      
+      if (!(error instanceof InternalServerErrorException)) {
+        throw error
+      }
       throw new InternalServerErrorException(error)
     }
   }
@@ -335,6 +374,10 @@ export class OrderService {
       return await this.prismaService.order.delete({ where: { id } })
     } catch (error) {
       console.error(error)
+      
+      if (!(error instanceof InternalServerErrorException)) {
+        throw error
+      }
       throw new InternalServerErrorException(error)
     }
   }
@@ -354,6 +397,10 @@ export class OrderService {
       await this.prismaService.order.updateMany({ where: { guestToken: { in: guestTokens } }, data: { userId } })
     } catch (error) {
       console.error(error)
+      
+      if (!(error instanceof InternalServerErrorException)) {
+        throw error
+      }
       throw new InternalServerErrorException(error)
     }
   }

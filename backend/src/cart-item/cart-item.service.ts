@@ -87,6 +87,10 @@ export class CartItemService {
       })
     } catch (error) {
       console.error(error)
+      
+      if (!(error instanceof InternalServerErrorException)) {
+        throw error
+      }
       throw new InternalServerErrorException(error)
     }
   }
@@ -122,6 +126,10 @@ export class CartItemService {
       await this.cacheManager.clear()
     } catch (error) {
       console.error(error)
+      
+      if (!(error instanceof InternalServerErrorException)) {
+        throw error
+      }
       throw new InternalServerErrorException(error)
     }
   }

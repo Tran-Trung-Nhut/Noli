@@ -1,7 +1,7 @@
 import { createContext, useState, type ReactNode, useContext, useEffect } from "react";
-import authApi from "../apis/authApi";
-import { setAccessTokenGetter, setAccessTokenSetter } from "../apis/axiosClient";
-import cartItemApi from "../apis/cartItemApi";
+import authApi from "../apis/auth.api";
+import { setAccessTokenGetter, setAccessTokenSetter } from "../apis/axios.client";
+import cartItemApi from "../apis/cart-item.api";
 import { HttpStatusCode } from "axios";
 import { getGuestToken } from "../utils";
 

@@ -3,7 +3,7 @@ import type { Review } from "../dtos/review.dto";
 import type { UserDto } from "../dtos/user.dto";
 import No_image from "../assets/No_image_user.jpg"
 import { confirm, formatDateTime, notifyError } from "../utils";
-import { reviewApi } from "../apis/reviewApi";
+import { reviewApi } from "../apis/review.api";
 import { HttpStatusCode } from "axios";
 import LoadingAuth from "./LoadingAuth";
 import Not_found from "../assets/product-not-found.svg"

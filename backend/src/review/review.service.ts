@@ -33,6 +33,10 @@ export class ReviewService {
       return reuslt
     } catch (error) {
       console.error(error)
+      
+      if (!(error instanceof InternalServerErrorException)) {
+        throw error
+      }
       throw new InternalServerErrorException(error)
     }
   }
@@ -55,6 +59,10 @@ export class ReviewService {
       })
     } catch (error) {
       console.error(error)
+      
+      if (!(error instanceof InternalServerErrorException)) {
+        throw error
+      }
       throw new InternalServerErrorException(error)
     }
   }
@@ -69,6 +77,10 @@ export class ReviewService {
       });
     } catch (error) {
       console.error(error)
+      
+      if (!(error instanceof InternalServerErrorException)) {
+        throw error
+      }
       throw new InternalServerErrorException(error)
     }
   }
@@ -90,6 +102,10 @@ export class ReviewService {
       return result
     } catch (error) {
       console.error(error)
+      
+      if (!(error instanceof InternalServerErrorException)) {
+        throw error
+      }
       throw new InternalServerErrorException(error)
     }
   }

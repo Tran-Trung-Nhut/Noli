@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { confirm, formatPrice, getGuestToken, notifyError, notifyWarning, setGuestToken } from "../utils";
 import { useAuth } from "../contexts/AuthContext";
-import cartApi from "../apis/cartApi";
+import cartApi from "../apis/cart.api";
 import type { Cart } from "../dtos/cart.dto";
 import type { Product } from "../dtos/product.dto";
 import type { ProductVariant } from "../dtos/productVariant.dto";
@@ -10,10 +10,10 @@ import DeliveryDetail from "../components/DeliveryDetail";
 import PaymentMethodModal from "../components/PaymentMethodModal";
 import { HttpStatusCode } from "axios";
 import LoadingAuth from "../components/LoadingAuth";
-import paymentApi from "../apis/paymentApi";
-import addressApi from "../apis/addressApi";
+import paymentApi from "../apis/payment.api";
+import addressApi from "../apis/address.api";
 import { type AddressDto } from "../dtos/address.dto";
-import orderApi from "../apis/orderApi";
+import orderApi from "../apis/order.api";
 import type { CreateOrderItemDto } from "../dtos/orderItem.dto";
 
 export type Province = {

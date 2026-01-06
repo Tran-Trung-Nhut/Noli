@@ -7,6 +7,8 @@ import DemographicCard from "../../components/ecommerce/DemographicCard";
 import PageMeta from "../../components/common/PageMeta";
 
 export default function Home() {
+
+
   return (
     <>
       <PageMeta
@@ -24,9 +26,9 @@ export default function Home() {
           <MonthlyTarget />
         </div>
 
-        <div className="col-span-12">
+        {/* <div className="col-span-12">
           <StatisticsChart />
-        </div>
+        </div> */}
 
         <div className="col-span-12 xl:col-span-5">
           <DemographicCard />

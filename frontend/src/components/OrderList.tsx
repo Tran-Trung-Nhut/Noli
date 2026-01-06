@@ -3,7 +3,7 @@ import { formatDateTime, formatPrice, getOrderCurrentStatus } from "../utils";
 import { useEffect, useState } from "react";
 import { type OrderDto } from "../dtos/order.dto";
 import type { UserDto } from "../dtos/user.dto";
-import orderApi from "../apis/orderApi";
+import orderApi from "../apis/order.api";
 import { HttpStatusCode } from "axios";
 import type { AddressDto } from "../dtos/address.dto";
 import { useNavigate } from "react-router-dom";

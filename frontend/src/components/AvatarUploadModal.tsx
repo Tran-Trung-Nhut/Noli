@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import axiosClient from '../apis/axiosClient';
+import axiosClient from '../apis/axios.client';
 import { notifyError } from '../utils';
 import No_Image from "../assets/No_image_user.jpg"
 import { FaTrash } from 'react-icons/fa6';

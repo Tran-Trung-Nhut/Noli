@@ -1,5 +1,5 @@
 import type { CreateOrderDto, UpdateOrder } from "../dtos/order.dto"
-import axiosClient from "./axiosClient"
+import axiosClient from "./axios.client"
 
 const orderApi = {
     async createOrder(order: CreateOrderDto, fromCart: boolean) {

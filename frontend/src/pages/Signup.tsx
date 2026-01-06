@@ -5,7 +5,7 @@ import { getGuestToken, notifyError } from "../utils";
 import { ToastContainer } from "react-toastify";
 import { HttpStatusCode } from "axios";
 import LoadingAuth from "../components/LoadingAuth";
-import authApi from "../apis/authApi";
+import authApi from "../apis/auth.api";
 import { useAuth } from "../contexts/AuthContext";
 import { ArrowLeft } from "lucide-react";
 

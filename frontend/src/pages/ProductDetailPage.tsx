@@ -3,8 +3,8 @@ import { useEffect, useState } from "react";
 import { type ProductDetail } from "../dtos/product.dto";
 import { useNavigate, useParams } from "react-router-dom";
 import Slider from "react-slick"; // Import Slider từ react-slick
-import productApi from "../apis/productApi";
-import cartItemApi from "../apis/cartItemApi";
+import productApi from "../apis/product.api";
+import cartItemApi from "../apis/cart-item.api";
 import { Minus, Plus } from "lucide-react";
 import { HttpStatusCode } from "axios";
 import type { ProductVariant } from "../dtos/productVariant.dto";

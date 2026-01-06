@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import type { Product } from "../dtos/product.dto";
 import ProductCard from "./ProductCart";
 import ProductCardSkeleton from "./ProductCartSkeleton";
-import productApi from "../apis/productApi";
+import productApi from "../apis/product.api";
 import { HttpStatusCode } from "axios";
 import { notifyError } from "../utils";
 

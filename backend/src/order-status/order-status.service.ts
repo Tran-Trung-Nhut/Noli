@@ -33,6 +33,10 @@ export class OrderStatusService {
       }
     } catch (error) {
       console.error(error)
+      
+      if (!(error instanceof InternalServerErrorException)) {
+        throw error
+      }
       throw new InternalServerErrorException(error)
     }
   }

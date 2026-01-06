@@ -19,6 +19,10 @@ export class CartService {
       await this.prismaService.cart.update({ where: { guestToken }, data: { userId, status: 'merged' } });
     } catch (error) {
       console.error(error)
+      
+      if (!(error instanceof InternalServerErrorException)) {
+        throw error
+      }
       throw new InternalServerErrorException(error)
     }
   }
@@ -41,6 +45,10 @@ export class CartService {
       return await this.prismaService.cart.create({ data: createCartDto });
     } catch (error) {
       console.error(error)
+      
+      if (!(error instanceof InternalServerErrorException)) {
+        throw error
+      }
       throw new InternalServerErrorException(error)
     }
   }
@@ -57,6 +65,10 @@ export class CartService {
       return result;
     } catch (error) {
       console.error(error)
+      
+      if (!(error instanceof InternalServerErrorException)) {
+        throw error
+      }
       throw new InternalServerErrorException(error)
     }
   }
@@ -78,6 +90,10 @@ export class CartService {
       });
     } catch (error) {
       console.error(error)
+      
+      if (!(error instanceof InternalServerErrorException)) {
+        throw error
+      }
       throw new InternalServerErrorException(error)
     }
   }
@@ -98,6 +114,10 @@ export class CartService {
       return activeCart;
     } catch (error) {
       console.error(error)
+      
+      if (!(error instanceof InternalServerErrorException)) {
+        throw error
+      }
       throw new InternalServerErrorException(error)
     }
   }

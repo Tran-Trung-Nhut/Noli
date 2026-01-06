@@ -1,11 +1,10 @@
 import { createContext, useContext, useEffect, useRef, useState, type ReactNode } from "react";
-import authApi from "../apis/authApi";
+import authApi from "../apis/auth.api";
 import { HttpStatusCode } from "axios";
 
 type ServerWakeContextType = {
     isAwake: boolean;
     isWaking: boolean;
-    // nếu cần bạn có thể expose wakeNow để trigger manual
     wakeNow: () => Promise<void>;
 };
 

@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Star } from "./ProductReviews";
 import { notifyError, notifySuccess } from "../utils";
-import { reviewApi } from "../apis/reviewApi";
+import { reviewApi } from "../apis/review.api";
 import { HttpStatusCode } from "axios";
 import type { PublicUserInfo } from "../contexts/AuthContext";
 

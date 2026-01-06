@@ -4,11 +4,11 @@ import EditProfileModal from "../components/EditProfile";
 import { useAuth } from "../contexts/AuthContext";
 import { getGender, notifyError, notifySuccess } from "../utils";
 import { type UpdateUserDto, type UserDto } from "../dtos/user.dto";
-import userApi from "../apis/userApi";
+import userApi from "../apis/user.api";
 import { HttpStatusCode } from "axios";
 import noImage from "../assets/No_image_user.jpg"
 import LoadingAuth from "../components/LoadingAuth";
-import orderApi from "../apis/orderApi";
+import orderApi from "../apis/order.api";
 import OrderList from "../components/OrderList";
 import { FaCamera } from "react-icons/fa6";
 import AvatarUploadModal from "../components/AvatarUploadModal";

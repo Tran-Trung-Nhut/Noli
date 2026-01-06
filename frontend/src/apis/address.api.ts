@@ -1,5 +1,5 @@
 import type { CreateAddressDto, UpdateAddressDto } from "../dtos/address.dto";
-import axiosClient from "./axiosClient";
+import axiosClient from "./axios.client";
 
 const addressApi = {
     getListProvinces: async () => {

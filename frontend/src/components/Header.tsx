@@ -5,7 +5,7 @@ import { FaBars } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import { ChevronDown } from "lucide-react";
-import authApi from "../apis/authApi";
+import authApi from "../apis/auth.api";
 import { confirm, removeGuestToken } from "../utils";
 
 const Header: React.FC = () => {

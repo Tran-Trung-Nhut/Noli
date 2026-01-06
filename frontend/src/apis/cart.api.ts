@@ -1,4 +1,4 @@
-import axiosClient from "./axiosClient";
+import axiosClient from "./axios.client";
 
 const cartApi = {
     async getCartByGuestToken(guest_token: string) {

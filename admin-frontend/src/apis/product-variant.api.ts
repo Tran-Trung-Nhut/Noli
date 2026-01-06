@@ -1,4 +1,4 @@
-import axiosClient from "./axiosClient";
+import axiosClient from "./axios.client";
 import { CreateProductVariant } from "../dtos/productVariant.dto";
 
 const productVariantApi = {

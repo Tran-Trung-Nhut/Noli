@@ -5,7 +5,7 @@ import { Outlet } from 'react-router-dom'
 import { useLayoutEffect, useRef } from 'react';
 import { useAuth } from './contexts/AuthContext';
 import { getGuestToken, setGuestToken } from './utils';
-import cartApi from './apis/cartApi';
+import cartApi from './apis/cart.api';
 import { HttpStatusCode } from 'axios';
 import ScrollToTop from './contexts/ScrollToTop';
 

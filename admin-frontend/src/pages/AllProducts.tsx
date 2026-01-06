@@ -8,10 +8,11 @@ import { PlusIcon } from "../icons";
 import { useEffect, useState } from "react";
 import { Option } from "../dtos/options.dto";
 import { defaultProduct, Product } from "../dtos/product.dto";
-import productApi from "../apis/productApi";
+import productApi from "../apis/product.api";
 import CreateOrUpdateProduct from "./CreateOrUpdateProduct";
 import AllProductsTable from "../components/tables/BasicTables/AllProductsTable";
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa6";
+import { SortOrder } from "../enums/sort.enum";
 
 export default function AllProducts() {
   const [isCreatingOrUpdatingProduct,setIsCreatingOrUpdatingProduct] = useState<string>('')
@@ -20,7 +21,7 @@ export default function AllProducts() {
   const [page, setPage] = useState<number>(1);
   const [limit, setLimit] = useState<number>(5);
   const [sortBy, setSortBy] = useState<string>("name");
-  const [sortOrder, setSortOrder] = useState<string>("desc");
+  const [sortOrder, setSortOrder] = useState<SortOrder>(SortOrder.DESC);
   const [search, setSearch] = useState<string>("");
 
   const viewOptions: Option[] = [
@@ -37,8 +38,8 @@ export default function AllProducts() {
   ]
 
   const orderOptions: Option[] = [
-    {value: "desc", label: "Giảm dần"},
-    {value: "asc", label: "Tăng dần"},
+    {value: SortOrder.DESC, label: "Giảm dần"},
+    {value: SortOrder.ASC, label: "Tăng dần"},
   ]
 
   const fetchProducts = async () => {
@@ -49,9 +50,8 @@ export default function AllProducts() {
       sortOrder,
       search
     });
-    console.log(response);
     if (response.status === 200) {
-      setProducts(response.data.items);
+      setProducts(response.data);
     }
   }
 
@@ -81,7 +81,7 @@ export default function AllProducts() {
                 </div>
                 <div>
                   <Label>Thứ tự</Label>
-                  <Select options={orderOptions} onChange={(event) => {setSortOrder(event)}} defaultValue="desc"/>
+                  <Select options={orderOptions} onChange={(event) => {setSortOrder(event as SortOrder)}} defaultValue={SortOrder.DESC}/>
                 </div>
                 <div>
                   <Label>Tìm kiếm</Label>

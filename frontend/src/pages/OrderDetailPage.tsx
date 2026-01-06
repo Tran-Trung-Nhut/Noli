@@ -55,7 +55,7 @@ export const STATUS_META: Record<
 import { FaCheckCircle } from "react-icons/fa";
 import { useLocation, useNavigate } from "react-router-dom";
 import LoadingAuth from "../components/LoadingAuth";
-import orderApi from "../apis/orderApi";
+import orderApi from "../apis/order.api";
 import { HttpStatusCode } from "axios";
 import type { AddressDto } from "../dtos/address.dto";
 import type { OrderItemShow } from "../dtos/orderItem.dto";
@@ -63,7 +63,7 @@ import type { OrderDto } from "../dtos/order.dto";
 import type { OrderStatusDto } from "../dtos/orderStatus.dto";
 import BuyAgainModal from "../components/BuyAgainModal";
 import PaymentMethodModal from "../components/PaymentMethodModal";
-import paymentApi from "../apis/paymentApi";
+import paymentApi from "../apis/payment.api";
 
 // --- Mock order (used if no prop passed) ---
 

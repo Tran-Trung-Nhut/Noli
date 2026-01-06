@@ -1,5 +1,5 @@
 import type { CreateCartItem } from "../dtos/cartItem.dto";
-import axiosClient from "./axiosClient";
+import axiosClient from "./axios.client";
 
 const cartItemApi = {
     async addItemToCart(body: CreateCartItem) {

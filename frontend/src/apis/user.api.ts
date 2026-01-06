@@ -1,5 +1,5 @@
 import type { UpdateUserDto } from "../dtos/user.dto";
-import axiosClient from "./axiosClient";
+import axiosClient from "./axios.client";
 
 const userApi = {
     getUserById: async (userId: number) => {

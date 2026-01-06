@@ -2,12 +2,12 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom"; // nếu dùng React Router
 import LoadingAuth from "../components/LoadingAuth";
-import authApi from "../apis/authApi";
+import authApi from "../apis/auth.api";
 import { HttpStatusCode } from "axios";
 import { useAuth } from "../contexts/AuthContext";
-import cartApi from "../apis/cartApi";
+import cartApi from "../apis/cart.api";
 import { getGuestToken } from "../utils";
-import orderApi from "../apis/orderApi";
+import orderApi from "../apis/order.api";
 
 const GoogleAuthLoading = () => {
     const [loading, setLoading] = useState(true);

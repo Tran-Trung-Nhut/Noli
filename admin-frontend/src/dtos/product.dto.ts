@@ -7,6 +7,7 @@ export type Product = {
     description: string,
     image: string[],
     category: string[],
+    soldQuantity?: number,
     createdAt?: Date,
     updatedAt?: Date,
 }

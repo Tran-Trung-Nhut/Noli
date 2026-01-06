@@ -7,6 +7,7 @@ import { JwtPayload } from './dto/jwt.dto';
 import { CartService } from 'src/cart/cart.service';
 import { OrderService } from 'src/order/order.service';
 import { SignUpDto } from './dto/auth.dto';
+import { userInfo } from 'os';
 
 @Injectable()
 export class AuthService {
@@ -27,6 +28,10 @@ export class AuthService {
             return user;
         } catch (error) {
             console.error(error)
+
+            if (!(error instanceof InternalServerErrorException)) {
+                throw error
+            }
             throw new InternalServerErrorException(error)
         }
     }
@@ -71,9 +76,22 @@ export class AuthService {
 
             await this.orderService.mergeOrder(user.id)
 
-            return { accessToken, userInfo: { id: user.id, firstName: user.firstName, lastName: user.lastName, image: user.image } };
+            return { 
+                accessToken, 
+                userInfo: { 
+                    id: user.id, 
+                    firstName: 
+                    user.firstName, 
+                    lastName: user.lastName, 
+                    image: user.image , 
+                    role: user.role
+                }
+            };
         } catch (error) {
-            console.error(error)
+            if (!(error instanceof InternalServerErrorException)) {
+                throw error
+            }
+
             throw new InternalServerErrorException(error)
         }
     }
@@ -114,6 +132,10 @@ export class AuthService {
             }
         } catch (error) {
             console.error(error)
+
+            if (!(error instanceof InternalServerErrorException)) {
+                throw error
+            }
             throw new InternalServerErrorException(error)
         }
     }
@@ -133,12 +155,17 @@ export class AuthService {
                     password: hashedPassword,
                     firstName: body.firstName,
                     lastName: body.lastName,
+
                 }
             });
 
             return this.login(newUser.username, body.password, body.guestToken, res);
         } catch (error) {
             console.error(error)
+
+            if (!(error instanceof InternalServerErrorException)) {
+                throw error
+            }
             throw new InternalServerErrorException(error)
         }
     }
@@ -156,6 +183,10 @@ export class AuthService {
             });
         } catch (error) {
             console.error(error)
+
+            if (!(error instanceof InternalServerErrorException)) {
+                throw error
+            }
             throw new InternalServerErrorException(error)
         }
     }
@@ -186,6 +217,10 @@ export class AuthService {
             return { accessToken, userInfo: { id: user.id, firstName: user.firstName, lastName: user.lastName, image: user.image } };
         } catch (error) {
             console.error(error)
+
+            if (!(error instanceof InternalServerErrorException)) {
+                throw error
+            }
             throw new InternalServerErrorException(error)
         }
     }

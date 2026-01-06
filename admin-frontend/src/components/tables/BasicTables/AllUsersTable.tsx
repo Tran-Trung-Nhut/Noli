@@ -7,8 +7,8 @@ import {
 } from "../../ui/table";
 import { PencilIcon, TrashBinIcon } from "../../../icons";
 import { confirm, formatDate, notifyError, notifySuccess } from "../../../utils";
-import productApi from "../../../apis/productApi";
-import { User } from "../../../dtos/user.dto";
+import productApi from "../../../apis/product.api";
+import { User, UserInList } from "../../../dtos/user.dto";
 
 
 
@@ -17,9 +17,9 @@ export default function AllUsersTable({
   fetchUsers,
   editUser
 }: {
-  users: User[], 
+  users: UserInList[], 
   fetchUsers: () => void,
-  editUser: (user: User) => void,
+  editUser: (userId: number) => void,
 }) {
 
   const handleDeleteUser = (id: number) => {
@@ -62,7 +62,7 @@ export default function AllUsersTable({
                 isHeader
                 className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
               >
-                Số đơn đã mua
+                Hoạt động lần cuối
               </TableCell>
               <TableCell
                 isHeader
@@ -83,7 +83,7 @@ export default function AllUsersTable({
                       <img
                         width={40}
                         height={40}
-                        src={user.avatar}
+                        src={user.image ? user.image : '/default-avatar.png'}
                         // alt={order.user.name}
                       />
                     </div>
@@ -119,15 +119,15 @@ export default function AllUsersTable({
                       </div>
                     ))}
                   </div> */}
-                  {formatDate(user.createdAt)}
+                  {formatDate(user.registeredAt)}
                 </TableCell>
                 <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                  0
+                  {formatDate(user.lastLogin)}
                 </TableCell>
                 <TableCell className="px-4 py-3 text-gray-500 text-theme-sm dark:text-gray-400">
                   <div className="flex gap-4">
                     <button className="hover:scale-110 active:scale-90">
-                      <PencilIcon width={25} height={25} onClick={() => editUser(user)}/>
+                      <PencilIcon width={25} height={25} onClick={() => editUser(user.id)}/>
                     </button>
                     <button className="hover:scale-110 text-red-500 active:scale-90">
                       <TrashBinIcon width={25} height={25} onClick={() => handleDeleteUser(user.id)}/>

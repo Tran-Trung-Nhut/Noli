@@ -18,6 +18,12 @@ export class OrderController {
     return await this.orderService.mergeOrder(+data.userId)
   }
 
+  @Get('/total')
+  async getTotal(@Query('status') status: string) {
+    
+    return await this.orderService.getTotal(status);
+  }
+
   @UseGuards(JwtAuthGuard)
   @Get('/summary/:userId')
   async getOrderSummary (@Param('userId') userId: number){

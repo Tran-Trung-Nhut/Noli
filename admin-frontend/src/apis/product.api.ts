@@ -1,6 +1,7 @@
-import axiosClient from "./axiosClient";
-import { type CreateProduct } from "../dtos/product.dto";
-import type { Paging } from "../dtos/paging.dto";
+import axiosClient from "./axios.client";
+import { CreateProduct } from "../dtos/product.dto";
+import { Paging } from "../dtos/paging.dto";
+
 const productApi = {
     getPaging: async (paging: Paging) => {
         try {
@@ -8,24 +9,25 @@ const productApi = {
                 params: paging
             });
         } catch (error: any) {
-            return error.response;
+            return error.response?.data;
         }
     },
 
-    getProduct: async (id: number) => {
-        try {
-            return await axiosClient.get(`/product/${id}`);
-        } catch (error: any) {
-            return error.response;
+    getLowAvailiblePaging: async (paging: Paging) => {
+        try{
+            return await axiosClient.get("/product/low-availible-paging",{
+                params: paging
+            })
+        }catch (error: any){
+            return error.response?.data
         }
     },
-
 
     create : async (product: CreateProduct) => {
         try {
             return await axiosClient.post("/product", product);}
         catch (error: any) {
-            return error.response
+            return error.response?.data
         }
     },
 
@@ -33,7 +35,7 @@ const productApi = {
         try{
             return await axiosClient.patch(`product/${productId}`, product)
         }catch(error: any){
-            return error.response
+            return error.response?.data
         }
     },
 
@@ -41,7 +43,7 @@ const productApi = {
         try {
             return await axiosClient.delete(`/product/${id}`);
         } catch (error: any) {
-            return error.response
+            return error.response?.data;
         }
     }
 };

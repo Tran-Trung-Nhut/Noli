@@ -1,4 +1,4 @@
-import axiosClient from "./axiosClient";
+import axiosClient from "./axios.client";
 
 const authApi = {
 
@@ -19,17 +19,9 @@ const authApi = {
     },
 
 
-    login: async (username: string, password: string, guestToken: string | null) => {
+    login: async (username: string, password: string) => {
         try {
-            return await axiosClient.post("/auth/login", { username, password, guestToken });
-        } catch (error: any) {
-            return error.response
-        }
-    },
-
-    signup: async (username: string, password: string, firstName: string, lastName: string, guestToken: string | null) => {
-        try {
-            return await axiosClient.post("/auth/signup", { username, password, firstName, lastName, guestToken });
+            return await axiosClient.post("/auth/login", { username, password });
         } catch (error: any) {
             return error.response
         }

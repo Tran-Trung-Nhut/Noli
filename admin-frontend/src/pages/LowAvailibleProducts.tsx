@@ -7,7 +7,7 @@ import Button from "../components/ui/button/Button";
 import { useEffect, useState } from "react";
 import { Option } from "../dtos/options.dto";
 import { LowAvailibleProduct } from "../dtos/product.dto";
-import productApi from "../apis/productApi";
+import productApi from "../apis/product.api";
 import { INVALID } from "../constantsAndMessage";
 import LowAvailibleProductsTable from "../components/tables/BasicTables/LowAvailibleProductsTable";
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa6";

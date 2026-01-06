@@ -1,9 +1,9 @@
 services:
   postgres:
-    image: postgres:latest
+    image: postgres:16
     container_name: nolishop
     environment:
-      POSTGRES_USER: localhost
+      POSTGRES_USER: nolishop
       POSTGRES_PASSWORD: abc@123
       POSTGRES_DB: nolishop
     ports:

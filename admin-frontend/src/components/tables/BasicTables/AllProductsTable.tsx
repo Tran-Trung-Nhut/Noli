@@ -8,7 +8,7 @@ import {
 import { PencilIcon, TrashBinIcon } from "../../../icons";
 import { confirm, formatDate, formatPrice, notifyError, notifySuccess } from "../../../utils";
 import { Product } from "../../../dtos/product.dto";
-import productApi from "../../../apis/productApi";
+import productApi from "../../../apis/product.api";
 
 
 
@@ -133,7 +133,7 @@ export default function AllProductsTable({
                   >
                     Còn hàng
                   </Badge> */}
-                  0
+                  {product.soldQuantity || 0}
                 </TableCell>
                 <TableCell className="px-4 py-3 text-gray-500 text-theme-sm dark:text-gray-400">
                   <div className="flex gap-4">

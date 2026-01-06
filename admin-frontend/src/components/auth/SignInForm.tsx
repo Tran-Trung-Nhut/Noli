@@ -1,37 +1,72 @@
 import { useState } from "react";
-import { Link } from "react-router";
-import { ChevronLeftIcon, EyeCloseIcon, EyeIcon } from "../../icons";
+import { EyeCloseIcon, EyeIcon } from "../../icons";
 import Label from "../form/Label";
 import Input from "../form/input/InputField";
-import Checkbox from "../form/input/Checkbox";
 import Button from "../ui/button/Button";
+import logo from '../../assets/logo.png'
+import authApi from "../../apis/auth.api";
+import { notifyError } from "../../utils";
+import { useNavigate } from "react-router";
+import { useAuth } from "../../context/AuthContext";
+import { HttpStatusCode } from "axios";
+import { Role } from "../../enums/role.enum";
+import LoadingPage from "../common/LoadingPage";
+
 
 export default function SignInForm() {
   const [showPassword, setShowPassword] = useState(false);
-  const [isChecked, setIsChecked] = useState(false);
+  const [username, setUsername] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+
+  const { setLoading, isLoading } = useAuth()
+
+  const { login } = useAuth()
+  const navigate = useNavigate()
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!username || !password) {
+      notifyError("Vui lòng điền đầy đủ thông tin đăng nhập")
+      return
+    }
+    setLoading(true)
+    const result = await authApi.login(username, password)
+    
+    if (result.status !== HttpStatusCode.Created) {
+      notifyError(result.data.message)
+      setLoading(false)
+      return
+    } 
+
+    if (result.data.userInfo.role !== Role.ADMIN) {
+      setLoading(false)
+      notifyError("Bạn không có quyền truy cập vào trang quản trị")
+      return
+    }
+
+    login(result.data.userInfo, result.data.accessToken)
+    navigate("/");
+  };
   return (
+
     <div className="flex flex-col flex-1">
-      <div className="w-full max-w-md pt-10 mx-auto">
-        <Link
-          to="/"
-          className="inline-flex items-center text-sm text-gray-500 transition-colors hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
-        >
-          <ChevronLeftIcon className="size-5" />
-          Back to dashboard
-        </Link>
-      </div>
-      <div className="flex flex-col justify-center flex-1 w-full max-w-md mx-auto">
-        <div>
+      {isLoading && <LoadingPage/>}
+      <div className="flex flex-col justify-center flex-1 w-full max-w-md mx-auto ">
+        <div className="border-2 p-5 rounded-xl">
+          <div className="flex justify-center item-center">
+            <img src={logo} alt="Logo" width={200} height={100} className="mb-8" />
+          </div>
           <div className="mb-5 sm:mb-8">
             <h1 className="mb-2 font-semibold text-gray-800 text-title-sm dark:text-white/90 sm:text-title-md">
-              Sign In
+              Đăng nhập
             </h1>
             <p className="text-sm text-gray-500 dark:text-gray-400">
-              Enter your email and password to sign in!
+              Nhập thông tin tài khoản của bạn để tiếp tục.
             </p>
           </div>
           <div>
-            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-5">
+            {/* <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-5">
               <button className="inline-flex items-center justify-center gap-3 py-3 text-sm font-normal text-gray-700 transition-colors bg-gray-100 rounded-lg px-7 hover:bg-gray-200 hover:text-gray-800 dark:bg-white/5 dark:text-white/90 dark:hover:bg-white/10">
                 <svg
                   width="20"
@@ -82,23 +117,27 @@ export default function SignInForm() {
                   Or
                 </span>
               </div>
-            </div>
-            <form>
-              <div className="space-y-6">
+            </div> */}
+            <form onSubmit={handleSubmit}>
+              <div className="space-y-10">
                 <div>
                   <Label>
-                    Email <span className="text-error-500">*</span>{" "}
+                    Tài khoản <span className="text-error-500">*</span>{" "}
                   </Label>
-                  <Input placeholder="info@gmail.com" />
+                  <Input
+                    placeholder="Enter your username"
+                    onChange={(e) => setUsername(e.target.value)}
+                  />
                 </div>
                 <div>
                   <Label>
-                    Password <span className="text-error-500">*</span>{" "}
+                    Mật khẩu <span className="text-error-500">*</span>{" "}
                   </Label>
                   <div className="relative">
                     <Input
                       type={showPassword ? "text" : "password"}
                       placeholder="Enter your password"
+                      onChange={(e) => setPassword(e.target.value)}
                     />
                     <span
                       onClick={() => setShowPassword(!showPassword)}
@@ -112,7 +151,7 @@ export default function SignInForm() {
                     </span>
                   </div>
                 </div>
-                <div className="flex items-center justify-between">
+                {/* <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     <Checkbox checked={isChecked} onChange={setIsChecked} />
                     <span className="block font-normal text-gray-700 text-theme-sm dark:text-gray-400">
@@ -125,10 +164,10 @@ export default function SignInForm() {
                   >
                     Forgot password?
                   </Link>
-                </div>
+                </div> */}
                 <div>
-                  <Button className="w-full" size="sm">
-                    Sign in
+                  <Button className="w-full" size="sm" type="submit">
+                    Đăng nhập
                   </Button>
                 </div>
               </div>
@@ -136,13 +175,8 @@ export default function SignInForm() {
 
             <div className="mt-5">
               <p className="text-sm font-normal text-center text-gray-700 dark:text-gray-400 sm:text-start">
-                Don&apos;t have an account? {""}
-                <Link
-                  to="/signup"
-                  className="text-brand-500 hover:text-brand-600 dark:text-brand-400"
-                >
-                  Sign Up
-                </Link>
+                Liên hệ quản trị viên để được cấp tài khoản.
+
               </p>
             </div>
           </div>

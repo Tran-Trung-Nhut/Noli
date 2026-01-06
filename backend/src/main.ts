@@ -14,7 +14,6 @@ async function bootstrap() {
     origin: [
       process.env.MAIN_FRONTEND_DOMAIN, 
       process.env.ADMIN_FRONTEND_DOMAIN,
-      process.env.LOCAL_FRONTEND_DOMAIN,
     ],
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],

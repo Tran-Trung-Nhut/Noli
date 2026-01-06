@@ -1,9 +1,9 @@
 import { HttpStatusCode } from "axios"
-import userApi from "../apis/userApi"
+import userApi from "../apis/user.api"
 import { useAuth } from "../contexts/AuthContext"
 import type { District, Province, Ward } from "../pages/Checkout"
 import { useEffect, useState } from "react"
-import addressApi from "../apis/addressApi"
+import addressApi from "../apis/address.api"
 import { type AddressDto } from "../dtos/address.dto"
 import { confirm, getDistrictNameByDistrictId, getProvinceNameByProvinceId, getWardNameByWardId, isValidEmail, notifyError, notifySuccess, notifyWarning } from "../utils"
 

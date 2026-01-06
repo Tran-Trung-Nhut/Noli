@@ -3,7 +3,7 @@ import { useEffect, useMemo, useState } from "react";
 import { FaShop } from "react-icons/fa6";
 import { useNavigate } from "react-router-dom";
 import LoadingAuth from "../components/LoadingAuth";
-import orderApi from "../apis/orderApi";
+import orderApi from "../apis/order.api";
 import { HttpStatusCode } from "axios";
 import { formatDateTime, formatPrice, getPaymentMethod, notifyError } from "../utils";
 import type { OrderDto } from "../dtos/order.dto";

@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import {
   ArrowDownIcon,
   ArrowUpIcon,
@@ -5,8 +6,22 @@ import {
   GroupIcon,
 } from "../../icons";
 import Badge from "../ui/badge/Badge";
+import { userApi } from "../../apis/user.api";
+import { orderApi } from "../../apis/order.api";
 
 export default function EcommerceMetrics() {
+
+  const [totalCustomers, setTotalCustomers] = useState<number>(0);
+  const [totalOrders, setTotalOrders] = useState<number>(0);
+
+  const  fetchMetrics = async () =>  {
+    setTotalCustomers((await userApi.getTotal()).data)
+    setTotalOrders((await orderApi.getTotal('ALL')).data)
+  }
+
+  useEffect(() => {
+    fetchMetrics();
+  }, []);
   return (
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-6">
       {/* <!-- Metric Item Start --> */}
@@ -21,13 +36,13 @@ export default function EcommerceMetrics() {
               Khách hàng
             </span>
             <h4 className="mt-2 font-bold text-gray-800 text-title-sm dark:text-white/90">
-              3,782
+              {totalCustomers}
             </h4>
           </div>
-          <Badge color="success">
+          {/* <Badge color="success">
             <ArrowUpIcon />
             11.01%
-          </Badge>
+          </Badge> */}
         </div>
       </div>
       {/* <!-- Metric Item End --> */}
@@ -43,14 +58,14 @@ export default function EcommerceMetrics() {
               Đơn đặt hàng
             </span>
             <h4 className="mt-2 font-bold text-gray-800 text-title-sm dark:text-white/90">
-              5,359
+              {totalOrders}
             </h4>
           </div>
 
-          <Badge color="error">
+          {/* <Badge color="error">
             <ArrowDownIcon />
             9.05%
-          </Badge>
+          </Badge> */}
         </div>
       </div>
       {/* <!-- Metric Item End --> */}

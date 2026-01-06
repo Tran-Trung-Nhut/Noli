@@ -6,7 +6,7 @@ import { ToastContainer } from "react-toastify";
 import { HttpStatusCode } from "axios";
 import LoadingAuth from "../components/LoadingAuth";
 import { useAuth } from "../contexts/AuthContext";
-import authApi from "../apis/authApi";
+import authApi from "../apis/auth.api";
 import { ArrowLeft } from "lucide-react";
 
 const Login = () => {
@@ -51,7 +51,7 @@ const Login = () => {
             notifyWarning("Phiên đăng nhập của bạn đã hết hạn. Vui lòng đăng nhập lại");
         }
 
-        if(error) {
+        if (error) {
             notifyError(error)
         }
     }, [warning]);
@@ -147,11 +147,14 @@ const Login = () => {
                             <button
                                 className="flex items-center justify-center gap-2 py-2 rounded-md border border-gray-200 hover:shadow-sm w-full"
                                 onClick={() => handleLoginByGoogle()}>
-                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M21 12.24c0-.72-.06-1.26-.18-1.8H12v3.42h4.92c-.06.54-.36 1.26-.9 1.92l1.44 1.08C18.6 17.34 19.86 15.9 21 12.24z" fill="#4285F4" />
-                                    <path d="M12 22c2.7 0 4.98-.9 6.64-2.46l-1.44-1.08c-1.02.72-2.28 1.2-5.2 1.2-3.96 0-7.3-2.64-8.5-6.18L1.78 14.5C3.44 18.9 7.4 22 12 22z" fill="#34A853" />
-                                    <path d="M3.5 8.82l1.74 1.28C6.06 8.28 8.86 6.6 12 6.6c1.74 0 3.12.6 4.2 1.44l1.5-1.5C16.96 4.74 14.04 3.4 12 3.4 7.4 3.4 3.44 6.5 3.5 8.82z" fill="#FBBC05" />
-                                    <path d="M12 6.6v4.8h7.56C19.98 9.24 17.22 6.6 12 6.6z" fill="#EA4335" />
+                                <svg
+                                    width="21"
+                                    className="fill-current"
+                                    height="20"
+                                    viewBox="0 0 21 20"
+                                    fill="none"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                >
                                 </svg>
                                 Google
                             </button>

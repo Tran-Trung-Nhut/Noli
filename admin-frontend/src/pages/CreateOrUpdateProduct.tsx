@@ -10,9 +10,9 @@ import { CreateProductVariant, ProductVariant } from "../dtos/productVariant.dto
 import Button from "../components/ui/button/Button";
 import { FaImages } from "react-icons/fa6";
 import { CreateProduct, Product } from "../dtos/product.dto";
-import productApi from "../apis/productApi";
+import productApi from "../apis/product.api";
 import { confirm, notifyError, notifySuccess } from "../utils";
-import productVariantApi from "../apis/productVariantApi";
+import productVariantApi from "../apis/product-variant.api";
 import { INVALID } from "../constantsAndMessage";
 import ProductVariantTable from "../components/ProductVariantTable";
 

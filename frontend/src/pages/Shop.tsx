@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
-import productApi from "../apis/productApi";
+import productApi from "../apis/product.api";
 import { notifyError, notifyWarning } from "../utils";
 import type { Product } from "../dtos/product.dto";
 import FiltersSidebar from "../components/FilterSideBar";
