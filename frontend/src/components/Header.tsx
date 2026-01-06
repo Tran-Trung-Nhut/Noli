@@ -47,7 +47,7 @@ const Header: React.FC = () => {
     return (
         <>
             <nav className="sticky top-0 z-50 bg-white shadow-md">
-                <div className="container px-4 py-2 flex items-center justify-between">
+                <div className="w-full px-4 py-2 flex items-center justify-between">
                     <img src={logo} alt="logo" className="w-44 h-16 object-contain" />
 
                     {/* desktop links */}
