@@ -96,3 +96,29 @@ Nest is an MIT-licensed open source project. It can grow thanks to the sponsors 
 ## License
 
 Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+
+## Restore database (Old -> .dumb -> New)
+### Create dumb
+```
+docker run --rm \
+  -v "$PWD:/dump" \
+  postgres:17 \
+  pg_dump \
+    --no-owner \
+    --no-acl \
+    --format=custom \
+    --dbname="OLD_DATABASE_URL" \
+    -f /dump/supabase.dump
+```
+
+### Migrate to new database
+```
+docker run --rm \
+  -v "$PWD:/dump" \
+  postgres:17 \
+  pg_restore \
+    --no-owner \
+    --no-acl \
+    --dbname="NEW_DATABASE_URL" \
+    /dump/supabase.dump
+```
