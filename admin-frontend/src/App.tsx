@@ -12,6 +12,7 @@ import AllProducts from "./pages/AllProducts";
 import AllUsers from "./pages/AllUsers";
 import ProtectedRoute from "./context/ProtectRoute";
 import { AuthProvider } from "./context/AuthContext";
+import AllOrders from "./pages/AllOrders";
 
 export default function App() {
   return (
@@ -42,6 +43,12 @@ export default function App() {
               <Route path="/all-users" element={
                 <ProtectedRoute>
                   <AllUsers />
+                </ProtectedRoute>
+              } />
+
+              <Route path="/all-orders" element={
+                <ProtectedRoute>
+                  <AllOrders />
                 </ProtectedRoute>
               } />
 

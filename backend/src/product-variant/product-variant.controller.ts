@@ -8,29 +8,23 @@ import { MESSAGES } from 'src/constantsAndMessage';
 export class ProductVariantController {
   constructor(private readonly productVariantService: ProductVariantService) { }
 
-  @Post(':productId')
+  @Post('product/:productId')
   async create(@Body() createProductVariantDto: CreateProductVariantDto, @Param('productId') productId: number) {
-    await this.productVariantService.create(createProductVariantDto, Number(productId));
-    return { message: MESSAGES.PRODUCT_VARIANT.SUCCESS.CREATE }
+    return await this.productVariantService.create(createProductVariantDto, Number(productId));
   }
 
-  @Get(':productId')
-  async findAllByProductId(@Param('productId') productId: number, @Res() res) {
-    return { data: await this.productVariantService.findAllByProductId(Number(productId)) }
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.productVariantService.findOne(+id);
+  @Get('product/:productId')
+  async findAllByProductId(@Param('productId') productId: number) {
+    return await this.productVariantService.findAllByProductId(Number(productId))
   }
 
   @Patch(':id')
   async update(@Param('id') id: string, @Body() updateProductVariantDto: UpdateProductVariantDto) {
-    return { message: await this.productVariantService.update(+id, updateProductVariantDto) }
+    return await this.productVariantService.update(+id, updateProductVariantDto)
   }
 
   @Delete(':id')
   async remove(@Param('id') id: string) {
-    return { message: MESSAGES.PRODUCT_VARIANT.SUCCESS.DELETE, data: await this.productVariantService.remove(+id) }
+    return await this.productVariantService.remove(+id)
   }
 }

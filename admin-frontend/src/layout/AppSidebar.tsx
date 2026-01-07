@@ -33,14 +33,13 @@ const navItems: NavItem[] = [
     name: "Người Dùng",
     subItems: [
       { name: "Tất cả người dùng", path: "/all-users", pro: false },
-      { name: "Người dùng vắng mặt", path: "/", pro: false }
     ],
   },
   {
     icon: <FaCartShopping />,
     name: "Đơn mua",
     subItems: [
-      { name: "Tất cả đơn mua", path: "", pro: false },
+      { name: "Tất cả đơn mua", path: "/all-orders", pro: false },
     ],
   },
 ];

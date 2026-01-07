@@ -1,4 +1,4 @@
-import { CreateProductVariant, ProductVariant } from "../dtos/productVariant.dto"
+import { CreateProductVariant, ProductVariant } from "../dtos/product-variant.dto"
 import { PencilIcon, TrashBinIcon } from "../icons"
 
 export default function ({

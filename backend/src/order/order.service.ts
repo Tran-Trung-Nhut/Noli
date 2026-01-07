@@ -200,7 +200,7 @@ export class OrderService {
           orderStatuses: {
             some: {
               isCurrentStatus: true,
-              status: OrderStat.DELIVERED
+              status: OrderStat.DELIVERY
             }
           }
         }
@@ -222,7 +222,7 @@ export class OrderService {
           orderStatuses: {
             some: {
               isCurrentStatus: true,
-              status: OrderStat.CANCELLED
+              status: OrderStat.CANCEL
             }
           }
         }
@@ -230,8 +230,64 @@ export class OrderService {
     ])
   }
 
-  findAll() {
-    return `This action returns all order`;
+  async findAll(
+    page: number,
+    limit: number,
+    sortBy: string,
+    sortOrder: string,
+    search: string,
+  ) {
+    try {
+      const orders = await this.prismaService.order.findMany({
+        select: {
+          id: true,
+          userId: true,
+          totalAmount: true,
+          createdAt: true,
+          user: {
+            select: {
+              firstName: true,
+              lastName: true,
+              image: true
+            }
+          },
+          orderStatuses: {
+            where: { isCurrentStatus: true },
+            select: {
+              status: true,
+            }
+          }
+        },
+        // where: {
+        //   OR: [
+        //     {
+        //       id: isNaN(Number(search)) ? undefined : Number(search),
+        //     },
+        //     {
+        //       userId: isNaN(Number(search)) ? undefined : Number(search),
+        //     },
+        //   ],
+        // },
+        orderBy: {
+          [sortBy]: sortOrder.toLowerCase() === 'asc' ? 'asc' : 'desc',
+        },
+        skip: (page - 1) * limit,
+        take: limit,
+      });
+      
+      return orders.map(o => ({
+        ...o,
+        status: o.orderStatuses[0]?.status || null,
+        customerFirstName: o.user?.firstName || null,
+        customerLastName: o.user?.lastName || null,
+        customerImage: o.user?.image || null
+      }));
+    } catch (error) {
+      if (!(error instanceof InternalServerErrorException)) {
+        throw error
+      }
+      throw new InternalServerErrorException(error)
+    }
   }
 
   async findAllByUserIdAndStatus(userId: number, status: string) {

@@ -1,4 +1,4 @@
-import { CreateProductVariant } from "./productVariant.dto"
+import { CreateProductVariant } from "./product-variant.dto"
 
 export type Product = {
     id: number,

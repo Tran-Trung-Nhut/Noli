@@ -1,8 +1,10 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Res, HttpStatus, Query, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Res, HttpStatus, Query, UseGuards, ParseIntPipe } from '@nestjs/common';
 import { OrderService } from './order.service';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
 import { JwtAuthGuard } from 'src/auth/jwt.guard';
+import { Roles } from 'src/shares/decorators/role.decorator';
+import { Role } from '@prisma/client';
 
 @Controller('order')
 export class OrderController {
@@ -30,9 +32,23 @@ export class OrderController {
     return this.orderService.getOrderSummary(userId)
   }
 
+  @UseGuards(JwtAuthGuard)
+  @Roles(Role.ADMIN)
   @Get()
-  findAll() {
-    return this.orderService.findAll();
+  async findAll(
+    @Query('page', ParseIntPipe) page: number,
+    @Query('limit', ParseIntPipe) limit: number,
+    @Query('sortBy') sortBy: string,
+    @Query('sortOrder') sortOrder: string,
+    @Query('search') search: string,
+  ) {
+    return await this.orderService.findAll(
+      page,
+      limit,
+      sortBy,
+      sortOrder,
+      search
+    );
   }
 
   @Get('userId/:userId')

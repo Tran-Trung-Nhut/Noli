@@ -1,10 +1,10 @@
 import axiosClient from "./axios.client";
-import { CreateProductVariant } from "../dtos/productVariant.dto";
+import { CreateProductVariant } from "../dtos/product-variant.dto";
 
 const productVariantApi = {
     getAllByProductId: async (productId: number) => {
         try {
-            return await axiosClient.get(`/product-variant/${productId}`);
+            return await axiosClient.get(`/product-variant/product/${productId}`);
         } catch (error: any) {
             return error.response?.data;
         }
@@ -12,7 +12,7 @@ const productVariantApi = {
 
     create : async (variant: CreateProductVariant, productId: number) => {
         try {
-            return await axiosClient.post(`/product-variant/${productId}`, variant);}
+            return await axiosClient.post(`/product-variant/product/${productId}`, variant);}
         catch (error: any) {
             return error.response?.data
         }
