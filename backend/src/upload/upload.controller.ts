@@ -15,4 +15,12 @@ export class UploadController {
     return await this.uploadService.uploadUserImage(file, +userId)
   }
 
+  @UseGuards(JwtAuthGuard)
+  @Post('/image')
+  @UseInterceptors(FileInterceptor('file'))
+  async uploadProductImage (@UploadedFile() file: Express.Multer.File) {
+    
+    return await this.uploadService.uploadImage(file)
+  }
+
 }
