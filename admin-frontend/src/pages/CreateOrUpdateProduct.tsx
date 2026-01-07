@@ -11,12 +11,14 @@ import Button from "../components/ui/button/Button";
 import { FaImages } from "react-icons/fa6";
 import { CreateProduct, Product } from "../dtos/product.dto";
 import productApi from "../apis/product.api";
-import { confirm, notifyError, notifySuccess } from "../utils";
+import { confirm, notifyError, notifySuccess, notifyWarning } from "../utils";
 import productVariantApi from "../apis/product-variant.api";
 import { INVALID } from "../constantsAndMessage";
 import ProductVariantTable from "../components/ProductVariantTable";
 import ImageViewer from "../components/ui/images/ImageViewer";
 import LoadingPage from "../components/common/LoadingPage";
+import FileInput from "../components/form/input/FileInput";
+import axiosClient from "../apis/axios.client";
 
 export default function CreateOrUpdateProduct({
     isCreateOrUpdateProduct,
@@ -38,13 +40,16 @@ export default function CreateOrUpdateProduct({
     const [price, setPrice] = useState<number>(INVALID.NUMBER)
     const [stock, setStock] = useState<number>(INVALID.NUMBER)
     const [images, setImages] = useState<string[]>([])
-    const [imageLink, setImageLink] = useState<string>(INVALID.EMPTY_STRING)
+    const [listImageUpload, setListImageUpload] = useState<string[]>([])
+    const [file, setFile] = useState<File | null>(null)
     const [productVariants, setProductVariants] = useState<CreateProductVariant[]>([])
     const [editingProductVariants, setEditingProductVariants] = useState<ProductVariant[]>([])
     const [errors, setErrors] = useState<string[]>([])
     const [listImageViewing, setListImageViewing] = useState<string[]>([])
     const [activeImageIndex, setActiveImageIndex] = useState<number>(0)
     const [loading, setLoading] = useState<boolean>(false);
+    const [uploading, setUploading] = useState<boolean>(false);
+    const [progress, setProgress] = useState<number>(0);
 
 
     const resetVariantAttribute = () => {
@@ -115,15 +120,6 @@ export default function CreateOrUpdateProduct({
         setLoading(false)
     }
 
-    const handleAddImages = () => {
-        if (imageLink === INVALID.EMPTY_STRING) {
-            setErrors([...errors, "blank_image"])
-            return
-        }
-        setImages([...images, imageLink])
-        setImageLink(INVALID.EMPTY_STRING)
-    }
-
     const handleDeleteColorAndSize = (variantColor: string, variantSize: string, variantId?: number) => {
         if (isCreateOrUpdateProduct === 'update') {
             confirm("Xóa màu sắc và kích thước sản phẩm", "Bạn có chắn chắn xóa màu sắc và kích thước của sản phẩm này?", async () => {
@@ -135,7 +131,7 @@ export default function CreateOrUpdateProduct({
         else setProductVariants(productVariants.filter(productVariant => !(productVariant.color === variantColor && productVariant.size === variantSize)))
     }
 
-    const handleAddProduct = () => {
+    const handleAddProduct = async () => {
         const newErrors: string[] = []
         if (name === INVALID.EMPTY_STRING) newErrors.push('blank_name')
         if (category === INVALID.EMPTY_STRING) newErrors.push('blank_category')
@@ -157,31 +153,40 @@ export default function CreateOrUpdateProduct({
             category: [category],
             defaultPrice: defaultPrice,
             description: description,
-            image: images,
+            image: isCreateOrUpdateProduct === 'create' ? listImageUpload : images,
             productVariants: productVariants
         }
 
-        if (isCreateOrUpdateProduct === 'create') productApi.create(product)
-            .then((response) => {
-                if (response.status !== 201) return notifyError(response.message)
-                setCategory('bags')
-                setDefaultPrice(INVALID.NUMBER)
-                setDescription(INVALID.EMPTY_STRING)
-                setCustomedPrice('default')
-                resetVariantAttribute()
-                setImages([])
-                setProductVariants([])
-                setName(INVALID.EMPTY_STRING)
-                setErrors([])
+        setLoading(true);
+        if (isCreateOrUpdateProduct === 'create') {
+            const response = await productApi.create(product)
+            if (response.status !== 201) {
+                setLoading(false);
+                return notifyError(response.message)
+            }
+            setCategory('bags')
+            setDefaultPrice(INVALID.NUMBER)
+            setDescription(INVALID.EMPTY_STRING)
+            setCustomedPrice('default')
+            resetVariantAttribute()
+            setImages([])
+            setProductVariants([])
+            setName(INVALID.EMPTY_STRING)
+            setErrors([])
+            setListImageUpload([])
 
-                notifySuccess(response.data.message)
-            })
-        else productApi.update((({ productVariants, ...rest }) => rest)(product), editingProduct.id)
-            .then((response) => {
-                if (response.status !== 200) return notifyError(response.message)
-                notifySuccess(response.data.message)
-                onClose()
-            })
+            notifySuccess("Thêm sản phẩm thành công")
+        }
+        else {
+            const response = await productApi.update((({ productVariants, ...rest }) => rest)(product), editingProduct.id)
+            if (response.status !== 200) {
+                setLoading(false);
+                return notifyError(response.message)
+            }
+            notifySuccess("Cập nhật sản phẩm thành công")
+            onClose()
+        }
+        setLoading(false);
 
     }
 
@@ -223,8 +228,43 @@ export default function CreateOrUpdateProduct({
     }
 
     const handleViewImages = (index: number) => {
-        setListImageViewing(images)
+        setListImageViewing(isCreateOrUpdateProduct === 'create' ? listImageUpload : images)
         setActiveImageIndex(index)
+    }
+
+    const handleUpload = async () => {
+        if (!file) return notifyWarning("Vui lòng chọn hình ảnh để tải lên");
+        setUploading(true);
+        setProgress(0);
+
+        try {
+            const form = new FormData();
+            form.append('file', file);
+
+            const response = await axiosClient.post("/upload/image", form, {
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                },
+                onUploadProgress: (ev) => {
+                    if (ev.total) {
+                        const p = Math.round((ev.loaded / ev.total) * 100);
+                        setProgress(p);
+                    }
+                },
+            });
+
+            if (isCreateOrUpdateProduct === 'update') setImages([...images, response.data.secure_url]);
+            else setListImageUpload([...listImageUpload, response.data.secure_url]);
+
+            setUploading(false);
+            setProgress(100);
+            setFile(null);
+
+        } catch (err: any) {
+            console.error(err);
+            setUploading(false);
+            notifyError("Tải hình ảnh thất bại")
+        }
     }
 
     useState(() => {
@@ -371,29 +411,35 @@ export default function CreateOrUpdateProduct({
                         )}
                         <Button onClick={() => handleAddColorAndSize()} className="mb-6">Thêm/Chỉnh sửa màu và kích thước</Button>
                         <div className="mb-2">
-                            <Label>Liên kết hình ảnh</Label>
+                            <Label>Tải ảnh lên</Label>
                             <div className="flex flex-wrap gap-3">
-                                <Input
-                                    type="text"
-                                    placeholder="https://scontent.fsgn5-10.fna.fbcdn.net/v/....."
-                                    value={imageLink}
-                                    onChange={(event) => {
-                                        setImageLink(event.target.value)
-                                        if (event.target.value.length > INVALID.NUMBER) setErrors(errors.filter(error => error !== 'blank_image'))
-                                    }}
-                                    error={errors.includes('blank_image')}
-                                    hint={errors.includes('blank_image') ? "Vui lòng nhập liên kết ảnh" : ""}
-                                />
-                                {images.length > 0 && (
+                                <FileInput width="20%" onChange={(e) => setFile(e.target.files?.[0] || null)} />
+                                {images.length > 0 && isCreateOrUpdateProduct === 'update' && (
                                     <div className="flex flex-wrap gap-2 relative hover:cursor-pointer active:scale-90">
-                                        <FaImages size={40} onClick={() => handleViewImages(1)} />
+                                        <FaImages size={40} onClick={() => handleViewImages(0)} />
                                         <div className="w-4 h-4 bg-red-500 absolute top-[-5px] right-[-5px] rounded-full">
                                             <span className="absolute top-[-4px] right-[2px] text-white">{images.length}</span>
                                         </div>
                                     </div>)}
+
+                                {listImageUpload.length > 0 && isCreateOrUpdateProduct === 'create' && (
+                                    <div className="flex flex-wrap gap-2 relative hover:cursor-pointer active:scale-90">
+                                        <FaImages size={40} onClick={() => handleViewImages(0)} />
+                                        <div className="w-4 h-4 bg-red-500 absolute top-[-5px] right-[-5px] rounded-full">
+                                            <span className="absolute top-[-4px] right-[2px] text-white">{listImageUpload.length}</span>
+                                        </div>
+                                    </div>)}
                             </div>
+                            {uploading && (
+                                <div className="mt-2">
+                                    <div className="w-full h-2 bg-gray-100 rounded-full overflow-hidden">
+                                        <div style={{ width: `${progress}%` }} className="h-full rounded-full transition-all bg-sky-500"></div>
+                                    </div>
+                                    <div className="text-xs text-gray-500 mt-1">Đang tải: {progress}%</div>
+                                </div>
+                            )}
+                            <Button onClick={() => handleUpload()} className="mt-2 mb-6">Thêm ảnh</Button>
                         </div>
-                        <Button onClick={() => handleAddImages()} className="mb-6">Thêm ảnh</Button>
                     </div>
                 </div>
                 <div className="flex justify-end gap-3">

@@ -20,7 +20,7 @@ export default function AllProducts() {
   const [editingProduct, setEditingProduct] = useState<Product>(defaultProduct);
   const [page, setPage] = useState<number>(1);
   const [limit, setLimit] = useState<number>(5);
-  const [sortBy, setSortBy] = useState<string>("name");
+  const [sortBy, setSortBy] = useState<string>("createdAt");
   const [sortOrder, setSortOrder] = useState<SortOrder>(SortOrder.DESC);
   const [search, setSearch] = useState<string>("");
 
@@ -60,6 +60,10 @@ export default function AllProducts() {
     setEditingProduct(product);
   }
 
+  const deleteProduct = (productId: number) => {
+    setProducts(products.filter(product => product.id !== productId));
+  }
+
   useEffect(() => {
     if(page !== 0) fetchProducts();
   }, [page, limit, sortBy, sortOrder, search]);
@@ -77,7 +81,7 @@ export default function AllProducts() {
               <div className="flex gap-6">
                 <div>
                   <Label>Sắp xếp theo</Label>
-                  <Select options={sortOptions} onChange={(event) => {setSortBy(event)}} defaultValue="name"/>
+                  <Select options={sortOptions} onChange={(event) => {setSortBy(event)}} defaultValue="createdAt"/>
                 </div>
                 <div>
                   <Label>Thứ tự</Label>
@@ -88,7 +92,7 @@ export default function AllProducts() {
                   <Input placeholder="Nhập tên sản phẩm..." onChange={(event) => setSearch(event.target.value)}/>
                 </div>
               </div>
-            <AllProductsTable products={products} fetchProducts={fetchProducts} editProduct={editProduct}/>
+            <AllProductsTable products={products} deleteProduct={deleteProduct} editProduct={editProduct}/>
             <div className="flex items-center justify-between mt-4">
                <div className="flex items-center justify-between mt-4 gap-2">
                 <Select 

@@ -5,6 +5,8 @@ export const notifySuccess = (message: string) => toast.success(message, { posit
 
 export const notifyError = (message: string) => toast.error(message, { position: 'top-right', autoClose: 2000 })
 
+export const notifyWarning = (message: string) => toast.warning(message, { position: 'top-right', autoClose: 2000 })
+
 
 export const formatPrice = (price: number) => {
     return price.toLocaleString('vi-VN', { minimumFractionDigits: 0 }) + 'đ';
