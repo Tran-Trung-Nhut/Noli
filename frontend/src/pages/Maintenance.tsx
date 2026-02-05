@@ -1,4 +1,4 @@
-import { FaTools, FaEnvelope, FaFacebookF, FaTwitter, FaInstagram, FaWrench, FaCog, FaHammer } from "react-icons/fa";
+import { FaTools, FaEnvelope, FaFacebookF, FaWrench, FaCog, FaHammer } from "react-icons/fa";
 import { useState } from "react";
 import { FaTiktok } from "react-icons/fa6";
 
