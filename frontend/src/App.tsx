@@ -1,32 +1,33 @@
 
 import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
-import DefaultLayout from './DefaltLayout';
-import Home from './pages/Home';
-import NotFound from './pages/NotFound';
-import Login from './pages/Login';
-import Signup from './pages/Signup';
+// import DefaultLayout from './DefaltLayout';
+// import Home from './pages/Home';
+// import NotFound from './pages/NotFound';
+// import Login from './pages/Login';
+// import Signup from './pages/Signup';
 import { AuthProvider } from './contexts/AuthContext';
-import Profile from './pages/Profile';
-import CartPage from './pages/CartPage';
-import ProductDetailPage from './pages/ProductDetailPage';
-import Checkout from './pages/Checkout';
-import GoogleAuthLoading from './pages/GoogleAuthLoading';
-import ProtectedRoute from './contexts/ProtectRoute';
-import Shop from './pages/Shop';
+// import Profile from './pages/Profile';
+// import CartPage from './pages/CartPage';
+// import ProductDetailPage from './pages/ProductDetailPage';
+// import Checkout from './pages/Checkout';
+// import GoogleAuthLoading from './pages/GoogleAuthLoading';
+// import ProtectedRoute from './contexts/ProtectRoute';
+// import Shop from './pages/Shop';
 import { ServerWakeProvider } from './contexts/ServerStatusContext';
-import WakeOverlay from './components/WakeOverlay';
-import About from './pages/About';
-import Contact from './pages/Contact';
-import PaymentResult from './pages/PaymentResult';
-import OrderDetailPage from './pages/OrderDetailPage';
-import Invalid from './pages/Invalid';
-import PolicyPage from './pages/Policy';
-import TermsPage from './pages/Term';
-import PrivacyPage from './pages/PrivacyPolicy';
-import SitemapPage from './pages/SiteMap';
-import RecruitmentPage from './pages/Career';
-import FAQPage from './pages/FAQ';
-import { TrackOrderPage } from './pages/TrackOrderPage';
+// import WakeOverlay from './components/WakeOverlay';
+// import About from './pages/About';
+// import Contact from './pages/Contact';
+// import PaymentResult from './pages/PaymentResult';
+// import OrderDetailPage from './pages/OrderDetailPage';
+// import Invalid from './pages/Invalid';
+// import PolicyPage from './pages/Policy';
+// import TermsPage from './pages/Term';
+// import PrivacyPage from './pages/PrivacyPolicy';
+// import SitemapPage from './pages/SiteMap';
+// import RecruitmentPage from './pages/Career';
+// import FAQPage from './pages/FAQ';
+// import { TrackOrderPage } from './pages/TrackOrderPage';
+import Maintenance from './pages/Maintenance';
 
 
 const App = () => {
@@ -34,15 +35,16 @@ const App = () => {
     <Router>
       <ServerWakeProvider>
         <AuthProvider>
-          <WakeOverlay />
+          {/* <WakeOverlay /> */}
           <Routes>
-            <Route path='*' element={<NotFound />} />
+            <Route path='*' element={<Maintenance />} />
+            {/* <Route path='*' element={<NotFound />} />
             <Route path='/login' element={<Login />} />
             <Route path='/signup' element={<Signup />} />
             <Route path='/auth-google-result' element={<GoogleAuthLoading />} />
             <Route path='/invalid' element={<Invalid />} />
             <Route path='/' element={<DefaultLayout />}>
-              <Route index element={<Home />} />               {/* đường dẫn "/" */}
+              <Route index element={<Home />} />               
               <Route path='/my-cart' element={<CartPage />} />
               <Route path='/product/:id' element={<ProductDetailPage />} />
               <Route path='/profile' element={
@@ -67,7 +69,7 @@ const App = () => {
                   <OrderDetailPage />
                 </ProtectedRoute>
               } />
-            </Route>
+            </Route> */}
             {/* <Route path='/login' element={<MaintenancePage/>}></Route> */}
           </Routes>
         </AuthProvider>
